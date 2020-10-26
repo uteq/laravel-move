@@ -4,5 +4,4 @@ namespace Uteq\Move;
 
 class Resource
 {
-
 }
