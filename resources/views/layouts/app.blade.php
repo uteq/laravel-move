@@ -12,6 +12,7 @@
 
     <!-- Styles -->
     {!! Move::styles() !!}
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <livewire:styles>
 

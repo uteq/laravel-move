@@ -14,7 +14,7 @@
             </div>
             <input id="search_field"
                    class="shadow block w-full h-full pl-10 pr-3 py-2 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 text-sm"
-                   placeholder="Zoeken"
+                   placeholder="Search"
                    type="search"
                    wire:model="filter.search"
             />

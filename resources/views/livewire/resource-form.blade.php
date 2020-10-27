@@ -25,9 +25,9 @@
 
         <x-move-button>
             @if ($model->id)
-                {{ __( $this->label() . ' aanpassen') }}
+                {{ __('Edit ' . $this->label()) }}
             @else
-                {{ __( $this->label() . ' aanmaken') }}
+                {{ __('Create' . $this->label()) }}
             @endif
         </x-move-button>
     </x-slot>

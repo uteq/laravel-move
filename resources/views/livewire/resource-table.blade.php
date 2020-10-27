@@ -1,6 +1,6 @@
 <div>
     <x-move-table.header add-action="add"
-                             add-text="{{ $this->resource()->singularLabel() }} aanmaken"
+                             add-text="Create {{ $this->resource()->singularLabel() }}"
                              search
     ></x-move-table.header>
 
@@ -102,7 +102,7 @@
                     <div class="p-10">
                         <p class="mb-3">Geen items aanwezig</p>
                         <button wire:click="add" class="underline text-green-500">
-                            Eerste {{ $this->resource()->singularLabel() }} aanmaken
+                            Create first {{ $this->resource()->singularLabel() }}
                         </button>
                     </div>
                 </x-move-td>

@@ -166,34 +166,24 @@ class Move
     public function styles()
     {
         return <<<HTML
-<style>
-    {$this->cssAssets()}
-</style>
+<link rel="stylesheet" type="text/css" href="{$this->cssAssets()}" />
 HTML;
     }
 
     public function scripts()
     {
         return <<<HTML
-<script>
-    {$this->jsAssets()}
-</script>
+<script src="{$this->jsAssets()}"></script>
 HTML;
     }
 
     public function cssAssets()
     {
-        ob_start();
-        include dirname(dirname(__FILE__)) . '/public/css/app.css';
-
-        return ob_get_clean();
+        return asset('/move/move.css');
     }
 
     public function jsAssets()
     {
-        ob_start();
-        include dirname(dirname(__FILE__)) . '/public/js/app.js';
-
-        return ob_get_clean();
+        return '/move/move.js';
     }
 }

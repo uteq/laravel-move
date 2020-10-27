@@ -88,7 +88,7 @@ class ResourceForm extends FormComponent
     public function title()
     {
         return $this->resource()->singularLabel() . ' ' . (
-            $this->model ? 'bewerken' : 'aanmaken'
+            $this->model ? 'edit' : 'create'
         );
     }
 

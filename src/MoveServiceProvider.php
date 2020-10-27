@@ -11,6 +11,8 @@ use Livewire\Livewire;
 use Livewire\LivewireBladeDirectives;
 use Uteq\Move\Commands\MoveCommand;
 use Uteq\Move\Controllers\DownloadController;
+use Uteq\Move\Controllers\MoveStyleAssets;
+use Uteq\Move\Controllers\MoveJavaScriptAssets;
 use Uteq\Move\Controllers\PreviewFileController;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Livewire\ResourceForm;
@@ -136,6 +138,9 @@ class MoveServiceProvider extends ServiceProvider
 
     public function configureRoutes()
     {
+        Route::get('/move/move.js', [MoveJavaScriptAssets::class, 'source']);
+        Route::get('/move/move.css', [MoveStyleAssets::class, 'source']);
+
         Route::bind('model', function ($value) {
             $resource = Move::resolveResource(request()->route()->parameter('resource'));
 

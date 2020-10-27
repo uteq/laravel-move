@@ -7,7 +7,50 @@
 Move makes it very easy to create your own Admin Panel using Laravel and Livewire. 
 This package was heavily inspired bij Laravel Nova. And works practically the same.
  
+Here is an example of how you can use it:
+```php
+<?php
 
+namespace App\Move;
+
+use Uteq\Move\Fields\Id;
+use Uteq\Move\Fields\Text;
+use Uteq\Move\Resource;
+
+class User extends Resource
+{
+    public static $model = \App\Models\User::class;
+
+    public static string $title = 'name';
+
+    public function fields()
+    {
+        return [
+            Id::make(),
+
+            Text::make('Name', 'name'),
+        ];
+    }
+
+    public function filters()
+    {
+        return [];
+    }
+
+    public function actions()
+    {
+        return [];
+    }
+
+    public function icon()
+    {
+        return 'heroicon-o-users';
+    }
+}
+```
+
+And this is a basic example with a user:
+<img src="https://uteq.nl/images/move-example.png" />
 
 ## Todo
 - Translations
@@ -38,19 +81,33 @@ You can publish the config file with:
 php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="config"
 ```
 
-This is the contents of the published config file:
+You should also install Jetstream with the Livewire frontend<br />
+https://jetstream.laravel.com/1.x/installation.html#installing-jetstream
 
-```php
-return [
-];
+Do not forget to finalize the script:
 ```
+npm install && npm run dev
+
+php artisan migrate
+```
+
+
 
 ## Usage
 
-``` php
-$laravel-move = new Uteq\Move();
-echo $laravel-move->echoPhrase('Hello, Uteq!');
-```
+### Supported Field types
+These are the currently supported fields in Move:
+- Country
+- Date
+- Files
+- Id
+- Number
+- Password
+- Select (with filter search)
+- Status
+- Text
+- Textarea
+
 ### Route prefix
 Move out of the box adds a prefix to your resources, that way it will never interfere with your own routes.
 The default is `move`.
@@ -62,17 +119,6 @@ use Illuminate\Support\Facades\Route;
 function boot()
 {
     Route::move('my-prefix');
-}
-```
-
-If you prefer to completely disable the prefix, change the `move` prefix to `null`:
-
-```php
-use Illuminate\Support\Facades\Route;
-
-function boot()
-{
-    Route::move();
 }
 ```
 
