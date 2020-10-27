@@ -9,8 +9,8 @@ use Illuminate\Support\Str;
 use Uteq\Move\Concerns\PerformsQueries;
 use Uteq\Move\DomainActions\DeleteResource;
 use Uteq\Move\DomainActions\StoreResource;
-use Uteq\Move\Fields\Field;
 use Uteq\Move\Facades\Move;
+use Uteq\Move\Fields\Field;
 
 abstract class Resource
 {

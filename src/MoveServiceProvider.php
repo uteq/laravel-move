@@ -15,10 +15,10 @@ use Uteq\Move\Controllers\MoveStyleAssets;
 use Uteq\Move\Controllers\MoveJavaScriptAssets;
 use Uteq\Move\Controllers\PreviewFileController;
 use Uteq\Move\Facades\Move;
+use Uteq\Move\Livewire\HeaderSearch;
 use Uteq\Move\Livewire\ResourceForm;
 use Uteq\Move\Livewire\ResourceShow;
 use Uteq\Move\Livewire\ResourceTable;
-use Uteq\Move\Livewire\HeaderSearch;
 
 class MoveServiceProvider extends ServiceProvider
 {
