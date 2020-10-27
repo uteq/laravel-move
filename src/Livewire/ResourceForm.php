@@ -97,7 +97,7 @@ class ResourceForm extends FormComponent
         return view('move::livewire.resource-form', [
             'model' => $this->model,
             'fields' => $this->resolveFields($this->model),
-        ])->layout('layouts.app', [
+        ])->layout(Move::layout(), [
             'header' => $this->resource()->singularLabel() .' details',
         ]);
     }

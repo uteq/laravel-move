@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\HasSelected;
 use Uteq\Move\Exceptions\ResourcesException;
+use Uteq\Move\Facades\Move;
 use Uteq\Move\Requests\ResourceIndexRequest;
 use Uteq\Move\Support\Livewire\TableComponent;
 
@@ -108,7 +109,7 @@ class ResourceTable extends TableComponent
         return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery), [
             'collection' => $this->collection(),
             'rows' => $this->rows(),
-        ]))->layout('layouts.app', [
+        ]))->layout(Move::layout(), [
             'header' => $this->resource()->label(),
         ]);
     }

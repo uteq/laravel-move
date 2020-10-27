@@ -32,6 +32,23 @@ class Move
         return $this;
     }
 
+    public function resources()
+    {
+        $resources = [];
+        foreach ($this->all() as $resource) {
+            $resources[] = $this->resolveResource($resource);
+        }
+
+        return $resources;
+    }
+
+    public function resourceRoute(string $alias)
+    {
+        $resourceName = $this->fullResourceName($this->getByClass($alias));
+
+        return str_replace('.', '/', $resourceName);
+    }
+
     public function resourceNamespace(string $namespace, string $prefix)
     {
         $this->customResourceNamespaces[$prefix] = $namespace;
@@ -41,9 +58,13 @@ class Move
 
     public function resolveResource(string $resource)
     {
-        $resource = str_replace('/', '.', $resource);
+        if ($this->getByClass($resource)) {
+            $resource = $this->getByClass($resource);
+        }
 
-        if (! app()->has('resource.' . $resource)) {
+        $resource = $this->fullResourceName($resource);
+
+        if (! app()->has($resource)) {
             throw new \Exception(sprintf(
                 '%s: The requested resource %s does not exist or has not been added',
                 __METHOD__,
@@ -51,7 +72,12 @@ class Move
             ));
         }
 
-        return app()->get('resource.' . $resource);
+        return app()->get($resource);
+    }
+
+    public function fullResourceName(string $resource)
+    {
+        return str_replace('/', '.', Str::start($resource, $this->prefix .'.'));
     }
 
     public function getCustomResources()
@@ -81,10 +107,12 @@ class Move
             $resources = array_merge(
                 $resources,
                 $this->getClassNames($this->generatePathFromNamespace($namespace))
-                ->mapWithKeys(function ($class) use ($prefix) {
-                    return [$prefix . '.' . Str::lower(Str::afterLast(rtrim($class, '\\'), '\\')) => $class];
-                })
-                ->toArray()
+                    ->mapWithKeys(function ($class) use ($prefix) {
+                        $prefix = empty($prefix) ? null : $prefix . '.';
+
+                        return [$prefix . Str::lower(Str::afterLast(rtrim($class, '\\'), '\\')) => $class];
+                    })
+                    ->toArray()
             );
         }
 
@@ -93,7 +121,7 @@ class Move
 
     public function getClassNames($path)
     {
-        return collect(app(Filesystem::class)->allFiles(base_path() . '/' . $path))
+        return collect(app(Filesystem::class)->allFiles(Str::start($path, base_path() . '/')))
             ->map(function (SplFileInfo $file) {
                 return app()->getNamespace() . str_replace(
                     ['/', '.php'],
@@ -112,5 +140,60 @@ class Move
         $name = Str::replaceFirst(app()->getNamespace(), '', $namespace);
 
         return app('path') . '/' . str_replace('\\', '/', $name);
+    }
+
+    public function routeMiddlewares()
+    {
+        $middlewares = config('laravel-move.middlewares');
+
+        if (config('laravel-move.auth.enabled')) {
+            $middlewares = array_replace($middlewares, config('laravel-move.auth.middlewares'));
+        }
+
+        return $middlewares;
+    }
+
+    public function headerSearch()
+    {
+        return 'move::livewire.header-search';
+    }
+
+    public function layout()
+    {
+        return config('laravel-move.layout');
+    }
+
+    public function styles()
+    {
+        return <<<HTML
+<style>
+    {$this->cssAssets()}
+</style>
+HTML;
+    }
+
+    public function scripts()
+    {
+        return <<<HTML
+<script>
+    {$this->jsAssets()}
+</script>
+HTML;
+    }
+
+    public function cssAssets()
+    {
+        ob_start();
+        include dirname(dirname(__FILE__)) . '/public/css/app.css';
+
+        return ob_get_clean();
+    }
+
+    public function jsAssets()
+    {
+        ob_start();
+        include dirname(dirname(__FILE__)) . '/public/js/app.js';
+
+        return ob_get_clean();
     }
 }

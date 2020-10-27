@@ -6,6 +6,7 @@ use Livewire\Component;
 use Uteq\Move\Concerns\FilesModal;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\LoadableFiles;
+use Uteq\Move\Facades\Move;
 use Uteq\Move\Support\Livewire\Concerns\HasCrud;
 
 class ResourceShow extends Component
@@ -30,7 +31,7 @@ class ResourceShow extends Component
             'resource' => $this->resource,
             'model' => $this->model,
             'fields' => $this->resolveFields($this->model),
-        ])->layout('layouts.app', [
+        ])->layout(Move::layout(), [
             'header' => $this->resource()->singularLabel() .' details',
         ]);
     }

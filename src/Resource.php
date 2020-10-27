@@ -10,6 +10,7 @@ use Uteq\Move\Concerns\PerformsQueries;
 use Uteq\Move\DomainActions\DeleteResource;
 use Uteq\Move\DomainActions\StoreResource;
 use Uteq\Move\Fields\Field;
+use Uteq\Move\Facades\Move;
 
 abstract class Resource
 {
@@ -199,7 +200,7 @@ abstract class Resource
             $filter,
             static::$model::query(),
             $filter['search'] ?? '',
-            $this->filters(),
+            $this->filters() ?? [],
             $requestQuery['order'] ?? [],
         );
 
@@ -305,6 +306,18 @@ abstract class Resource
 
         return $model;
     }
+
+    public function route()
+    {
+        return Move::resourceRoute(get_class($this));
+    }
+
+    public function icon()
+    {
+        return 'heroicon-o-home';
+    }
+
+    abstract public function fields();
 
     abstract public function filters();
 

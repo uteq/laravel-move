@@ -14,7 +14,7 @@
                 </div>
             @endif
 
-            @foreach ($this->filters() as $key => $filter)
+            @foreach ($this->filters() ?? [] as $key => $filter)
                 <h3 class="text-sm text-gray-600 uppercase bg-gray-100 text-80 bg-30 p-2">
                     {{ $filter->name() }}
                 </h3>

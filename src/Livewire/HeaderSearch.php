@@ -1,9 +1,9 @@
 <?php
 
-namespace Uteq\Move\Support\Livewire;
+namespace Uteq\Move\Livewire;
 
 use Livewire\Component;
-use Uteq\Move\Resources;
+use Uteq\Move\Facades\Move;
 
 class HeaderSearch extends Component
 {
@@ -27,22 +27,21 @@ class HeaderSearch extends Component
 
     public function render()
     {
-        return view('header-search', [
+        return view(Move::headerSearch(), [
             'searchResult' => $this->searchResult(),
         ]);
     }
 
     public function searchResult()
     {
-        if (!$this->search) {
+        if (! $this->search) {
             return [];
         }
 
-        $resources = collect(Resources::all())
+        $resources = collect(Move::all())
             // Only globally Searchable
-            ->filter(fn ($resource) => $resource::$globallySearchable ===  true)
-            ->map(function(string $resource, $key) {
-
+            ->filter(fn ($resource) => $resource::$globallySearchable === true)
+            ->map(function (string $resource, $key) {
                 $resourceModel = $resource::$model;
 
                 $exists = \Schema::hasTable((new $resourceModel)->getTable());
@@ -59,7 +58,7 @@ class HeaderSearch extends Component
                 )
                     ->limit($resource::$globalSearchResults);
 
-                if (!$query->count()) {
+                if (! $query->count()) {
                     return null;
                 }
 
@@ -78,7 +77,7 @@ class HeaderSearch extends Component
 
     public function updatedShowSearchResult()
     {
-        if (!$this->showSearchResult) {
+        if (! $this->showSearchResult) {
             $this->search = null;
         }
     }

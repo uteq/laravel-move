@@ -24,7 +24,7 @@
     </x-move-dropdown>
 
     <div class="flex items-center flex-wrap">
-        @if ($this->has_selected && count($this->actions()))
+        @if ($this->has_selected && count($this->actions() ?? []))
             <select class="form-control form-select mr-2 py-1" wire:model="action">
                 <option disabled="disabled" selected="selected" value="-">Actie selecteren</option>
                 <optgroup label="{{ $this->resource()->label() }}">

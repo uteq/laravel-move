@@ -1,5 +1,18 @@
 <?php
 
 return [
-    'middlewares' => ['web', 'auth', 'verified'],
+
+    'layout' => 'move::layouts.app',
+
+    'auth' => [
+        'enabled' => true,
+
+        'middlewares' => ['auth', 'verified'],
+    ],
+
+    'middlewares' => [
+        // Add your custom middlewares here
+        // You are allowed to over
+        'web',
+    ],
 ];

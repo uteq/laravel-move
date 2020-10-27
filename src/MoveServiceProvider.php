@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Livewire;
+use Livewire\LivewireBladeDirectives;
 use Uteq\Move\Commands\MoveCommand;
 use Uteq\Move\Controllers\DownloadController;
 use Uteq\Move\Controllers\PreviewFileController;
@@ -15,6 +16,7 @@ use Uteq\Move\Facades\Move;
 use Uteq\Move\Livewire\ResourceForm;
 use Uteq\Move\Livewire\ResourceShow;
 use Uteq\Move\Livewire\ResourceTable;
+use Uteq\Move\Livewire\HeaderSearch;
 
 class MoveServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,7 @@ class MoveServiceProvider extends ServiceProvider
         $this->configureNamespaces();
         $this->configureComponents();
         $this->configureRoutes();
+        $this->configureBladeDirectives();
     }
 
     public function configurePublishers()
@@ -72,7 +75,7 @@ class MoveServiceProvider extends ServiceProvider
         }
 
         foreach (Move::all() as $alias => $class) {
-            $this->app->singleton('resource.' . $alias, function () use ($class) {
+            $this->app->singleton(Move::getPrefix() . '.' . $alias, function () use ($class) {
                 $model = $class::$model;
 
                 return new $class(new $model());
@@ -94,6 +97,8 @@ class MoveServiceProvider extends ServiceProvider
             $this->registerComponent('form.label');
             $this->registerComponent('form.row');
 
+            $this->registerComponent('sidebar.link');
+
             $this->registerComponent('table.filters');
             $this->registerComponent('table.header');
             $this->registerComponent('table.item-actions');
@@ -104,12 +109,14 @@ class MoveServiceProvider extends ServiceProvider
             $this->registerComponent('card');
             $this->registerComponent('dialog-modal');
             $this->registerComponent('dropdown');
+            $this->registerComponent('dropdown-link');
             $this->registerComponent('form-section');
             $this->registerComponent('modal');
             $this->registerComponent('row');
             $this->registerComponent('secondary-button');
             $this->registerComponent('section-title');
             $this->registerComponent('status');
+            $this->registerComponent('switchable-team');
             $this->registerComponent('table');
             $this->registerComponent('td');
             $this->registerComponent('th');
@@ -135,7 +142,7 @@ class MoveServiceProvider extends ServiceProvider
             return $resource->model()::find($value) ?: $resource::newModel();
         });
 
-        Route::group(['middleware' => config('laravel-move.middlewares')], function () {
+        Route::group(['middleware' => Move::routeMiddlewares()], function () {
             Route::prefix(Move::getPrefix())->group(function () {
                 Route::get('preview-file/{filename}', PreviewFileController::class)
                     ->name('move.preview-file');
@@ -165,6 +172,12 @@ class MoveServiceProvider extends ServiceProvider
         });
     }
 
+    protected function configureBladeDirectives()
+    {
+//        Blade::directive('moveStyles', [LivewireBladeDirectives::class, 'livewireStyles']);
+//        Blade::directive('moveScripts', [LivewireBladeDirectives::class, 'livewireScripts']);
+    }
+
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/laravel-move.php', 'laravel-move');
@@ -184,6 +197,8 @@ class MoveServiceProvider extends ServiceProvider
             Livewire::component('livewire.resource-table', ResourceTable::class);
             Livewire::component('livewire.resource-show', ResourceShow::class);
             Livewire::component('livewire.resource-form', ResourceForm::class);
+
+            Livewire::component('header-search', HeaderSearch::class);
         });
     }
 }
