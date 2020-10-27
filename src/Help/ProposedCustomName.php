@@ -18,12 +18,11 @@ class ProposedCustomName
                 return '';
             }
 
-            if (!isset($resource->custom[$field])) {
+            if (! isset($resource->custom[$field])) {
                 return '';
             }
 
             return 'Voorstel van invoerder: ' . $resource->custom[$field];
         };
     }
-
 }

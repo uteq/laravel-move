@@ -44,16 +44,16 @@ trait HasDependencies
     public function areDependenciesSatisfied($model)
     {
         $rules = [
-            'callback'   => fn ($value, $result) => $value($result),
-            'value'      => fn ($value, $result) => $result == $value,
-            'not'        => fn ($value, $result) => $result != $value,
-            'empty'      => fn ($value, $result) => empty($result),
+            'callback' => fn ($value, $result) => $value($result),
+            'value' => fn ($value, $result) => $result == $value,
+            'not' => fn ($value, $result) => $result != $value,
+            'empty' => fn ($value, $result) => empty($result),
             'nullOrZero' => fn ($value, $result) => in_array($result, [null, 0, '0']),
         ];
 
         foreach ($this->dependencies as $field => $condition) {
             foreach ($condition as $type => $value) {
-                if (!$rules[$type]($value, $model->{$field})) {
+                if (! $rules[$type]($value, $model->{$field})) {
                     return false;
                 }
             }

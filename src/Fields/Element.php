@@ -70,5 +70,4 @@ abstract class Element extends Component
 
         return $this;
     }
-
 }

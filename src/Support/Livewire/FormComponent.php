@@ -17,7 +17,7 @@ abstract class FormComponent extends Component
     {
         return view($this->baseRoute . '.form')
             ->layout($this->layout, [
-                'header' => $this->header()
+                'header' => $this->header(),
             ]);
     }
 
@@ -36,7 +36,7 @@ abstract class FormComponent extends Component
             $this->label = $this->label();
         }
 
-        if (!$this->label) {
+        if (! $this->label) {
             throw new \Exception(sprintf(
                 '%s: property `protected $label` should be defined',
                 __METHOD__,

@@ -8,7 +8,8 @@ use Uteq\Move\Concerns\Metable;
 
 class Action
 {
-    use Makeable, Metable;
+    use Makeable;
+    use Metable;
 
     /** The displayable name of the action. */
     public string $name;
@@ -32,8 +33,7 @@ class Action
         \Uteq\Move\Resource $resource,
         Collection $collection,
         array $actionFields
-    )
-    {
+    ) {
         $this->resource = $resource;
         $this->collection = $collection;
 
@@ -64,6 +64,7 @@ class Action
                 ->resolveForDisplay($resource->resource ?: static::newModel())
                 ->formAttribute('actionFields');
         }
+
         return $fields;
     }
 

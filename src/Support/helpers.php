@@ -1,7 +1,6 @@
 <?php
 
 if (! function_exists('resolve_resource')) {
-
     function resolve_resource($resource)
     {
         $resource = str_replace('/', '.', $resource);

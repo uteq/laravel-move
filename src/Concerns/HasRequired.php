@@ -23,8 +23,8 @@ trait HasRequired
 
     public function requiredOnCreateOnly()
     {
-        $this->requiredCallback = function($request, $model) {
-            return ! ( $model->id ?? false );
+        $this->requiredCallback = function ($request, $model) {
+            return ! ($model->id ?? false);
         };
 
         return $this;
@@ -41,8 +41,7 @@ trait HasRequired
             }
 
             if (! empty($this->attribute) && is_null($callback)) {
-
-                if (!isset($this->type)) {
+                if (! isset($this->type)) {
                     return false;
                 }
 

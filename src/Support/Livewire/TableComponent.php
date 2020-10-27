@@ -10,14 +10,15 @@ use Uteq\Move\Support\Livewire\Concerns\HasFilter;
 
 abstract class TableComponent extends Component
 {
-    use HasFilter, HasCrud;
+    use HasFilter;
+    use HasCrud;
 
     public function getTotalProperty()
     {
         return $this->query()->count();
     }
 
-    abstract function query(): Builder;
+    abstract public function query(): Builder;
 
     public function render(ResourceIndexRequest $request)
     {

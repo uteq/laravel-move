@@ -10,7 +10,8 @@ use Uteq\Move\Concerns\Metable;
 
 abstract class Filter
 {
-    use Makeable, Metable;
+    use Makeable;
+    use Metable;
 
     public function __invoke($request, Builder $query)
     {

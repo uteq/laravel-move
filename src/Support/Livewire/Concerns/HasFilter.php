@@ -23,7 +23,7 @@ trait HasFilter
     {
         $order = $this->order[$field] ?? null;
 
-        if (!$order) {
+        if (! $order) {
             $order = 'asc';
         } elseif ($order === 'asc') {
             $order = 'desc';

@@ -13,6 +13,7 @@ class Password extends Field
         if (isset($model->{$this->attribute})) {
             $model->{$this->attribute} = null;
         }
+
         return $model;
     }
 }

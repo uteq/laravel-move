@@ -34,15 +34,14 @@ class HeaderSearch extends Component
 
     public function searchResult()
     {
-        if (!$this->search) {
+        if (! $this->search) {
             return [];
         }
 
         $resources = collect(Resources::all())
             // Only globally Searchable
-            ->filter(fn ($resource) => $resource::$globallySearchable ===  true)
-            ->map(function(string $resource, $key) {
-
+            ->filter(fn ($resource) => $resource::$globallySearchable === true)
+            ->map(function (string $resource, $key) {
                 $resourceModel = $resource::$model;
 
                 $exists = \Schema::hasTable((new $resourceModel)->getTable());
@@ -59,7 +58,7 @@ class HeaderSearch extends Component
                 )
                     ->limit($resource::$globalSearchResults);
 
-                if (!$query->count()) {
+                if (! $query->count()) {
                     return null;
                 }
 
@@ -78,7 +77,7 @@ class HeaderSearch extends Component
 
     public function updatedShowSearchResult()
     {
-        if (!$this->showSearchResult) {
+        if (! $this->showSearchResult) {
             $this->search = null;
         }
     }
