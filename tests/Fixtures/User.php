@@ -9,7 +9,9 @@ use Uteq\Move\Tests\Factories\UserFactory;
 
 class User extends \Illuminate\Foundation\Auth\User
 {
-    use Notifiable, SoftDeletes, HasFactory;
+    use Notifiable;
+    use SoftDeletes;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
