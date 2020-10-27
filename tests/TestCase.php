@@ -4,6 +4,7 @@ namespace Uteq\Move\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Uteq\Move\Facades\Move;
 use Uteq\Move\MoveServiceProvider;
 
 class TestCase extends Orchestra
@@ -11,6 +12,8 @@ class TestCase extends Orchestra
     public function setUp(): void
     {
         parent::setUp();
+
+        Move::resourceNamespace('Uteq\\Move\\Tests\\Fixtures', 'fixtures');
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Uteq\\Move\\Database\\Factories\\'.class_basename($modelName).'Factory'

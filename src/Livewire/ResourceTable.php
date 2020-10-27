@@ -1,0 +1,130 @@
+<?php
+
+namespace Uteq\Move\Livewire;
+
+use Illuminate\Support\Str;
+use Livewire\WithPagination;
+use Uteq\Move\Concerns\HasResource;
+use Uteq\Move\Concerns\HasSelected;
+use Uteq\Move\Exceptions\ResourcesException;
+use Uteq\Move\Requests\ResourceIndexRequest;
+use Uteq\Move\Support\Livewire\TableComponent;
+
+class ResourceTable extends TableComponent
+{
+    use WithPagination;
+    use HasResource;
+    use HasSelected;
+
+    public $action = '-';
+    public $showingAction = false;
+    public $showingDelete = false;
+    public $error = null;
+    public $hasError = false;
+    public $requestQuery;
+    protected ?string $table;
+    protected string $limit;
+    public array $actionFields = [];
+
+    protected $queryString = ['search', 'filter', 'order'];
+
+    protected $crudBaseRoute = 'move';
+
+    public function mount(string $resource)
+    {
+        $this->resource = $resource;
+        $this->filter['limit'] = $this->filter('limit', $this->resource()->defaultPerPage());
+        $this->hydrate();
+        $this->computeHasSelected();
+        $this->requestQuery = request()->query();
+    }
+
+    public function resetPage()
+    {
+        $this->setSelected();
+    }
+
+    public function hydrate()
+    {
+        $this->table = get_class($this->resource()->resource);
+    }
+
+    public function showDelete()
+    {
+        $this->showingDelete = true;
+    }
+
+    public function handleDelete()
+    {
+        $handler = $this->resource()->handler('delete')
+            ?: fn ($item) => $item->delete();
+
+        $this->selectedCollection()->each($handler);
+
+        $this->showingDelete = false;
+        $this->selected = [];
+        $this->hasSelected = false;
+        $this->resetFilter();
+    }
+
+    public function handleAction()
+    {
+        try {
+            $result = app()->call([$this->action(), 'handleLivewireRequest'], [
+                'resource' => $this->resource,
+                'collection' => $this->selectedCollection(),
+                'actionFields' => $this->actionFields,
+            ]);
+        } catch (ResourcesException $e) {
+            $this->hasError = true;
+            $this->error = $e->getMessage();
+        }
+
+        $this->showAction(false);
+
+        // This enables the action to perform its own logic after
+        //  it was successful as if we were in a Livewire Component
+        if (isset($result['handle']) && is_callable($result['handle'])) {
+            $result['handle']($this);
+        }
+
+        app()->call([$this, 'render']);
+    }
+
+    public function action()
+    {
+        return collect($this->actions())
+            ->filter(fn ($action) => Str::slug($action->name) === $this->action)
+            ->first();
+    }
+
+    public function showAction($showingAction = true)
+    {
+        $this->showingAction = $showingAction;
+    }
+
+    public function render(ResourceIndexRequest $request)
+    {
+        return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery), [
+            'collection' => $this->collection(),
+            'rows' => $this->rows(),
+        ]))->layout('layouts.app', [
+            'header' => $this->resource()->label(),
+        ]);
+    }
+
+    protected function rows()
+    {
+        $rows = [];
+        foreach ($this->collection() as $item) {
+            $resourceClass = get_class($this->resource());
+            $resource = new $resourceClass($item);
+
+            $fields = $this->resource()->resolveFields($resource->model(), 'index');
+
+            $rows[] = ['model' => $resource->model(), 'fields' => $fields];
+        }
+
+        return $rows;
+    }
+}
