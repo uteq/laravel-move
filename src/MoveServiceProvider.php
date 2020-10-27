@@ -179,8 +179,8 @@ class MoveServiceProvider extends ServiceProvider
 
     protected function configureBladeDirectives()
     {
-//        Blade::directive('moveStyles', [LivewireBladeDirectives::class, 'livewireStyles']);
-//        Blade::directive('moveScripts', [LivewireBladeDirectives::class, 'livewireScripts']);
+        Blade::directive('moveStyles', [MoveBladeDirectives::class, 'moveStyles']);
+        Blade::directive('moveScripts', [MoveBladeDirectives::class, 'moveScripts']);
     }
 
     public function register()

@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
 
     <!-- Styles -->
-    {!! Move::styles() !!}
+    @moveStyles()
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <livewire:styles>
@@ -46,7 +46,7 @@
         </div>
     </div>
 
-    {!! Move::scripts() !!}
+    @moveScripts()
     <livewire:scripts>
     @stack('scripts')
     @stack('modals')
