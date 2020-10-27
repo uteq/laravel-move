@@ -19,7 +19,7 @@ trait WithSyncableMedia
                 continue;
             }
 
-            if (!file_exists($path->path)) {
+            if (! file_exists($path->path)) {
                 continue;
             }
 
@@ -30,4 +30,3 @@ trait WithSyncableMedia
         }
     }
 }
-

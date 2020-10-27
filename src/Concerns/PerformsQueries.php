@@ -16,8 +16,7 @@ trait PerformsQueries
         array $filters = [],
         array $orderings = [],
         $withTrashed = ''
-    )
-    {
+    ) {
         $query = static::initializeQuery($request, $query, $search, $withTrashed);
         $query = static::applyFilters($requestQuery, $query, $filters);
         $query = static::applyOrderings($query, $orderings);
@@ -56,8 +55,7 @@ trait PerformsQueries
 
     public static function applySearch($query, $search)
     {
-        return $query->where(function(Builder $query) use ($search) {
-
+        return $query->where(function (Builder $query) use ($search) {
             $query->orWhere($query->getModel()->getQualifiedKeyName(), $search);
 
             foreach (static::searchableColumns() as $column) {

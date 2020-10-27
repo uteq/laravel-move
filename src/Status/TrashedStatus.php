@@ -13,4 +13,3 @@ class TrashedStatus
         return $withTrashed ? self::WITH : self::DEFAULT;
     }
 }
-

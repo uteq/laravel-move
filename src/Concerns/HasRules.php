@@ -105,7 +105,8 @@ trait HasRules
             : $this->updateRules, ];
 
         return array_merge_recursive(
-            $this->getRules($request), $rules
+            $this->getRules($request),
+            $rules
         );
     }
 

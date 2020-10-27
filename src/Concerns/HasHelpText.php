@@ -39,6 +39,7 @@ trait HasHelpText
     public function getHelpText()
     {
         $helpText = $this->helpText;
+
         return is_callable($helpText)
         ? $helpText()
             : $helpText;

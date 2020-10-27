@@ -18,10 +18,10 @@ use Uteq\Move\Exceptions\InvalidExcelDownloadException;
 
 abstract class ExportToExcel extends Action implements FromCollection, WithCustomChunkSize, WithHeadingsContract, WithMapping
 {
-    use WithChunkCount,
-        WithDisk,
-        WithFilename,
-        WithHeadings;
+    use WithChunkCount;
+    use WithDisk;
+    use WithFilename;
+    use WithHeadings;
 
     public \Uteq\Move\Resource $resource;
     public Collection $collection;
@@ -30,8 +30,7 @@ abstract class ExportToExcel extends Action implements FromCollection, WithCusto
         \Uteq\Move\Resource $resource,
         Collection $collection,
         array $actionFields
-    )
-    {
+    ) {
         $this->resource = $resource;
         $this->collection = $collection;
         $this->withHeadings(array_keys($this->map($collection->first())));
@@ -43,17 +42,17 @@ abstract class ExportToExcel extends Action implements FromCollection, WithCusto
     {
         $response = Excel::download($this, 'test.xlsx', null, $this->headings());
 
-        if (!$response instanceof BinaryFileResponse || $response->isInvalid()) {
+        if (! $response instanceof BinaryFileResponse || $response->isInvalid()) {
             throw new InvalidExcelDownloadException('Resource could not be exported.', 500);
         }
 
         return [
-            'handle' => function($livewire) use ($response) {
+            'handle' => function ($livewire) use ($response) {
                 $livewire->emit('_blank', URL::temporarySignedroute('move.download', now()->addMinutes(1), [
-                    'path'     => encrypt($response->getFile()->getPathname()),
+                    'path' => encrypt($response->getFile()->getPathname()),
                     'filename' => strtolower($livewire->resource()->label() . '-' . now()->isoFormat('DD-MMMM-YYYY')) . '.xlsx',
                 ]));
-            }
+            },
         ];
     }
 

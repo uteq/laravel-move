@@ -314,6 +314,7 @@ abstract class FieldElement extends Element
         if ($action === 'show') {
             return $this->isShownOnDetail($request, $resource);
         }
+
         return false;
     }
 }
