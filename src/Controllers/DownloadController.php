@@ -30,6 +30,6 @@ class DownloadController extends Controller
         return $response->download(
             decrypt($data['path']),
             $data['filename']
-        )->deleteFileAfterSend($shouldDelete = true);
+        )->deleteFileAfterSend(true);
     }
 }

@@ -2,8 +2,10 @@
 
 namespace Uteq\Move\Livewire;
 
+use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 use Uteq\Move\Facades\Move;
+use Uteq\Move\Resource;
 
 class HeaderSearch extends Component
 {
@@ -41,10 +43,10 @@ class HeaderSearch extends Component
         $resources = collect(Move::all())
             // Only globally Searchable
             ->filter(fn ($resource) => $resource::$globallySearchable === true)
-            ->map(function (string $resource, $key) {
+            ->map(function ($resource, $key) {
                 $resourceModel = $resource::$model;
 
-                $exists = \Schema::hasTable((new $resourceModel)->getTable());
+                $exists = Schema::hasTable((new $resourceModel)->getTable());
 
                 if (! $exists) {
                     return null;

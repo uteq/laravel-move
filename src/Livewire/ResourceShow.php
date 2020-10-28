@@ -27,6 +27,7 @@ class ResourceShow extends Component
 
     public function render()
     {
+        /** @psalm-suppress UndefinedInterfaceMethod */
         return view('move::livewire.resource-show', [
             'resource' => $this->resource,
             'model' => $this->model,

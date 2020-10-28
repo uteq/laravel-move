@@ -85,8 +85,10 @@ abstract class Resource
     /**
      * Get a fresh instance of the model represented by the resource.
      */
-    public static function newModel(): Model
+    public static function newModel(): ?Model
     {
+        if (! isset(static::$model)) return null;
+
         $model = static::$model;
 
         return new $model;
@@ -153,7 +155,7 @@ abstract class Resource
     public function isSoftDeleted()
     {
         return static::softDeletes()
-            && ! is_null($this->resource()->{$this->resource()->getDeletedAtColumn()});
+            && ! is_null($this->resource->{$this->resource->getDeletedAtColumn()});
     }
 
     /**
@@ -163,6 +165,10 @@ abstract class Resource
      */
     public static function softDeletes()
     {
+        if (! isset(static::$model)) {
+            return false;
+        }
+
         if (isset(static::$softDeletes[static::$model])) {
             return static::$softDeletes[static::$model];
         }
@@ -178,7 +184,7 @@ abstract class Resource
      */
     public function model(): Model
     {
-        return $this->resource ?: static::newModel();
+        return $this->resource;
     }
 
     /**
@@ -193,6 +199,14 @@ abstract class Resource
 
     public function getForIndex($requestQuery): array
     {
+        if (! isset(static::$model)) {
+            throw new \Exception(sprintf(
+                '%s: The parameter public static $model should be defined on resource %s',
+                __METHOD__,
+                static::class,
+            ));
+        }
+
         $filter = $requestQuery['filter'] ?? [];
 
         $query = $this->buildIndexQuery(

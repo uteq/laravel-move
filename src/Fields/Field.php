@@ -37,7 +37,7 @@ abstract class Field extends FieldElement
      */
     public $value;
 
-    /** @var callable|null */
+    /** @var callable|Closure|null */
     protected $callableValue;
 
     /**
@@ -82,6 +82,11 @@ abstract class Field extends FieldElement
     public string $formAttribute = 'model';
 
     /**
+     * Define your own field filler here
+     */
+    public Closure $fillCallback;
+
+    /**
      * Field constructor.
      */
     public function __construct(string $name, string $attribute = null, callable $callableValue = null)
@@ -91,6 +96,7 @@ abstract class Field extends FieldElement
         $this->callableValue = $callableValue;
 
         if (method_exists($this, 'init')) {
+            /** @psalm-suppress InvalidArgument */
             app()->call([$this, 'init']);
         }
     }
@@ -138,7 +144,7 @@ abstract class Field extends FieldElement
 
         if (! $this->displayCallback) {
             $this->resolve($resource, $attribute);
-        } elseif (is_callable($this->displayCallback)) {
+        } else {
             tap(
                 $this->value ?? $this->resolveAttribute($resource, $attribute),
                 fn ($value) => $this->value = call_user_func($this->displayCallback, $value, $resource, $attribute)
@@ -209,13 +215,15 @@ abstract class Field extends FieldElement
     protected function fillAttribute(Request $request, $requestAttribute, $model, $attribute)
     {
         if (isset($this->fillCallback)) {
-            return call_user_func(
+            call_user_func(
                 $this->fillCallback,
                 $request,
                 $model,
                 $attribute,
                 $requestAttribute
             );
+
+            return;
         }
 
         $this->fillAttributeFromRequest($request, $requestAttribute, $model, $attribute);
@@ -259,7 +267,7 @@ abstract class Field extends FieldElement
     /**
      * Specify a callback that should be used to hydrate the model attribute for the field.
      *
-     * @param  callable  $fillCallback
+     * @param  Closure $fillCallback
      * @return $this
      */
     public function fillUsing($fillCallback)
@@ -294,7 +302,7 @@ abstract class Field extends FieldElement
     /**
      * Return the validation key for the field.
      */
-    public function validationKey(): string
+    public function validationKey(): ?string
     {
         return $this->attribute;
     }

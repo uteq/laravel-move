@@ -25,7 +25,7 @@ class Date extends Field
         return $this;
     }
 
-    public function resolveUsing(callable $callableValue)
+    public function resolveUsing($callableValue)
     {
         $this->callableValue = $callableValue;
 

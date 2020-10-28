@@ -69,6 +69,7 @@ class StoreResource
 
         collect($beforeSaveActions)->each->__invoke($this, $model, $data);
 
+        /** @psalm-suppress InvalidArgument */
         app()->call([$this, 'syncMedia'], ['model' => $model, 'data' => $data]);
     }
 

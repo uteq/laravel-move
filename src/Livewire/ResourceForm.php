@@ -48,7 +48,7 @@ class ResourceForm extends FormComponent
         }
 
         if (count($this->showingAddResource)) {
-            foreach ($this->showingAddResource as $key => $value) {
+            foreach (array_keys($this->showingAddResource) as $key) {
                 $this->showingAddResource[$key] = false;
             }
         }
@@ -94,6 +94,7 @@ class ResourceForm extends FormComponent
 
     public function render()
     {
+        /** @psalm-suppress UndefinedInterfaceMethod */
         return view('move::livewire.resource-form', [
             'model' => $this->model,
             'fields' => $this->resolveFields($this->model),

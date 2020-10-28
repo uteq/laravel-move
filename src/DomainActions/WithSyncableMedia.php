@@ -2,14 +2,24 @@
 
 namespace Uteq\Move\DomainActions;
 
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Uteq\Move\DataTransferObjects\MediaCollection;
 
 trait WithSyncableMedia
 {
-    public function syncMedia(HasMedia $model, MediaCollection $paths, $collection)
+    public function syncMedia(Model $model, MediaCollection $paths, $collection)
     {
+        if (! $model instanceof HasMedia) {
+            throw new \Exception(sprintf(
+                '%s: The given model `%s` should implement the %s interface',
+                __METHOD__,
+                get_class($model),
+                HasMedia::class,
+            ));
+        }
+
         foreach ($paths->onlyDelete() as $path) {
             $model->deleteMedia($path->id);
         }

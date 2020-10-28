@@ -79,6 +79,10 @@ class MoveServiceProvider extends ServiceProvider
         }
 
         foreach (Move::all() as $alias => $class) {
+            if (! isset($class::$model)) {
+                continue;
+            }
+
             $this->app->singleton(Move::getPrefix() . '.' . $alias, function () use ($class) {
                 $model = $class::$model;
 

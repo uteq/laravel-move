@@ -4,6 +4,8 @@ namespace Uteq\Move\Concerns;
 
 trait WithChunkCount
 {
+    public static int $chunkCount = 0;
+
     /**
      * @param int $chunkCount
      *

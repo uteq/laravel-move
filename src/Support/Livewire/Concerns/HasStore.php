@@ -54,6 +54,7 @@ trait HasStore
             'fields' => $this->resolveMappedFields($this->model),
         ];
 
+        /** @psalm-suppress InvalidArgument */
         return $this->{$this->property}->id
             ? app()->call([$this, $this->actionsMethods['update']], $data)
             : app()->call([$this, $this->actionsMethods['create']], $data);

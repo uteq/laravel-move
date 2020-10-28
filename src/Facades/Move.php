@@ -14,7 +14,7 @@ use Uteq\Move\Resource;
  * @method static getCustomResourceNamespace()
  * @method static get(string $alias)
  * @method static getByClass($class)
- * @method static Resource[] all()
+ * @method static array all()
  * @method static getClassNames($path)
  * @package Uteq\Move\Facades
  * @see \Uteq\Move\Move

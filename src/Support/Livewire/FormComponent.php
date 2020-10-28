@@ -15,6 +15,7 @@ abstract class FormComponent extends Component
 
     public function render()
     {
+        /** @psalm-suppress UndefinedInterfaceMethod */
         return view($this->baseRoute . '.form')
             ->layout($this->layout, [
                 'header' => $this->header(),

@@ -3,7 +3,7 @@
 namespace Uteq\Move\Concerns;
 
 use Illuminate\Support\Facades\URL;
-use Image;
+use Intervention\Image\Facades\Image;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\File\File;
 use Uteq\Move\DataTransferObjects\MediaCollection;
@@ -57,7 +57,6 @@ trait HasFiles
             return null;
         }
 
-        /** @var \Intervention\Image\Image $image */
         $image = Image::make($file->getPath());
         $image->setFileInfoFromPath($file->getPath());
         $image->rotate($degrees);

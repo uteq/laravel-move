@@ -24,7 +24,7 @@ class Id extends Field
      */
     public function asBigInt()
     {
-        $this->resolveCallback = function ($id) {
+        $this->callableValue = function ($id) {
             return (string) $id;
         };
 

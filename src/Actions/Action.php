@@ -38,6 +38,7 @@ class Action
         $this->collection = $collection;
 
         if (method_exists($this, 'handle')) {
+            /** @psalm-suppress InvalidArgument */
             return app()->call([$this, 'handle'], [
                 'fields' => collect($actionFields),
                 'models' => $collection,
@@ -61,7 +62,7 @@ class Action
         $fields = [];
         foreach ($this->fields() as $field) {
             $fields[] = $field->type('update')
-                ->resolveForDisplay($resource->resource ?: static::newModel())
+                ->resolveForDisplay($resource->resource)
                 ->formAttribute('actionFields');
         }
 

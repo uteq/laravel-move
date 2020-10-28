@@ -11,11 +11,11 @@ class Select extends Field
 
     public array $options = [];
 
-    public ?string $resourceName = null;
+    public $resourceName = null;
 
     public string $placeholder;
 
-    public \Closure $customIndexName;
+    public ?\Closure $customIndexName = null;
 
     public function indexName(\Closure $indexName)
     {
@@ -54,15 +54,17 @@ class Select extends Field
             return null;
         }
 
-        if ($this->customIndexName ?? false) {
+        if ($this->customIndexName) {
             $callback = $this->customIndexName;
 
             return $callback($this);
         }
 
-        $key = $this->resourceName::$title;
+        $resourceName = $this->resourceName;
 
-        return optional($this->resourceName::$model::find($this->value))->$key;
+        $key = $resourceName::$title;
+
+        return optional($resourceName::$model::find($this->value))->$key;
     }
 
     public function resource($resource)
@@ -104,13 +106,9 @@ class Select extends Field
             return $this->options;
         }
 
-        if ($this->resourceName) {
-            return $this->resourceName::$model::all()
-                ->mapWithKeys(function ($item) {
-                    $key = $this->resourceName::$title;
-
-                    return [$item->getKey() => $item->$key];
-                })
+        if ($resourceName = $this->resourceName) {
+            return $resourceName::$model::all()
+                ->mapWithKeys(fn ($item) => [$item->getKey() => $item->{$resourceName::$title}])
                 ->toArray();
         }
 

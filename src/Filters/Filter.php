@@ -13,7 +13,9 @@ abstract class Filter
     use Makeable;
     use Metable;
 
-    public function __invoke($request, Builder $query)
+    abstract public function apply($query, $value): Builder;
+
+    public function __invoke($request, Builder $query): Builder
     {
         $value = Arr::get($request, Str::slug(static::class));
 
@@ -22,11 +24,27 @@ abstract class Filter
 
     public function name()
     {
+        if (! isset($this->name)) {
+            throw new \Exception(sprintf(
+                '%s: The filter %s should have the property `public string $name defined`',
+                __METHOD__,
+                static::class
+            ));
+        }
+
         return $this->name;
     }
 
     public function component()
     {
+        if (! isset($this->component)) {
+            throw new \Exception(sprintf(
+                '%s: The filter %s should have the property `public string $component defined`',
+                __METHOD__,
+                static::class
+            ));
+        }
+
         return $this->component;
     }
 

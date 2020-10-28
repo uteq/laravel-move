@@ -2,8 +2,12 @@
 
 namespace Uteq\Move\Support\Livewire\Concerns;
 
+use Uteq\Move\Concerns\HasSelected;
+
 trait HasFilter
 {
+    use HasSelected;
+
     public $filter;
     public $has_filters = false;
     public $requestQuery = [];

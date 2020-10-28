@@ -60,11 +60,14 @@ trait HasRules
      */
     public function getRules(Request $request)
     {
-        return array_replace_recursive($this->customRules, [
-            $this->attribute => is_callable($this->rules)
-                ? call_user_func($this->rules, $request)
-                : $this->rules,
-        ]);
+        $rulesBuilder = $this->rules;
+
+        $rules = [
+            $this->attribute => is_callable($rulesBuilder) ? $rulesBuilder($request) : $rulesBuilder,
+        ];
+
+        /** @psalm-suppress InvalidArgument */
+        return array_replace_recursive($this->customRules, $rules);
     }
 
     /**
@@ -79,6 +82,7 @@ trait HasRules
                 : $this->creationRules,
         ];
 
+        /** @psalm-suppress InvalidArgument */
         return array_merge_recursive($this->getRules($request), $rules);
     }
 
@@ -104,6 +108,7 @@ trait HasRules
             ? call_user_func($this->updateRules, $request)
             : $this->updateRules, ];
 
+        /** @psalm-suppress InvalidArgument */
         return array_merge_recursive(
             $this->getRules($request),
             $rules

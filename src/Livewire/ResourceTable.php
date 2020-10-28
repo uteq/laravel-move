@@ -65,13 +65,14 @@ class ResourceTable extends TableComponent
 
         $this->showingDelete = false;
         $this->selected = [];
-        $this->hasSelected = false;
+        $this->has_selected = false;
         $this->resetFilter();
     }
 
     public function handleAction()
     {
         try {
+            /** @psalm-suppress InvalidArgument */
             $result = app()->call([$this->action(), 'handleLivewireRequest'], [
                 'resource' => $this->resource(),
                 'collection' => $this->selectedCollection(),
@@ -94,6 +95,7 @@ class ResourceTable extends TableComponent
             }
         }
 
+        /** @psalm-suppress InvalidArgument */
         app()->call([$this, 'render']);
     }
 
@@ -111,6 +113,7 @@ class ResourceTable extends TableComponent
 
     public function render(ResourceIndexRequest $request)
     {
+        /** @psalm-suppress UndefinedInterfaceMethod */
         return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery), [
             'collection' => $this->collection(),
             'rows' => $this->rows(),

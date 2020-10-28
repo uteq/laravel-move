@@ -24,6 +24,7 @@ class TemporaryUploadedResourceFile extends UploadedFile implements ResourceFile
 
     public function getPath()
     {
+        /** @psalm-suppress FalsableReturnStatement */
         return $this->media->getRealPath();
     }
 
