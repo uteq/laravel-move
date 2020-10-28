@@ -2,10 +2,7 @@
 
 namespace Uteq\Move;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
-use ReflectionClass;
-use Symfony\Component\Finder\SplFileInfo;
 
 class Move
 {

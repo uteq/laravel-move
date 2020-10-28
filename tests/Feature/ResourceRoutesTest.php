@@ -2,10 +2,6 @@
 
 namespace Uteq\Move\Tests\Feature;
 
-use Illuminate\View\Compilers\BladeCompiler;
-use Livewire\Livewire;
-use Uteq\Move\Facades\Move;
-use Uteq\Move\Tests\Fixtures\UserResource;
 use Uteq\Move\Tests\TestCase;
 
 class ResourceRoutesTest extends TestCase

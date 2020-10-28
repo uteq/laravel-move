@@ -3,7 +3,6 @@
 namespace Uteq\Move\Actions;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithCustomChunkSize;
 use Maatwebsite\Excel\Concerns\WithHeadings as WithHeadingsContract;
