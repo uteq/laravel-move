@@ -26,7 +26,6 @@ class PaginationFilter extends Filter
     public function apply($query, $value): Builder
     {
         return $query;
-
     }
 
     public function default()
@@ -48,5 +47,4 @@ class PaginationFilter extends Filter
             '100' => '100',
         ];
     }
-
 }

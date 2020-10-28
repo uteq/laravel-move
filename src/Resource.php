@@ -87,7 +87,9 @@ abstract class Resource
      */
     public static function newModel(): ?Model
     {
-        if (! isset(static::$model)) return null;
+        if (! isset(static::$model)) {
+            return null;
+        }
 
         $model = static::$model;
 
