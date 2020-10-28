@@ -21,30 +21,29 @@ Route::bind('model', function ($value) {
 });
 
 Route::group(['middleware' => Move::routeMiddlewares()], function () {
-    Route::prefix(Move::getPrefix())->group(function () {
-        Route::get('preview-file/{filename}', PreviewFileController::class)
-            ->name('move.preview-file');
 
-        // Download
-        Route::get('download', DownloadController::class)
-            ->name('move.download')
-            ->middleware(ValidateSignature::class);
+    Route::get('preview-file/{filename}', PreviewFileController::class)
+        ->name('move.preview-file');
 
-        // Resources
-        Route::get('{resource}/create', ResourceForm::class)
-            ->where('resource', '([^0-9]*)')
-            ->name('move.create');
+    // Download
+    Route::get('download', DownloadController::class)
+        ->name('move.download')
+        ->middleware(ValidateSignature::class);
 
-        Route::get('{resource}/{model}/edit', ResourceForm::class)
-            ->where('resource', '([^0-9]*)')
-            ->name('move.edit');
+    // Resources
+    Route::get('{resource}/create', ResourceForm::class)
+        ->where('resource', '([^0-9]*)')
+        ->name('move.create');
 
-        Route::get('{resource}/{model}/show', ResourceShow::class)
-            ->where('resource', '([^0-9]*)')
-            ->name('move.show');
+    Route::get('{resource}/{model}/edit', ResourceForm::class)
+        ->where('resource', '([^0-9]*)')
+        ->name('move.edit');
 
-        Route::get('{resource}', ResourceTable::class)
-            ->where('resource', '(.*)')
-            ->name('move.index');
-    });
+    Route::get('{resource}/{model}/show', ResourceShow::class)
+        ->where('resource', '([^0-9]*)')
+        ->name('move.show');
+
+    Route::get('{resource}', ResourceTable::class)
+        ->where('resource', '(.*)')
+        ->name('move.index');
 });

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Livewire;
+use Uteq\Move\Commands\InstallCommand;
 use Uteq\Move\Commands\MoveCommand;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Livewire\HeaderSearch;
@@ -26,69 +27,6 @@ class MoveServiceProvider extends ServiceProvider
         $this->configureNamespaces();
         $this->configureBladeDirectives();
         $this->configureCommands();
-    }
-
-    public function configureCommands()
-    {
-        if (! $this->app->runningInConsole()) {
-            return null;
-        }
-
-        $this->configurePublishers();
-
-        $this->commands([
-            MoveCommand::class,
-        ]);
-    }
-
-    public function configurePublishers()
-    {
-        $this->publishes([
-            __DIR__ . '/../config/laravel-move.php' => config_path('laravel-move.php'),
-        ], 'config');
-
-        $this->publishes([
-            __DIR__ . '/../resources/views' => base_path('resources/views/vendor/laravel-move'),
-        ], 'views');
-
-        $migrationFileName = 'create_laravel_move_table.php';
-        if (! $this->migrationFileExists($migrationFileName)) {
-            $this->publishes([
-                __DIR__ . "/../database/migrations/{$migrationFileName}.stub" => database_path('migrations/' . date('Y_m_d_His', time()) . '_' . $migrationFileName),
-            ], 'migrations');
-        }
-    }
-
-    public static function migrationFileExists(string $migrationFileName): bool
-    {
-        $len = strlen($migrationFileName);
-
-        foreach (glob(database_path("migrations/*.php")) as $filename) {
-            if ((substr($filename, -$len) === $migrationFileName)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function configureNamespaces()
-    {
-        if (file_exists(Move::generatePathFromNamespace('App\\Move'))) {
-            Move::resourceNamespace('App\\Move', '');
-        }
-
-        foreach (Move::all() as $alias => $class) {
-            if (! isset($class::$model)) {
-                continue;
-            }
-
-            $this->app->singleton(Move::getPrefix() . '.' . $alias, function () use ($class) {
-                $model = $class::$model;
-
-                return new $class(new $model());
-            });
-        }
     }
 
     public function configureComponents()
@@ -119,10 +57,14 @@ class MoveServiceProvider extends ServiceProvider
             $this->registerComponent('dropdown');
             $this->registerComponent('dropdown-link');
             $this->registerComponent('form-section');
+            $this->registerComponent('header');
             $this->registerComponent('modal');
+            $this->registerComponent('profile-dropdown');
             $this->registerComponent('row');
             $this->registerComponent('secondary-button');
             $this->registerComponent('section-title');
+            $this->registerComponent('sidebar');
+            $this->registerComponent('sidebar-menu');
             $this->registerComponent('status');
             $this->registerComponent('switchable-team');
             $this->registerComponent('table');
@@ -151,10 +93,29 @@ class MoveServiceProvider extends ServiceProvider
     {
         Route::group([
             'domain' => config('move.domain', null),
-            'prefix' => config('move.path', null),
+            'prefix' => config('move.path', Move::getPrefix()),
         ], function () {
             $this->loadRoutesFrom(__DIR__ . '/../routes/move.php');
         });
+    }
+
+    public function configureNamespaces()
+    {
+        if (file_exists(Move::generatePathFromNamespace('App\\Move'))) {
+            Move::resourceNamespace('App\\Move', '');
+        }
+
+        foreach (Move::all() as $alias => $class) {
+            if (! isset($class::$model)) {
+                continue;
+            }
+
+            $this->app->singleton(Move::getPrefix() . '.' . $alias, function () use ($class) {
+                $model = $class::$model;
+
+                return new $class(new $model());
+            });
+        }
     }
 
     protected function configureBladeDirectives()
@@ -163,9 +124,54 @@ class MoveServiceProvider extends ServiceProvider
         Blade::directive('moveScripts', [MoveBladeDirectives::class, 'moveScripts']);
     }
 
+    public function configureCommands()
+    {
+        if (! $this->app->runningInConsole()) {
+            return null;
+        }
+
+        $this->configurePublishers();
+
+        $this->commands([
+            MoveCommand::class,
+            InstallCommand::class,
+        ]);
+    }
+
+    public function configurePublishers()
+    {
+        $this->publishes([
+            __DIR__ . '/../config/move.php' => config_path('move.php'),
+        ], 'config');
+
+        $this->publishes([
+            __DIR__ . '/../resources/views' => base_path('resources/views/vendor/move'),
+        ], 'views');
+
+        $migrationFileName = 'create_laravel_move_table.php';
+        if (! $this->migrationFileExists($migrationFileName)) {
+            $this->publishes([
+                __DIR__ . "/../database/migrations/{$migrationFileName}.stub" => database_path('migrations/' . date('Y_m_d_His', time()) . '_' . $migrationFileName),
+            ], 'migrations');
+        }
+    }
+
+    public static function migrationFileExists(string $migrationFileName): bool
+    {
+        $len = strlen($migrationFileName);
+
+        foreach (glob(database_path("migrations/*.php")) as $filename) {
+            if ((substr($filename, -$len) === $migrationFileName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/laravel-move.php', 'laravel-move');
+        $this->mergeConfigFrom(__DIR__ . '/../config/move.php', 'move');
 
         $this->app->singleton('move', \Uteq\Move\Move::class);
 

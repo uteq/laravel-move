@@ -23,7 +23,11 @@ class InstallCommand extends Command
 
     public function handle()
     {
-        Artisan::call('jetstream:install', ['stack' => 'livewire', '--team' => $this->option('team')]);
+        $this->line('Installing Jetstream');
+
+        Artisan::call('jetstream:install', ['stack' => 'livewire', '--teams' => $this->option('teams')]);
+
+        echo Artisan::output();
 
         // TODO install move
         // - Stubs

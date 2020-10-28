@@ -17,7 +17,7 @@
                     </svg>
                 </button>
             </div>
-            @include('move::sidebar-menu')
+            <x-move-sidebar-menu />
         </div>
     </div>
 </div>
@@ -28,6 +28,6 @@
 >
     <div class="flex flex-col w-64">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
-        @include('move::sidebar-menu')
+        <x-move-sidebar-menu />
     </div>
 </div>

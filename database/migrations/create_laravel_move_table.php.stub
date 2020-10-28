@@ -8,7 +8,7 @@ class CreateMoveTable extends Migration
 {
     public function up()
     {
-        Schema::create('laravel-move_table', function (Blueprint $table) {
+        Schema::create('move_table', function (Blueprint $table) {
             $table->bigIncrements('id');
 
             // add fields

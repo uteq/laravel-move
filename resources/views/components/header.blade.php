@@ -11,6 +11,6 @@
         <livewire:header-search />
     </div>
     <div class="ml-4 flex items-center md:ml-6">
-        @include('move::profile-dropdown')
+        <x-move-profile-dropdown />
     </div>
 </div>

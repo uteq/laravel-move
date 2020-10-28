@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 class MoveCommand extends Command
 {
-    public $signature = 'laravel-move';
+    public $signature = 'move';
 
     public $description = 'My command';
 

@@ -130,10 +130,10 @@ class Move
 
     public function routeMiddlewares()
     {
-        $middlewares = config('laravel-move.middlewares');
+        $middlewares = config('move.middlewares');
 
-        if (config('laravel-move.auth.enabled')) {
-            $middlewares = array_replace($middlewares, config('laravel-move.auth.middlewares'));
+        if (config('move.auth.enabled')) {
+            $middlewares = array_replace($middlewares, config('move.auth.middlewares'));
         }
 
         return $middlewares;
@@ -146,16 +146,13 @@ class Move
 
     public function layout()
     {
-        return config('laravel-move.layout');
+        return config('move.layout');
     }
 
     public function styles()
     {
         return <<<HTML
 <link rel="stylesheet" type="text/css" href="{$this->cssAssets()}" />
-
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.7.0/dist/alpine.js" defer></script>
 HTML;
     }
 
@@ -163,8 +160,6 @@ HTML;
     {
         return <<<HTML
 <script src="{$this->jsAssets()}"></script>
-@stack('scripts')
-@stack('modals')
 HTML;
     }
 
