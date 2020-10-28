@@ -12,8 +12,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'move:install {stack : The Jetstream development stack that should be installed}
-                                         {--teams : Indicates if team support should be installed}';
+    protected $signature = 'move:install {--teams : Indicates if team support should be installed}';
 
     /**
      * The console command description.
@@ -24,7 +23,7 @@ class InstallCommand extends Command
 
     public function handle()
     {
-        Artisan::call('jetstream:install', ['stack' => $this->argument('stack'), '--team' => $this->option('team')]);
+        Artisan::call('jetstream:install', ['stack' => 'livewire', '--team' => $this->option('team')]);
 
         // TODO install move
         // - Stubs

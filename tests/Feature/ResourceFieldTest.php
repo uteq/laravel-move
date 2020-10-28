@@ -8,16 +8,30 @@ use Uteq\Move\Tests\TestCase;
 
 class ResourceFieldTest extends TestCase
 {
-    public function test_can_get_fields()
-    {
-        $user = User::factory()->make();
-        $userResource = new UserResource($user);
+    /** @var \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed */
+    private $user;
 
-        $this->assertIsArray($userResource->fields());
+    private UserResource $userResource;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->user = User::factory()->make();
+        $this->userResource = new UserResource($this->user);
     }
 
-//    public function test_can_resolve_fields()
-//    {
-//
-//    }
+    /** @test */
+    public function can_get_fields()
+    {
+        $this->assertIsArray($this->userResource->fields());
+    }
+
+    /** @test */
+    public function can_resolve_fields()
+    {
+        $fields = $this->userResource->resolveFields($this->user);
+
+        $this->assertNotEmpty($fields[0]->value);
+    }
 }

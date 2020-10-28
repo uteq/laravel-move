@@ -153,6 +153,9 @@ class Move
     {
         return <<<HTML
 <link rel="stylesheet" type="text/css" href="{$this->cssAssets()}" />
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.7.0/dist/alpine.js" defer></script>
 HTML;
     }
 
@@ -160,6 +163,8 @@ HTML;
     {
         return <<<HTML
 <script src="{$this->jsAssets()}"></script>
+@stack('scripts')
+@stack('modals')
 HTML;
     }
 

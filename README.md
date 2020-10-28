@@ -1,13 +1,95 @@
-# Laravel admin panel powered by Livewire and Jetstream
+# Laravel Move | An admin panel powered by Livewire and Jetstream
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/uteq/laravel-move.svg?style=flat-square)](https://packagist.org/packages/uteq/laravel-move)
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/uteq/laravel-move/run-tests?label=tests)](https://github.com/uteq/laravel-move/actions?query=workflow%3Arun-tests+branch%3Amaster)
 [![Total Downloads](https://img.shields.io/packagist/dt/uteq/laravel-move.svg?style=flat-square)](https://packagist.org/packages/uteq/laravel-move)
 
 Move makes it very easy to create your own Admin Panel using Laravel and Livewire. 
-This package was heavily inspired bij Laravel Nova. And works practically the same.
+This package was heavily inspired bij Laravel Nova. And works practically the same, except for some missing features.
  
 Here is an example of how you can use it:
+```php
+<?php
+
+namespace App\Move;
+
+use Uteq\Move\Fields\Id;
+use Uteq\Move\Fields\Text;
+use Uteq\Move\Resource;
+
+class User extends Resource
+{
+    public static $model = \App\Models\User::class;
+
+    public static string $title = 'name';
+
+    public function fields()
+    {
+        return [
+            Id::make(),
+
+            Text::make('Name', 'name'),
+        ];
+    }
+}
+```
+
+And this is a basic example with a user:
+<img src="https://uteq.nl/images/move-example.png" />
+
+## Todo
+- Translations
+- Package dependencies
+- Tests
+
+## Support us
+To best support is by improving this package. There is still a lot work to be done.
+For example:
+- Test coverage
+- Fields extension
+- Stubs and Class generators
+
+## Installation
+
+You can install the package via composer:
+
+```bash
+composer require uteq/laravel-move
+```
+
+Laravel Move will add Jetstream to your vendor folder, but will not install it automatically.
+So, for your convenience we tailor made a command that will install Jetstream and bootstrap the Move Admin Panel.
+Because Move uses Livewire as the preferred stack you do not have to supply the stack.
+
+```bash
+php artisan move:install 
+``` 
+
+You can also opt in on the `--team` option
+
+```bash
+php artisan move:install --team
+``` 
+
+You can publish and run the migrations with:
+
+```bash
+php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="migrations"
+php artisan migrate
+```
+
+You can publish the config file with:
+```bash
+php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="config"
+```
+
+You can publish the view files with:
+```bash
+php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="views"
+```
+
+## Usage
+Start by creating your first Move Resource. 
 ```php
 <?php
 
@@ -44,61 +126,11 @@ class User extends Resource
 
     public function icon()
     {
-        return 'heroicon-o-users';
+        return 'heroicon-o-home';
     }
+
 }
 ```
-
-And this is a basic example with a user:
-<img src="https://uteq.nl/images/move-example.png" />
-
-## Todo
-- Translations
-- Package dependencies
-- Tests
-- No more DTO's and Actions required (only when registered)
-
-## Support us
-The best support for now is improving this package. There is still a lot work to be done, every help is welcome.
-
-## Installation
-
-You can install the package via composer:
-
-```bash
-composer require uteq/laravel-move
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-```bash
-php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="config"
-```
-
-You can publish the view files with:
-```bash
-php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="views"
-```
-
-You should also install Jetstream with the Livewire frontend<br />
-https://jetstream.laravel.com/1.x/installation.html#installing-jetstream
-
-Do not forget to finalize the script:
-```
-npm install && npm run dev
-
-php artisan migrate
-```
-
-
-
-## Usage
 
 ### Supported Field types
 These are the currently supported fields in Move:
@@ -204,7 +236,8 @@ This will overwrite the system wide action handlers.
 
 ### Hooks
 ### Before save
-You can hook into the Store action by adding a beforeSave method that provides callables
+The preferred way to hook into the before save is using the default Laravel events https://laravel.com/docs/eloquent#events.
+You can also hook into the Store action by adding a beforeSave method that provides callables
 ```php
 public function beforeSave()
 {
@@ -218,11 +251,23 @@ public function beforeSave()
 }
 ```
 
-Another way to hook into the before save is using the default Laravel saving event. 
+ 
 
 ### After save
-
-TODO see before save
+The preferred way to hook into the after save is using the default Laravel events https://laravel.com/docs/eloquent#events.
+You can also hook into the Store action by adding a afterSave method that provides callables
+```php
+public function afterSave()
+{
+    return [
+        fn($resource, $model, $data) => $data['rand'] = rand(1, 99),
+        function($resource, $model, $data) {
+            return $data['rand'] = rand(1, 99);
+        },
+        new MyCustomAfterSaveAction,
+    ];
+}
+```
 
 ## Testing
 
