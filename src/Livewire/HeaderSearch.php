@@ -5,7 +5,6 @@ namespace Uteq\Move\Livewire;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 use Uteq\Move\Facades\Move;
-use Uteq\Move\Resource;
 
 class HeaderSearch extends Component
 {
