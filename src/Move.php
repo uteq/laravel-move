@@ -121,18 +121,7 @@ class Move
 
     public function getClassNames($path)
     {
-        return collect(app(Filesystem::class)->allFiles(Str::start($path, base_path() . '/')))
-            ->map(function (SplFileInfo $file) {
-                return app()->getNamespace() . str_replace(
-                    ['/', '.php'],
-                    ['\\', ''],
-                    Str::after($file->getPathname(), app_path() . '/')
-                );
-            })
-            ->filter(function (string $class) {
-                return is_subclass_of($class, Resource::class) &&
-                    ! (new ReflectionClass($class))->isAbstract();
-            });
+        return app(ResourceFinder::class)->getClassNames($path);
     }
 
     public static function generatePathFromNamespace($namespace)

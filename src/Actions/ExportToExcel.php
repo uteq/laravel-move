@@ -48,10 +48,9 @@ abstract class ExportToExcel extends Action implements FromCollection, WithCusto
 
         return [
             'handle' => function ($livewire) use ($response) {
-                $livewire->emit('_blank', URL::temporarySignedroute('move.download', now()->addMinutes(1), [
-                    'path' => encrypt($response->getFile()->getPathname()),
-                    'filename' => strtolower($livewire->resource()->label() . '-' . now()->isoFormat('DD-MMMM-YYYY')) . '.xlsx',
-                ]));
+                $name = strtolower($livewire->resource()->label() . '-' . now()->isoFormat('DD-MMMM-YYYY')) . '.xlsx';
+
+                return response()->download($response->getFile()->getPathname(), $name);
             },
         ];
     }

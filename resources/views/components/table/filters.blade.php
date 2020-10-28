@@ -103,7 +103,7 @@
 
                 <x-slot name="footer">
                     <x-move-secondary-button wire:click="$toggle('showingDelete')" wire:loading.attr="disabled">
-                        {{ __('Annuleren') }}
+                        {{ __('Cancel') }}
                     </x-move-secondary-button>
 
                     <x-move-button class="ml-2" wire:click="handleDelete" wire:loading.attr="disabled">

@@ -20,7 +20,7 @@
         </x-move-action-message>
 
         <x-move-a wire:click="cancel">
-            Annuleren
+            Cancel
         </x-move-a>
 
         <x-move-button>

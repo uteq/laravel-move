@@ -26,7 +26,7 @@
                 <x-move-secondary-button
                     x-on:click="show = false"
                     wire:loading.attr="disabled"
-                >{{ __('Annuleren') }}</x-move-secondary-button>
+                >{{ __('Cancel') }}</x-move-secondary-button>
 
                 <x-move-button
                     class="ml-2"

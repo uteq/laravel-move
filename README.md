@@ -81,6 +81,11 @@ You can publish the config file with:
 php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="config"
 ```
 
+You can publish the view files with:
+```bash
+php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="views"
+```
+
 You should also install Jetstream with the Livewire frontend<br />
 https://jetstream.laravel.com/1.x/installation.html#installing-jetstream
 

@@ -1,4 +1,4 @@
-<x-move-dropdown align="right" width="48" orientation="right">
+<x-move-dropdown align="left" width="48" orientation="right">
     <x-slot name="trigger">
         <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out">
             <img class="h-8 w-8 rounded-full object-cover" src="{{ optional(Auth::user())->profile_photo_url }}" alt="{{ optional(Auth::user())->name }}" />

@@ -21,7 +21,6 @@ trait HasHelpText
     /**
      * Add help text to the metric.
      *
-     * @param string $text
      * @return $this
      */
     public function help($text)
@@ -41,14 +40,13 @@ trait HasHelpText
         $helpText = $this->helpText;
 
         return is_callable($helpText)
-        ? $helpText()
+            ? $helpText()
             : $helpText;
     }
 
     /**
      * Set the width for the help text tooltip.
      *
-     * @param  string
      * @return $this
      */
     public function helpWidth($helpWidth)

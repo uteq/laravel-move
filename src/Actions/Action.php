@@ -17,10 +17,10 @@ class Action
     public string $component = 'confirm-action';
 
     /** The text to be used for the action's confirm button. */
-    public string $confirmButtonText = 'Actie uitvoeren';
+    public string $confirmButtonText = 'Apply action';
 
     /** The text to be used for the action's cancel button. */
-    public string $cancelButtonText = 'Annuleren';
+    public string $cancelButtonText = 'Cancel';
 
     /** The text to be used for the action's confirmation text. */
     public string $confirmText = 'Weet u zeker dat u deze actie uit wilt voeren?';

@@ -56,7 +56,7 @@ class HeaderSearch extends Component
                     $resourceModel::query(),
                     $this->search
                 )
-                    ->limit($resource::$globalSearchResults);
+                ->limit($resource::$globalSearchResults);
 
                 if (! $query->count()) {
                     return null;

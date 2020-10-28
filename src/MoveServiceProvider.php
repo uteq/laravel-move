@@ -2,18 +2,13 @@
 
 namespace Uteq\Move;
 
-use Illuminate\Routing\Middleware\ValidateSignature;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Livewire;
-use Livewire\LivewireBladeDirectives;
 use Uteq\Move\Commands\MoveCommand;
-use Uteq\Move\Controllers\DownloadController;
-use Uteq\Move\Controllers\MoveStyleAssets;
-use Uteq\Move\Controllers\MoveJavaScriptAssets;
-use Uteq\Move\Controllers\PreviewFileController;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Livewire\HeaderSearch;
 use Uteq\Move\Livewire\ResourceForm;
@@ -24,19 +19,26 @@ class MoveServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
-            $this->configurePublishers();
-
-            $this->commands([
-                MoveCommand::class,
-            ]);
-        }
-
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'move');
-        $this->configureNamespaces();
+
         $this->configureComponents();
         $this->configureRoutes();
+        $this->configureNamespaces();
         $this->configureBladeDirectives();
+        $this->configureCommands();
+    }
+
+    public function configureCommands()
+    {
+        if (! $this->app->runningInConsole()) {
+            return null;
+        }
+
+        $this->configurePublishers();
+
+        $this->commands([
+            MoveCommand::class,
+        ]);
     }
 
     public function configurePublishers()
@@ -136,44 +138,18 @@ class MoveServiceProvider extends ServiceProvider
         Blade::component('move::components.' . $component, 'move-' . $component);
     }
 
-    public function configureRoutes()
+    /**
+     * Configure the routes offered by the application.
+     *
+     * @return void
+     */
+    protected function configureRoutes()
     {
-        Route::get('/move/move.js', [MoveJavaScriptAssets::class, 'source']);
-        Route::get('/move/move.css', [MoveStyleAssets::class, 'source']);
-
-        Route::bind('model', function ($value) {
-            $resource = Move::resolveResource(request()->route()->parameter('resource'));
-
-            return $resource->model()::find($value) ?: $resource::newModel();
-        });
-
-        Route::group(['middleware' => Move::routeMiddlewares()], function () {
-            Route::prefix(Move::getPrefix())->group(function () {
-                Route::get('preview-file/{filename}', PreviewFileController::class)
-                    ->name('move.preview-file');
-
-                // Download
-                Route::get('download', DownloadController::class)
-                    ->name('move.download')
-                    ->middleware(ValidateSignature::class);
-
-                // Resources
-                Route::get('{resource}/create', ResourceForm::class)
-                    ->where('resource', '([^0-9]*)')
-                    ->name('move.create');
-
-                Route::get('{resource}/{model}/edit', ResourceForm::class)
-                    ->where('resource', '([^0-9]*)')
-                    ->name('move.edit');
-
-                Route::get('{resource}/{model}/show', ResourceShow::class)
-                    ->where('resource', '([^0-9]*)')
-                    ->name('move.show');
-
-                Route::get('{resource}', ResourceTable::class)
-                    ->where('resource', '(.*)')
-                    ->name('move.index');
-            });
+        Route::group([
+            'domain' => config('move.domain', null),
+            'prefix' => config('move.path', null),
+        ], function () {
+            $this->loadRoutesFrom(__DIR__ . '/../routes/move.php');
         });
     }
 
@@ -189,7 +165,16 @@ class MoveServiceProvider extends ServiceProvider
 
         $this->app->singleton('move', \Uteq\Move\Move::class);
 
+        $this->registerComponentAutoDiscovery();
+
         $this->configureLivewire();
+    }
+
+    public function registerComponentAutoDiscovery()
+    {
+        $this->app->singleton(ResourceFinder::class, function () {
+            return new ResourceFinder(new Filesystem, base_path() . '/');
+        });
     }
 
     public function configureLivewire()

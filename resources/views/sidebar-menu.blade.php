@@ -6,7 +6,7 @@
         <nav class="flex-1 px-2">
 
 
-            @foreach(Move::resources() as $resource)
+            @foreach(\Uteq\Move\Facades\Move::resources() as $resource)
                 <x-move-sidebar.link icon="{{ $resource->icon() }}" alt-active="{{ $resource->route() }}*" href="/{{ $resource->route() }}">
                     {{ $resource->label() }}
                 </x-move-sidebar.link>

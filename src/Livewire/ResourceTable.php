@@ -4,6 +4,7 @@ namespace Uteq\Move\Livewire;
 
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
+use Symfony\Component\HttpFoundation\Response;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\HasSelected;
 use Uteq\Move\Exceptions\ResourcesException;
@@ -72,7 +73,7 @@ class ResourceTable extends TableComponent
     {
         try {
             $result = app()->call([$this->action(), 'handleLivewireRequest'], [
-                'resource' => $this->resource,
+                'resource' => $this->resource(),
                 'collection' => $this->selectedCollection(),
                 'actionFields' => $this->actionFields,
             ]);
@@ -86,7 +87,11 @@ class ResourceTable extends TableComponent
         // This enables the action to perform its own logic after
         //  it was successful as if we were in a Livewire Component
         if (isset($result['handle']) && is_callable($result['handle'])) {
-            $result['handle']($this);
+            $response = $result['handle']($this);
+
+            if ($response instanceof Response) {
+                return $response;
+            }
         }
 
         app()->call([$this, 'render']);
