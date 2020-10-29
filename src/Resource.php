@@ -64,6 +64,9 @@ abstract class Resource
     /** The underlying model resource instance. */
     public Model $resource;
 
+    /** @var string|null */
+    public static string $group = 'Resources';
+
     /**
      * Creates a new resource instance.
      */

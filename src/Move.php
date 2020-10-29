@@ -29,6 +29,15 @@ class Move
         return $this;
     }
 
+    public function groupedResources()
+    {
+        return collect($this->resources())
+            ->filter(fn ($item) => $item::$group)
+            ->mapToGroups(function ($item) {
+                return [$item::$group => $item];
+            });
+    }
+
     public function resources()
     {
         $resources = [];
