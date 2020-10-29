@@ -9,7 +9,7 @@ class Move
     public array $customResources = [];
     public array $customResourceNamespaces = [];
     public string $prefix = 'move';
-    public bool $useSidebarGroups;
+    public bool $useSidebarGroups = true;
 
     public function prefix(string $prefix)
     {
