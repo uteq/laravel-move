@@ -16,7 +16,7 @@
                 @endforeach
             @else
                 @foreach(\Uteq\Move\Facades\Move::groupedResources() as $key => $resourceGroup)
-                    <x-move-sidebar.link icon="css-import" alt-active="move/*" href="#">
+                    <x-move-sidebar.link icon="css-import" :active="\Uteq\Move\Facades\Move::activeResource()::$group === $key" href="#">
                         {{$key}}
                         <x-slot name="collapse">
                             @foreach($resourceGroup as $resource)

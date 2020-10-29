@@ -50,7 +50,7 @@
                                  x-show="!open"
             ></x-dynamic-component>
         @endif
-    </a href="{{ $href }}">
+    </a>
 
     @if ($collapse)
         <div class="mt-1 space-y-1 {{ $active ? 'block' : 'hidden' }}" :class="{'block': open, 'hidden': ! open}">
