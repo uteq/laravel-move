@@ -7,7 +7,7 @@
         <nav class="flex-1 px-2">
             @if (!\Uteq\Move\Facades\Move::hasSidebarGroups())
                 @foreach(\Uteq\Move\Facades\Move::resources() as $resource)
-                    <x-move-sidebar.link :active="\Uteq\Move\Facades\Move::activeResource()::$group === $key"
+                    <x-move-sidebar.link alt-active="{{ $resource->route() }}*"
                                          href="/{{ $resource->route() }}"
                                          :icon="$resource->icon()"
                     >
