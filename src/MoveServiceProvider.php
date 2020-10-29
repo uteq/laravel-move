@@ -17,6 +17,7 @@ use Uteq\Move\Livewire\HeaderSearch;
 use Uteq\Move\Livewire\ResourceForm;
 use Uteq\Move\Livewire\ResourceShow;
 use Uteq\Move\Livewire\ResourceTable;
+use function Couchbase\defaultDecoder;
 
 class MoveServiceProvider extends ServiceProvider
 {

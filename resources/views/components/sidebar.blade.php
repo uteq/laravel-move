@@ -8,16 +8,17 @@
 
         <div class="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-gray-800">
             <div class="absolute top-0 right-0 -mr-14 p-1">
-                <button class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600"
-                        aria-label="Close sidebar"
-                        @click="mobileMenuOpen = false"
+                <button
+                    class="flex items-center justify-center h-12 w-12 rounded-full focus:outline-none focus:bg-gray-600"
+                    aria-label="Close sidebar"
+                    @click="mobileMenuOpen = false"
                 >
                     <svg class="h-6 w-6 text-white" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
-            <x-move-sidebar-menu />
+            <x-move-sidebar-menu/>
         </div>
     </div>
 </div>
@@ -28,6 +29,6 @@
 >
     <div class="flex flex-col w-64">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
-        <x-move-sidebar-menu />
+        <x-move-sidebar-menu/>
     </div>
 </div>
