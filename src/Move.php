@@ -33,7 +33,7 @@ class Move
     {
         return collect($this->resources())
             ->filter(fn ($item) => $item::$group)
-            ->mapToGroups(function($item) {
+            ->mapToGroups(function ($item) {
                 return [$item::$group => $item];
             });
     }
