@@ -9,6 +9,7 @@ class Move
     public array $customResources = [];
     public array $customResourceNamespaces = [];
     public string $prefix = 'move';
+    public bool $useSidebarGroups = true;
 
     public function prefix(string $prefix)
     {
@@ -33,7 +34,7 @@ class Move
     {
         return collect($this->resources())
             ->filter(fn ($item) => $item::$group)
-            ->mapToGroups(function($item) {
+            ->mapToGroups(function ($item) {
                 return [$item::$group => $item];
             });
     }
@@ -55,7 +56,7 @@ class Move
         return str_replace('.', '/', $resourceName);
     }
 
-    public function resourceNamespace(string $namespace, string $prefix)
+    public function resourceNamespace(string $namespace, string $prefix = '')
     {
         $this->customResourceNamespaces[$prefix] = $namespace;
 
@@ -128,6 +129,18 @@ class Move
         }
 
         return array_replace($resources, $this->customResources);
+    }
+
+    public function useSidebarGroups(bool $bool = true)
+    {
+        $this->useSidebarGroups = $bool;
+
+        return $this;
+    }
+
+    public function hasSidebarGroups()
+    {
+        return $this->useSidebarGroups;
     }
 
     public function getClassNames($path)

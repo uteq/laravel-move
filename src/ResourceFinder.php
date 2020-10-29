@@ -14,26 +14,45 @@ class ResourceFinder
      */
     private Filesystem $files;
     private string $basePath;
+    private string $namespace;
+    private string $appPath;
 
     public function __construct(Filesystem $files, string $basePath)
     {
         $this->files = $files;
         $this->basePath = $basePath;
+        $this->namespace = app()->getNamespace();
+        $this->appPath = app_path();
+    }
+
+    public function setNamespace($namespace)
+    {
+        $this->namespace = $namespace;
+
+        return $this;
+    }
+
+    public function setAppPath($appPath)
+    {
+        $this->appPath = $appPath;
+
+        return $this;
     }
 
     public function getClassNames($path)
     {
         return collect($this->files->allFiles(Str::start($path, $this->basePath)))
             ->map(function (SplFileInfo $file) {
-                return app()->getNamespace() . str_replace(
+                return $this->namespace . str_replace(
                     ['/', '.php'],
                     ['\\', ''],
-                    Str::after($file->getPathname(), app_path() . DIRECTORY_SEPARATOR)
+                    Str::after($file->getPathname(), $this->appPath . DIRECTORY_SEPARATOR)
                 );
             })
             ->filter(function (string $class) {
                 return is_subclass_of($class, Resource::class) &&
                     ! (new ReflectionClass($class))->isAbstract();
-            });
+            })
+            ->values();
     }
 }

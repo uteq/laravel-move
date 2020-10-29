@@ -47,19 +47,19 @@
 </form>
 
 <script defer>
-    // document.addEventListener("livewire:load", function() {
-    //     $('#search-dropdown ul').first().focus();
-    // });
-    //
-    // document.addEventListener("keyup", event => {
-    //     if (event.key === '/') {
-    //         window.livewire.emit('startSearch')
-    //         document.getElementById('search_field').focus();
-    //     }
-    //
-    //     if (event.key === 'Escape') {
-    //         window.livewire.emit('stopSearch');
-    //         document.getElementById('search_field').blur();
-    //     }
-    // });
+    document.addEventListener("livewire:load", function() {
+        $('#search-dropdown ul').first().focus();
+    });
+
+    document.addEventListener("keyup", event => {
+        if (event.key === '/') {
+            window.livewire.emit('startSearch')
+            document.getElementById('search_field').focus();
+        }
+
+        if (event.key === 'Escape') {
+            window.livewire.emit('stopSearch');
+            document.getElementById('search_field').blur();
+        }
+    });
 </script>
