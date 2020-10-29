@@ -92,7 +92,10 @@ class TestCase extends Orchestra
         include_once __DIR__ . '/../database/migrations/create_move_table.php.stub';
         (new \CreateMoveTable())->up();
 
-        include_once __DIR__.'/../database/migrations/create_laravel_users_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_laravel_users_table.php';
         (new \UsersTable())->up();
+
+        include_once __DIR__ . '/../database/migrations/create_laravel_contacts_table.php';
+        (new \ContactsTable())->up();
     }
 }

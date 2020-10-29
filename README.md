@@ -187,10 +187,7 @@ You can Bootstrap this namespace in the following way
 ```php
 use Uteq\Move\Facades\Move;
 
-/**
- * Bootstrap your package's services.
- */
-public function boot()
+public function register()
 {
     Move::resourceNamespace('App\\Resources', 'resources');
 }
