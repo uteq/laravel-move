@@ -74,6 +74,7 @@ class InstallCommand extends Command
             ));
         }
     }
+
     /**
      * Update the "package.json" file.
      *
