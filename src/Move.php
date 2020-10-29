@@ -62,6 +62,11 @@ class Move
         return $this;
     }
 
+    public function activeResource()
+    {
+        return Move::resolveResource(request()->route()->parameter('resource'));
+    }
+
     public function resolveResource(string $resource)
     {
         if ($this->getByClass($resource)) {

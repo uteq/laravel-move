@@ -1,10 +1,10 @@
 @props(['href', 'icon' => null, 'active' => false, 'collapse' => null, 'sub' => false, 'altActive' => null])
 
 @php
-
+/**
     if (!empty($href) && !$altActive) {
         $altActive = ltrim($href, '/') . '*';
-    }
+    }*/
 
     $active = is_string($active) ? request()->is($active) : $active;
     $active = $altActive ? request()->is($altActive) : $active;
@@ -50,7 +50,7 @@
                                  x-show="!open"
             ></x-dynamic-component>
         @endif
-    </a>
+    </a href="{{ $href }}">
 
     @if ($collapse)
         <div class="mt-1 space-y-1 {{ $active ? 'block' : 'hidden' }}" :class="{'block': open, 'hidden': ! open}">

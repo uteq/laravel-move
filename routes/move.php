@@ -12,7 +12,7 @@ use Uteq\Move\Livewire\ResourceShow;
 use Uteq\Move\Livewire\ResourceTable;
 
 Route::bind('model', function ($value) {
-    $resource = Move::resolveResource(request()->route()->parameter('resource'));
+    $resource = Move::activeResource();
 
     return $resource->model()::find($value) ?: $resource::newModel();
 });
