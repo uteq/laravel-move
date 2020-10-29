@@ -10,6 +10,8 @@ use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Livewire;
 use Uteq\Move\Commands\InstallCommand;
 use Uteq\Move\Commands\MoveCommand;
+use Uteq\Move\Controllers\MoveJavaScriptAssets;
+use Uteq\Move\Controllers\MoveStyleAssets;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Livewire\HeaderSearch;
 use Uteq\Move\Livewire\ResourceForm;
@@ -91,6 +93,9 @@ class MoveServiceProvider extends ServiceProvider
      */
     protected function configureRoutes()
     {
+        Route::get('move/move.js', [MoveJavaScriptAssets::class, 'source']);
+        Route::get('move/move.css', [MoveStyleAssets::class, 'source']);
+
         Route::group([
             'domain' => config('move.domain', null),
             'prefix' => config('move.path', Move::getPrefix()),

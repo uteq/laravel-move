@@ -1,0 +1,6 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import 'flatpickr/dist/flatpickr.css';
+@import 'select2/dist/css/select2.css';

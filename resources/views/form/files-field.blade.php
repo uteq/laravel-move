@@ -1,19 +1,26 @@
 <x-move-form.row width="w-full" custom label="{{ $field->name }}" model="{{ $field->model() }}" :required="$field->isRequired()" help-text="{{ $field->getHelpText() }}">
-    <div class="border p-2 bg-white mb-4 w-full">
-        <input type="file"
+
+    <label class="w-full">
+        <div class="flex text-center items-center px-4 py-2 bg-white text-blue rounded-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-teal-800 hover:text-white">
+            <x-heroicon-o-cloud-download class="w6 h-6" />
+            <span class="ml-2 mt-1 text-base leading-normal">
+                {{ __('Add a new file') }}
+            </span>
+        </div>
+        <input type='file'
                name="{{ $field->model() }}[]"
+               class="hidden"
                wire:model="files.{{ $field->attribute }}"
-               class="form-control cursor-pointer w-full"
-               style="height: 44px"
                accept="image/*, .pdf, application/pdf, application/heic"
                capture="camera"
                multiple
         />
 
         <div wire:loading wire:target="files.{{ $field->attribute }}">
-            Bestand wordt geüpload...
+            {{ __('File is being uploaded') }}
         </div>
-    </div>
+
+    </label>
 
     @php $this->loadFiles($field) @endphp
 

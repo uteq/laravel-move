@@ -20,9 +20,7 @@
         "sass": "^1.26.11",
         "sass-loader": "^8.0.2",
         "tailwindcss": "^1.8.10",
-        "vue-template-compiler": "^2.6.12"
-    },
-    "dependencies": {
+        "vue-template-compiler": "^2.6.12",
         "@popperjs/core": "^2.5.3",
         "alpinejs": "^2.7.0",
         "flatpickr": "^4.6.6",

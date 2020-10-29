@@ -11,9 +11,6 @@ use Uteq\Move\Livewire\ResourceForm;
 use Uteq\Move\Livewire\ResourceShow;
 use Uteq\Move\Livewire\ResourceTable;
 
-Route::get('/move/move.js', [MoveJavaScriptAssets::class, 'source']);
-Route::get('/move/move.css', [MoveStyleAssets::class, 'source']);
-
 Route::bind('model', function ($value) {
     $resource = Move::resolveResource(request()->route()->parameter('resource'));
 

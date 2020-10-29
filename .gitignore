@@ -3,6 +3,7 @@ node_modules
 .php_cs
 .php_cs.cache
 .phpunit.result.cache
+stubs/node_modules
 build
 composer.lock
 coverage

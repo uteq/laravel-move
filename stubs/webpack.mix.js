@@ -11,12 +11,9 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/move.js', 'dist')
-    .postCss('stubs/resources/css/app.css', 'stubs/public/css', [
+mix.js('resources/js/app.js', 'public/js')
+    .postCss('resources/css/app.css', 'public/css', [
         require('postcss-import'),
         require('tailwindcss'),
     ])
-    .postCss('resources/css/move.css', 'dist', [
-        require('postcss-import'),
-    ])
-    .webpackConfig(require('./stubs/webpack.config'));
+    .webpackConfig(require('./webpack.config'));

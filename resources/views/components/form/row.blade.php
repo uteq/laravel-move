@@ -1,4 +1,4 @@
-@props(['model', 'required' => false, 'label', 'type' => 'input', 'helpText' => null, 'custom' => false, 'width' => 'max-w-lg'])
+@props(['model', 'required' => false, 'label', 'type' => 'input', 'helpText' => null, 'custom' => false, 'width' => null])
 
 @php $labelValue = $label @endphp
 
