@@ -22,7 +22,7 @@ class ResourceFinder
         $this->files = $files;
         $this->basePath = $basePath;
         $this->namespace = app()->getNamespace();
-        $this->namespace = app_path();
+        $this->appPath = app_path();
     }
 
     public function setNamespace($namespace)
