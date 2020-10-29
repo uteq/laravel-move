@@ -15,10 +15,8 @@ class MoveServiceProvider extends ServiceProvider
     public function register()
     {
         Move::prefix('move');
-
-        if (file_exists(Move::generatePathFromNamespace('App\\Move'))) {
-            Move::resourceNamespace('App\\Move', '');
-        }
+        Move::useSidebarGroups(true);
+        Move::resourceNamespace('App\\Move');
     }
 
     /**

@@ -64,7 +64,6 @@ abstract class Resource
     /** The underlying model resource instance. */
     public Model $resource;
 
-    /** @var string|null */
     public static string $group = 'Resources';
 
     /**
@@ -333,7 +332,7 @@ abstract class Resource
 
     public function icon()
     {
-        return 'heroicon-o-home';
+        return null;
     }
 
     abstract public function fields();
