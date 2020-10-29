@@ -125,7 +125,7 @@ class Move
     {
         $name = Str::replaceFirst(app()->getNamespace(), '', $namespace);
 
-        return app('path') . '/' . str_replace('\\', '/', $name);
+        return app('path') . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name);
     }
 
     public function routeMiddlewares()
