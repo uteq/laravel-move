@@ -14,7 +14,11 @@ class MoveServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        Move::prefix('move');
+
+        if (file_exists(Move::generatePathFromNamespace('App\\Move'))) {
+            Move::resourceNamespace('App\\Move', '');
+        }
     }
 
     /**
@@ -24,6 +28,5 @@ class MoveServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Move::prefix('move');
     }
 }

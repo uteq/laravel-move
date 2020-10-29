@@ -133,7 +133,7 @@ class Move
         $middlewares = config('move.middlewares');
 
         if (config('move.auth.enabled')) {
-            $middlewares = array_replace($middlewares, config('move.auth.middlewares'));
+            $middlewares = array_merge($middlewares, config('move.auth.middlewares'));
         }
 
         return $middlewares;

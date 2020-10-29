@@ -106,10 +106,6 @@ class MoveServiceProvider extends ServiceProvider
 
     public function configureNamespaces()
     {
-        if (file_exists(Move::generatePathFromNamespace('App\\Move'))) {
-            Move::resourceNamespace('App\\Move', '');
-        }
-
         foreach (Move::all() as $alias => $class) {
             if (! isset($class::$model)) {
                 continue;
