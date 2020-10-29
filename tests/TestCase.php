@@ -89,7 +89,7 @@ class TestCase extends Orchestra
 
         Move::resource('fixtures.user-resource', UserResource::class);
 
-        include_once __DIR__.'/../database/migrations/create_laravel_move_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_move_table.php.stub';
         (new \CreateMoveTable())->up();
 
         include_once __DIR__.'/../database/migrations/create_laravel_users_table.php.stub';
