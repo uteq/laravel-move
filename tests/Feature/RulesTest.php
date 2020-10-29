@@ -3,7 +3,6 @@
 namespace Uteq\Move\Tests\Feature;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Uteq\Move\Rules\UniquePostcodeHousenumber;
 use Uteq\Move\Tests\Fixtures\Contact;
 use Uteq\Move\Tests\TestCase;
