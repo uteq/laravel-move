@@ -109,8 +109,29 @@ class User extends Resource
     {
         return [
             Id::make(),
+            Text::make('Naam', 'name'),
 
-            Text::make('Name', 'name'),
+            Text::make('Email', 'email')
+                ->hideWhenUpdating()
+                ->requiredOnCreateOnly()
+                ->creationRules(['required', 'string', 'email', 'max:255', 'unique:users']),
+
+            Password::make('Password', 'password')
+                ->creationRules($this->passwordRules())
+                ->required(function($request, $model) {
+                    return ! ( $model->id ?? false );
+                }),
+
+            Password::make('Confirm password', 'password_confirmation')
+                ->hideFromIndex()
+                ->hideFromDetail()
+                ->required(function($request, $model) {
+                    return ! ( $model->id ?? false );
+                }),
+
+            Status::make('Email verified?', 'email_verified_at', function ($value) {
+                return $value !== null;
+            })->hideFromForm(),
         ];
     }
 
@@ -126,7 +147,7 @@ class User extends Resource
 
     public function icon()
     {
-        return 'heroicon-o-home';
+        return 'heroicon-o-users';
     }
 
 }
@@ -148,19 +169,19 @@ These are the currently supported fields in Move:
 ### Route prefix
 Move out of the box adds a prefix to your resources, that way it will never interfere with your own routes.
 The default is `move`.
-You can change the default prefix by overwriting it:
+You can change the default prefix by overwriting it at your local MoveServiceProvider at `App\Providers\MoveServiceProvider`:
 
 ```php
 use Illuminate\Support\Facades\Route;
 
-function boot()
+function register()
 {
     Route::move('my-prefix');
 }
 ```
 
 ### Manually Registering Resource Namespaces
-The default namespace for Move is App\Move. You are also able to register the Move Resources wherever you like.
+The default namespace for Move is `App\Move`. You are also able to register the Move Resources wherever you like.
 You can Bootstrap this namespace in the following way
 
 ```php
