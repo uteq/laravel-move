@@ -4,7 +4,7 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/uteq/laravel-move/run-tests?label=tests)](https://github.com/uteq/laravel-move/actions?query=workflow%3Arun-tests+branch%3Amaster)
 [![Total Downloads](https://img.shields.io/packagist/dt/uteq/laravel-move.svg?style=flat-square)](https://packagist.org/packages/uteq/laravel-move)
 
-<img src="https://uteq.nl/images/move/move-logo.svg" />
+<img src="https://uteq.nl/images/move/move-logo.png" />
 
 Move makes it very easy to create your own Admin Panel using Laravel and Livewire. 
 This package was heavily inspired bij Laravel Nova. And works practically the same, except for some missing features.
@@ -50,6 +50,7 @@ For example:
 - Test coverage
 - Fields extension
 - Stubs and Class generators
+- Translations: a lot is still in Dutch and not translatable
 
 ## Installation
 
