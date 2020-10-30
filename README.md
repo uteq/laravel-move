@@ -59,24 +59,23 @@ composer require uteq/laravel-move
 
 Laravel Move will add Jetstream to your vendor folder, but will not install it automatically.
 So, for your convenience we tailor made a command that will install Jetstream and bootstrap the Move Admin Panel.
-Because Move uses Livewire as the preferred stack you do not have to supply the stack.
-
-```bash
-php artisan move:install 
-``` 
-
-You can also opt in on the `--team` option
+Because Move uses Livewire as the preferred stack you do not have to supply the stack. In addition, you may use the --teams switch to enable team support:
 
 ```bash
 php artisan move:install --team
 ``` 
 
-You can publish and run the migrations with:
+To finalize your installation run:
 
 ```bash
-php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="migrations"
 php artisan migrate
 ```
+
+### Optional
+
+#### Configure Jetstream
+For more Jetstream related setup, please check:
+https://jetstream.laravel.com/1.x/installation.html#installing-jetstream
 
 You can publish the config file with:
 ```bash
@@ -89,7 +88,17 @@ php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="vie
 ```
 
 ## Usage
-Start by creating your first Move Resource. 
+
+### Creating your first resource
+Start by creating your first Move Resource. You can generate it or use the example below:
+
+#### Generate your resource
+```bash
+php artisan move:resource User --model=User
+```
+
+#### Use example resource
+
 ```php
 <?php
 
@@ -153,18 +162,6 @@ class User extends Resource
 }
 ```
 
-### Supported Field types
-These are the currently supported fields in Move:
-- Country
-- Date
-- Files
-- Id
-- Number
-- Password
-- Select (with filter search)
-- Status
-- Text
-- Textarea
 
 ### Route prefix
 Move out of the box adds a prefix to your resources, that way it will never interfere with your own routes.
@@ -205,6 +202,56 @@ The resource default name will than be:
 ```
 resources.your-resource
 ```
+
+## Resources
+
+### Supported Field types
+These are the currently supported fields in Move:
+- Country
+- Date
+- Files
+- Id
+- Number
+- Password
+- Select (with filter search)
+- Status
+- Text
+- Textarea
+
+
+
+## Sidebar
+Move automatically registers resources to the sidebar. 
+By default there are two ways to show your sidebar resources.
+Grouped and flat. The default is grouped  and is published with the \App\Providers\MoveServiceProvider.
+```php
+Move::useSidebarGroups(true);
+```
+
+To use the flat display, just change to
+```php
+Move::useSidebarGroups(false);
+```
+
+When you use the sidebar groups you should also set the resource property:
+
+```php
+class User extends \Uteq\Move\Resource
+{
+    public static ?string $group = 'admin';
+}
+```
+
+### Ordering sidebar items
+Currently, this is not a supported feature, feel free to create a PR. Or you can simply
+overwrite the components/sidebar-menu.blade.php file.
+
+### Ordering sidebar by namespace
+Whenever you would prefer to order your sidebar by the given namespace just use
+the grouped sidebar approach.
+If not you can always overwrite the components/sidebar-menu.blade.php file or create a PR. 
+
+## In depth
 
 ### Resolving a resource
 Resolving a resource means loading the concrete implementation of your Resource class.
@@ -253,7 +300,7 @@ class CustomResource extends Resource
 This will overwrite the system wide action handlers.
 
 ### Hooks
-### Before save
+#### Before save
 The preferred way to hook into the before save is using the default Laravel events https://laravel.com/docs/eloquent#events.
 You can also hook into the Store action by adding a beforeSave method that provides callables
 ```php
@@ -269,9 +316,7 @@ public function beforeSave()
 }
 ```
 
- 
-
-### After save
+#### After save
 The preferred way to hook into the after save is using the default Laravel events https://laravel.com/docs/eloquent#events.
 You can also hook into the Store action by adding a afterSave method that provides callables
 ```php

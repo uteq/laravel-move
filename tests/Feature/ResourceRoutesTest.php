@@ -15,6 +15,6 @@ class ResourceRoutesTest extends TestCase
             ->withoutMiddleware()
             ->get('move/fixtures/user-resource')
             ->assertOk()
-            ->assertSeeText('User');
+            ->assertSeeText('UserTest');
     }
 }

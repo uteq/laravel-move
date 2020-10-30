@@ -1,0 +1,37 @@
+<?php
+
+namespace {{ namespace }};
+
+use Uteq\Move\Resource;
+use Uteq\Move\Fields\ID;
+use Uteq\Move\TableActions\ExportToExcelAction;
+
+class {{ class }} extends Resource
+{
+    public static string $model = \{{ namespacedModel }}::class;
+
+    public static string $title = 'id';
+
+    public static array $search = ['id'];
+
+    public static string $group = 'Resources';
+
+    public function fields()
+    {
+        return [
+            ID::make()->sortable(),
+        ];
+    }
+
+    public function filters()
+    {
+        return [];
+    }
+
+    public function actions()
+    {
+        return [
+            new ExportToExcelAction
+        ];
+    }
+}
