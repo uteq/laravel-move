@@ -92,7 +92,7 @@ php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="vie
 ### Creating your first resource
 Start by creating your first Move Resource. You can generate it or use the example below:
 
-#### Generate your resource
+#### Generate your reso§urce
 ```bash
 php artisan move:resource User --model=User
 ```
