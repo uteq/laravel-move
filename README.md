@@ -238,7 +238,7 @@ When you use the sidebar groups you should also set the resource property:
 ```php
 class User extends \Uteq\Move\Resource
 {
-    public static ?string $group = 'admin';
+    public static string $group = 'admin';
 }
 ```
 
