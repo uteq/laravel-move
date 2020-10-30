@@ -4,6 +4,8 @@
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/uteq/laravel-move/run-tests?label=tests)](https://github.com/uteq/laravel-move/actions?query=workflow%3Arun-tests+branch%3Amaster)
 [![Total Downloads](https://img.shields.io/packagist/dt/uteq/laravel-move.svg?style=flat-square)](https://packagist.org/packages/uteq/laravel-move)
 
+<img src="https://uteq.nl/images/move/move-logo.svg" />
+
 Move makes it very easy to create your own Admin Panel using Laravel and Livewire. 
 This package was heavily inspired bij Laravel Nova. And works practically the same, except for some missing features.
  
@@ -35,7 +37,7 @@ class User extends Resource
 ```
 
 And this is a basic example with a user:
-<img src="https://uteq.nl/images/move-example.png" />
+<img src="https://uteq.nl/images/move/move-example.png" />
 
 ## Todo
 - Translations
