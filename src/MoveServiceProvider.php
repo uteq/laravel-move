@@ -9,7 +9,6 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Livewire;
 use Uteq\Move\Commands\InstallCommand;
-use Uteq\Move\Commands\MoveCommand;
 use Uteq\Move\Commands\ResourceCommand;
 use Uteq\Move\Controllers\MoveJavaScriptAssets;
 use Uteq\Move\Controllers\MoveStyleAssets;
