@@ -283,6 +283,16 @@ abstract class FieldElement extends Element
         return $this;
     }
 
+    public function hide()
+    {
+        $this->showOnIndex = false;
+        $this->showOnDetail = false;
+        $this->showOnCreation = false;
+        $this->showOnUpdate = false;
+
+        return $this;
+    }
+
     /**
      * Specify that the element should be hidden from forms.
      *
@@ -302,19 +312,11 @@ abstract class FieldElement extends Element
     {
         $request = $request ?: request();
 
-        if ($action === 'create') {
-            return $this->isShownOnCreation($request);
-        }
-        if ($action === 'update') {
-            return $this->isShownOnUpdate($request, $resource);
-        }
-        if ($action === 'index') {
-            return $this->isShownOnIndex($request, $resource);
-        }
-        if ($action === 'show') {
-            return $this->isShownOnDetail($request, $resource);
-        }
-
-        return false;
+        return [
+            'create' => $this->isShownOnCreation($request),
+            'update' => $this->isShownOnUpdate($request, $resource),
+            'index' => $this->isShownOnIndex($request, $resource),
+            'show' => $this->isShownOnDetail($request, $resource),
+        ][$action] ?? false;
     }
 }

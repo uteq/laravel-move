@@ -1,8 +1,14 @@
 @php $index = \Str::slug(str_replace('.', '-', 'model.'. $field->attribute)); @endphp
 
-<x-move-form.row custom label="{{ $field->name }}" model="{{ $field->model() }}" :required="$field->isRequired()" help-text="{{ $field->getHelpText() }}">
+<x-move-form.row
+    custom
+    label="{{ $field->name }}"
+    model="{{ $field->store }}"
+    :required="$field->isRequired()"
+    help-text="{{ $field->getHelpText() }}"
+>
     <div class="w-full text-black" x-data="{ form : false }">
-        <x-move-field.select model="{{ $field->model() }}"
+        <x-move-field.select model="{{ $field->store }}"
                         placeholder="{{ $field->placeholder ?? null }}"
         >
                 <option></option>

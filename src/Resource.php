@@ -11,6 +11,7 @@ use Uteq\Move\DomainActions\DeleteResource;
 use Uteq\Move\DomainActions\StoreResource;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Field;
+use Uteq\Move\Fields\Panel;
 
 abstract class Resource
 {
@@ -262,20 +263,12 @@ abstract class Resource
 
     public function handleCreate($handler, $model, $fields, $dtoMethod)
     {
-        $data = collect($fields)
-            ->mapWithKeys(fn ($value, $field) => [$field => $model->{$field}])
-            ->toArray();
-
-        return $handler($model, $this->toDataTransferObject($data, $dtoMethod), $this);
+        return $handler($model, $this->toDataTransferObject($fields, $dtoMethod), $this);
     }
 
     public function handleUpdate($handler, $model, $fields, $dtoMethod)
     {
-        $data = collect($fields)
-            ->mapWithKeys(fn ($value, $field) => [$field => $model->{$field}])
-            ->toArray();
-
-        return $handler($model, $this->toDataTransferObject($data, $dtoMethod), $this);
+        return $handler($model, $this->toDataTransferObject($fields, $dtoMethod), $this);
     }
 
     public function toDataTransferObject($data, $dtoMethod)
@@ -309,9 +302,47 @@ abstract class Resource
 
         $type = $type ?: (isset($model->id) ? 'edit' : 'create');
 
-        return collect($this->fields())
+        return collect($this->getFields())
             ->filter(fn ($field) => $field->isShownOn($type, $model, request()))
             ->toArray();
+    }
+
+    public function getFields()
+    {
+        $panelFields = collect($this->fields())
+            ->filter(fn ($field) => $field instanceof Panel)
+            ->flatMap(function ($panel) {
+                return collect($panel->fields);
+            });
+
+        $fields = collect($this->fields())
+            ->filter(fn ($field) => $field instanceof Field);
+
+        return $fields->merge($panelFields)->toArray();
+    }
+
+    public function panels($resource, string $displayType)
+    {
+        $panels = collect($this->fields())
+            ->filter(fn ($field) => $field instanceof Panel);
+
+        $panels->prepend(new Panel(
+            null,
+            collect($this->fields())
+                ->filter(fn ($field) => $field instanceof Field)
+                ->toArray()
+        ));
+
+        $panels = $panels->each(fn (Panel $panel) => $panel->resolveFields($resource))
+            ->map(function ($panel) use ($resource, $displayType) {
+                $panel->fields = collect($panel->fields)
+                    ->filter(fn (Field $field) => $field->isVisible($resource, $displayType))
+                    ->toArray();
+
+                return $panel;
+            });
+
+        return $panels;
     }
 
     public function fill(Model $model, array $data)

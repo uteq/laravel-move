@@ -16,6 +16,7 @@ trait HasRequired
      */
     public function required($callback = true)
     {
+        $this->rules(['required']);
         $this->requiredCallback = $callback;
 
         return $this;

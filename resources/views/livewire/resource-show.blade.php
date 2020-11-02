@@ -39,7 +39,7 @@
         @foreach ($fields as $field)
 
             <x-move-row name="{{ $field->name() }}">
-                {{ $field->type('show')->render() }}
+                {{ $field->render('show') }}
             </x-move-row>
         @endforeach
     </x-move-card>

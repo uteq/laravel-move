@@ -104,9 +104,11 @@ trait HasRules
      */
     public function getUpdateRules(Request $request)
     {
-        $rules = [$this->attribute => is_callable($this->updateRules)
-            ? call_user_func($this->updateRules, $request)
-            : $this->updateRules, ];
+        $rules = [
+            $this->attribute => is_callable($this->updateRules)
+                ? call_user_func($this->updateRules, $request)
+                : $this->updateRules,
+        ];
 
         /** @psalm-suppress InvalidArgument */
         return array_merge_recursive(

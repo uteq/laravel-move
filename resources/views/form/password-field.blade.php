@@ -1,4 +1,4 @@
-<x-move-form.row model="{{ $field->model() }}"
+<x-move-form.row model="{{ $field->store }}"
             type="password"
             label="{{ $field->name }}"
             :required="$field->isRequired()"

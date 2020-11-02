@@ -87,6 +87,22 @@ abstract class Field extends FieldElement
     public Closure $fillCallback;
 
     /**
+     * @var Closure[]
+     */
+    public array $beforeStore;
+
+    public string $store;
+
+    public array $displayTypes = [
+        'edit' => 'form',
+        'update' => 'form',
+        'create' => 'form',
+        'form' => 'form',
+        'index' => 'index',
+        'show' => 'show',
+    ];
+
+    /**
      * Field constructor.
      */
     public function __construct(string $name, string $attribute = null, callable $callableValue = null)
@@ -94,6 +110,7 @@ abstract class Field extends FieldElement
         $this->name = $name;
         $this->attribute = $attribute;
         $this->callableValue = $callableValue;
+        $this->store = 'store.' . $attribute;
 
         if (method_exists($this, 'init')) {
             /** @psalm-suppress InvalidArgument */
@@ -177,13 +194,6 @@ abstract class Field extends FieldElement
         }
     }
 
-    /**
-     * Resolve the given attribute from the given resource.
-     *
-     * @param  mixed  $resource
-     * @param  string  $attribute
-     * @return mixed
-     */
     protected function resolveAttribute($resource, $attribute)
     {
         return data_get($resource, str_replace('->', '.', $attribute));
@@ -312,32 +322,72 @@ abstract class Field extends FieldElement
         return strtolower(Str::afterLast(static::class, '\\'));
     }
 
-    public function view(array $data = [])
+    public function view(string $displayType, array $data = [])
     {
-        $defaultType = $this->type ?? Str::afterLast(request()->route()->getName(), '.');
-        $type = [
-            'update' => 'form',
-            'create' => 'form',
-            'form' => 'form',
-            'index' => 'index',
-            'show' => 'show',
-        ][$defaultType] ?? null;
+        $displayType = $this->displayTypes[$displayType] ?? 'index';
 
-        if (! $this->areDependenciesSatisfied($this->resource)) {
-            return null;
-        }
-
-        if (! $this->isShownOn($defaultType, $this->resource, request())) {
-            return null;
-        }
-
-        return view('move::'. $type .'.' . $this->component, array_replace_recursive([
+        return view('move::'. $displayType .'.' . $this->component, array_replace_recursive([
             'field' => $this,
         ], $data));
+    }
+
+    public function isVisible($resource, string $displayType)
+    {
+        if (! $this->areDependenciesSatisfied($resource)) {
+            return false;
+        }
+
+        $type = [
+            'create' => 'create',
+            'edit' => 'update',
+            'index' => 'index',
+            'show' => 'show',
+        ][$displayType] ?? $displayType;
+
+        if (! $this->isShownOn($type, $resource, request())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function defaultDisplayType()
+    {
+        return $this->type ?? Str::afterLast(request()->route()->getName(), '.');
     }
 
     public function render()
     {
         return $this->view(...func_get_args());
+    }
+
+    public function beforeStore(Closure $beforeStore)
+    {
+        $this->beforeStore[] = $beforeStore;
+
+        return $this;
+    }
+
+    public function handleBeforeStore($model, $data, $value)
+    {
+        $handlers = $this->beforeStore;
+
+        return collect($handlers)->each->__invoke($model, $data, $value);
+    }
+
+    public function removeFromModel()
+    {
+        $this->beforeStore[] = function ($model, $data, $value) {
+            unset($model[$this->attribute]);
+        };
+
+        return $this;
+    }
+
+    public function onlyForValidation()
+    {
+        $this->removeFromModel();
+
+        return $this;
     }
 }

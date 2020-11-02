@@ -36,7 +36,7 @@ trait HasStore
         return [];
     }
 
-    public function rules(): array
+    public function rules($model = null): array
     {
         // Overwrite method to add your own rules
         return [];
@@ -44,14 +44,14 @@ trait HasStore
 
     public function save()
     {
+        $this->{$this->property}->refresh();
+
         if (method_exists($this, 'beforeStore')) {
             $this->beforeStore($this->{$this->property});
         }
 
-        $this->model->fill($this->modelData);
-
         $data = [
-            'fields' => $this->resolveMappedFields($this->model),
+            'fields' => $this->resolveAndMapFields($this->model),
         ];
 
         /** @psalm-suppress InvalidArgument */
@@ -62,6 +62,8 @@ trait HasStore
 
     public function update(array $fields)
     {
+        $this->customValidate($fields, $this->rules($this->{$this->property}));
+
         // This ensures that the fields data is formatted as the user want it
         //  this will for example prevent a empty value to be seen as 0
         //  and skipped by the rules
@@ -70,8 +72,6 @@ trait HasStore
 
         $fields = is_array($data) ? $data : $data->toArray();
 
-        $this->customValidate($fields, $this->rules());
-
         $this->handleResourceAction('update', $fields);
 
         $this->maybeRedirectFromAction('update');
@@ -79,7 +79,15 @@ trait HasStore
 
     public function create(array $fields)
     {
-        $this->customValidate($fields, $this->rules());
+        $this->customValidate($fields, $this->rules($this->{$this->property}));
+
+        // This ensures that the fields data is formatted as the user want it
+        //  this will for example prevent a empty value to be seen as 0
+        //  and skipped by the rules
+        $data = $this->resource()
+            ->toDataTransferObject($fields, 'fromLivewire');
+
+        $fields = is_array($data) ? $data : $data->toArray();
 
         $this->handleResourceAction('create', $fields);
 

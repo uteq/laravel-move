@@ -61,6 +61,7 @@ class MoveServiceProvider extends ServiceProvider
             $this->registerComponent('form-section');
             $this->registerComponent('header');
             $this->registerComponent('modal');
+            $this->registerComponent('panel');
             $this->registerComponent('profile-dropdown');
             $this->registerComponent('row');
             $this->registerComponent('secondary-button');

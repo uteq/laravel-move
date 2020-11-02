@@ -49,5 +49,5 @@ abstract class FormComponent extends Component
             : $this->label .' toevoegen';
     }
 
-    abstract public function rules(): array;
+    abstract public function rules($model = null): array;
 }

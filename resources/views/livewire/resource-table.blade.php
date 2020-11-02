@@ -84,10 +84,10 @@
                                     wire:loading.attr="disabled"
                                     wire:loading.class="text-gray-500"
                             >
-                                {{ $field->type('index')->render() }}
+                                {{ $field->render('index') }}
                             </button>
                         @else
-                            {{ $field->type('index')->render() }}
+                            {{ $field->render('index') }}
                         @endif
                     </x-move-td>
                 @endforeach

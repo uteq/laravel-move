@@ -29,14 +29,17 @@ class ResourceForm extends FormComponent
         'saved' => 'handleAfterSaveActions',
     ];
 
+    /**
+     * @var array
+     */
+    public array $store;
+
     public function mount()
     {
         $this->baseRoute = Move::getPrefix();
-
-        if (isset($this->model->password)) {
-            collect($this->fields())
-                ->each(fn ($field) => $this->model = $field->cleanModel($this->model));
-        }
+        $this->store = collect($this->fields())
+            ->mapWithKeys(fn ($field) => [$field->attribute => $field->value])
+            ->toArray();
     }
 
     public function handleAfterSaveActions()
@@ -68,18 +71,6 @@ class ResourceForm extends FormComponent
         return $this->resource()::$redirectEndpoints;
     }
 
-    public function updatedModel($value, $field)
-    {
-        $this->resolveFields($this->model);
-
-        $this->model->{$field} = $value;
-
-        // FIX This is somehow needed to keep track of the model data
-        //  because whenever save is hit the model seems to reset.
-        //  still not to figure out why
-        $this->modelData = $this->model->toArray();
-    }
-
     public function label()
     {
         return $this->resource()->singularLabel();
@@ -92,24 +83,29 @@ class ResourceForm extends FormComponent
         );
     }
 
+    public function panels()
+    {
+        return $this->resource()->panels($this->model, isset($model->id) ? 'update' : 'create');
+    }
+
     public function render()
     {
         /** @psalm-suppress UndefinedInterfaceMethod */
-        return view('move::livewire.resource-form', [
-            'model' => $this->model,
-            'fields' => $this->resolveFields($this->model),
-        ])->layout(Move::layout(), [
+        return view('move::livewire.resource-form')->layout(Move::layout(), [
             'header' => $this->resource()->singularLabel() .' details',
         ]);
     }
 
-    public function rules(): array
+    public function rules($model = null): array
     {
-        return array_replace_recursive($this->resolveFieldRules(), (
-            // TODO model never exists whenever the rules are loaded
-        ($this->modelId ?? null)
-            ? $this->resolveFieldUpdateRules()
-            : $this->resolveFieldCreateRules()
-        ));
+        return array_replace_recursive(
+            $this->resolveFieldRules(),
+            (
+                // TODO model never exists whenever the rules are loaded
+                ((optional($model)->id || $this->modelId) ?? null)
+                    ? $this->resolveFieldUpdateRules()
+                    : $this->resolveFieldCreateRules()
+            )
+        );
     }
 }

@@ -1,6 +1,6 @@
 @if ($fields && $resource)
     @foreach ($fields as $field)
-        {{ $field->render() }}
+        {{ $field->render('create') }}
     @endforeach
 @else
     <p>{{ $action->confirmText }}</p>

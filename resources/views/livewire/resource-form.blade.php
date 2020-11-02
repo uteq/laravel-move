@@ -1,13 +1,13 @@
-<x-move-form-section submit="save" class="mt-10" wire:key="resource-form-{{ $this->model->id ?? rand(0, 99) }}">
+<x-move-form-section submit="save" class="mt-5" wire:key="resource-form-{{ $this->model->id ?? rand(0, 99) }}">
 
     <x-slot name="form">
-
-        @foreach ($fields as $key => $field)
-            @if ($model)
-                @php $field->resolveForDisplay($model->fill($modelData)) @endphp
-            @endif
-
-            {{ $field->type(isset($model->id) ? 'update' : 'create')->render() }}
+        @foreach ($this->panels() as $panel)
+            @if ($panel->empty()) @continue @endif
+            <x-move-panel :title="$panel->name">
+                @foreach ($panel->fields as $key => $field)
+                    {{ $field->render($model->id ? 'edit' : 'create') }}
+                @endforeach
+            </x-move-panel>
         @endforeach
     </x-slot>
 
@@ -27,7 +27,7 @@
             @if ($model->id)
                 {{ __('Edit ' . $this->label()) }}
             @else
-                {{ __('Create' . $this->label()) }}
+                {{ __('Create ' . $this->label()) }}
             @endif
         </x-move-button>
     </x-slot>

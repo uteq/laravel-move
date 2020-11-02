@@ -76,7 +76,7 @@ trait HasFiles
 
             $key = $field->attribute;
 
-            $this->model->{$key} = $this->getFilesPaths($field);
+            $this->store[$key] = $this->getFilesPaths($field);
         }
     }
 

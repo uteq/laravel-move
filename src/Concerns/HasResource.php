@@ -19,6 +19,13 @@ trait HasResource
         $this->modelId = optional($this->model)->id;
     }
 
+    public function mountHasResource()
+    {
+        if ($this->modelId) {
+            $this->resource()->resource = $this->model;
+        }
+    }
+
     public function resource()
     {
         return Move::resolveResource($this->resource);
@@ -41,10 +48,10 @@ trait HasResource
         return $this->resource()->resolveFields($model, $type);
     }
 
-    public function resolveMappedFields(Model $model)
+    public function resolveAndMapFields(Model $model)
     {
         return collect($this->resolveFields($this->model))
-            ->mapWithKeys(fn ($field) => [$field->attribute => $field->value])
+            ->mapWithKeys(fn ($field) => [$field->attribute => $this->store[$field->attribute]])
             ->toArray();
     }
 
@@ -71,16 +78,23 @@ trait HasResource
 
     public function handleResourceAction($type, $fields)
     {
-        $this->{$this->property} = $this->resource()
-            ->handleAction($type, $this->{$this->property}, $fields, 'livewire');
+        $this->resource()->handleAction(
+            $type,
+            $this->{$this->property},
+            $fields,
+            'livewire',
+        );
+
+        $this->{$this->property}->refresh();
 
         $this->emit('saved', $this->{$this->property});
     }
 
     public function fields()
     {
-        return $this->resource()
-            ->resolveFields($this->resource()->model());
+        return $this->model
+            ? $this->resolveFields($this->model)
+            : $this->resource()->resolveFields($this->resource()->model());
     }
 
     public function filters()

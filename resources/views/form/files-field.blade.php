@@ -1,4 +1,4 @@
-<x-move-form.row width="w-full" custom label="{{ $field->name }}" model="{{ $field->model() }}" :required="$field->isRequired()" help-text="{{ $field->getHelpText() }}">
+<x-move-form.row width="w-full" custom label="{{ $field->name }}" model="{{ $field->store }}" :required="$field->isRequired()" help-text="{{ $field->getHelpText() }}">
 
     <label class="w-full">
         <div class="flex text-center items-center px-4 py-2 bg-white text-blue rounded-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-teal-800 hover:text-white">
@@ -7,8 +7,8 @@
                 {{ __('Add a new file') }}
             </span>
         </div>
-        <input type='file'
-               name="{{ $field->model() }}[]"
+        <input type="file"
+               name="{{ $field->store }}[]"
                class="hidden"
                wire:model="files.{{ $field->attribute }}"
                accept="image/*, .pdf, application/pdf, application/heic"
@@ -25,7 +25,7 @@
     @php $this->loadFiles($field) @endphp
 
     <x-slot name="append">
-        <div class="flex flex-row flex-wrap">
+        <div class="grid grid-cols-3 gap-4">
         @if ($this->files)
             @foreach ($this->loadFiles($field) as $i => $file)
 
@@ -37,7 +37,7 @@
                     @continue
                 @endif
 
-                <div class="w-full md:w-1/4 @if ($i % 1 === 0) pr-6 @endif " wire:key="file{{ $field->attribute }}{{ $loop->index }}{{ $i }}">
+                <div wire:key="file{{ $field->attribute }}{{ $loop->index }}{{ $i }}">
                     <div class="border p-3 rounded my-3">
                         <div class="flex justify-end">
                             <div class="mr-auto text-small" wire:target="rotateFile" wire:loading>
