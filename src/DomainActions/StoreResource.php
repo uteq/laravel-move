@@ -16,7 +16,7 @@ class StoreResource
         $model = $resource->fill(
             // All media should be stripped from the model data
             //  because this action will store the media separate in the after store.
-            ...$this->withoutMedia($model, $data, $resource),
+            ...$this->withoutMedia($model, $data),
         );
 
         $model->save();

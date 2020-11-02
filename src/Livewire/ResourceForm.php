@@ -102,7 +102,7 @@ class ResourceForm extends FormComponent
             $this->resolveFieldRules(),
             (
                 // TODO model never exists whenever the rules are loaded
-                ((optional($model)->id || $this->modelId) ?? null)
+                (optional($model)->id || $this->modelId)
                     ? $this->resolveFieldUpdateRules()
                     : $this->resolveFieldCreateRules()
             )
