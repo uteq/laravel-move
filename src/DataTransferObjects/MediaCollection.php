@@ -13,7 +13,7 @@ class MediaCollection extends DataTransferObjectCollection implements MediaColle
 
     public static function create(array $data)
     {
-        return new self(collect($data)->map(fn($item) => new MediaData($item))->toArray());
+        return new self(collect($data)->map(fn ($item) => new MediaData($item))->toArray());
     }
 
     public function onlyDelete()
