@@ -252,6 +252,8 @@ abstract class Resource
         $dtoMethod = 'from' . ucfirst(strtolower($from));
 
         if (method_exists($this, 'handle' . ucfirst($key))) {
+            $fields = $this->handleFieldsBeforeStore($model, $fields, $this);
+
             return app()->call(
                 [$this, 'handle' . ucfirst($key)],
                 ['handler' => $handler, 'model' => $model, 'fields' => $fields, 'dtoMethod' => $dtoMethod]
@@ -269,6 +271,20 @@ abstract class Resource
     public function handleUpdate($handler, $model, $fields, $dtoMethod)
     {
         return $handler($model, $this->toDataTransferObject($fields, $dtoMethod), $this);
+    }
+
+    public function handleFieldsBeforeStore(Model $model, array $data, Resource $resource)
+    {
+        $beforeStoreFields = collect($resource->getFields())
+            ->filter(fn ($item) => isset($item->beforeStore));
+
+        foreach ($data as $field => $value) {
+            $beforeStoreFields
+                ->filter(fn (Field $item) => $item->attribute === $field)
+                ->each(fn (Field $item) => $data[$field] = $item->handleBeforeStore($model, $data, $value));
+        }
+
+        return $data;
     }
 
     public function toDataTransferObject($data, $dtoMethod)
@@ -336,7 +352,7 @@ abstract class Resource
         $panels = $panels->each(fn (Panel $panel) => $panel->resolveFields($resource))
             ->map(function ($panel) use ($resource, $displayType) {
                 $panel->fields = collect($panel->fields)
-                    ->filter(fn (Field $field) => $field->isVisible($resource, $displayType))
+                    ->filter(fn (Field $field) => $field->isVisible($resource->store, $displayType))
                     ->toArray();
 
                 return $panel;

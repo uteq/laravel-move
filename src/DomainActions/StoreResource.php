@@ -11,8 +11,6 @@ class StoreResource
 {
     public function __invoke(Model $model, array $data, Resource $resource)
     {
-        $data = $this->handleFieldsBeforeStore($model, $data, $resource);
-
         $model = $resource->fill(
             // All media should be stripped from the model data
             //  because this action will store the media separate in the after store.
@@ -66,20 +64,6 @@ class StoreResource
         return collect($data)
             ->filter(fn ($attribute) => ! $attribute instanceof MediaCollection)
             ->toArray();
-    }
-
-    public function handleFieldsBeforeStore(Model $model, array $data, Resource $resource)
-    {
-        $beforeStoreFields = collect($resource->fields())
-            ->filter(fn ($item) => isset($item->beforeStore));
-
-        foreach ($data as $field => $value) {
-            $beforeStoreFields
-                ->filter(fn (Field $item) => $item->attribute === $field)
-                ->each(fn (Field $item) => $data[$field] = $item->handleBeforeStore($model, $data, $value));
-        }
-
-        return $data;
     }
 
     public function afterStore(Model $model, array $data, Resource $resource)

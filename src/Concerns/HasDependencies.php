@@ -2,6 +2,8 @@
 
 namespace Uteq\Move\Concerns;
 
+use Illuminate\Support\Arr;
+
 trait HasDependencies
 {
     protected $dependencies = [];
@@ -41,7 +43,16 @@ trait HasDependencies
         return $this;
     }
 
-    public function areDependenciesSatisfied($model)
+    public function addDependencies($dependencies)
+    {
+        $this->dependencies = collect($this->dependencies)
+            ->merge($dependencies)
+            ->toArray();
+
+        return $this;
+    }
+
+    public function areDependenciesSatisfied($data)
     {
         $rules = [
             'callback' => fn ($value, $result) => $value($result),
@@ -53,7 +64,7 @@ trait HasDependencies
 
         foreach ($this->dependencies as $field => $condition) {
             foreach ($condition as $type => $value) {
-                if (! $rules[$type]($value, $model->{$field})) {
+                if (! $rules[$type]($value, $data[$field] ?? $data->{$field} ?? null)) {
                     return false;
                 }
             }

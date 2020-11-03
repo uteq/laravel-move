@@ -14,7 +14,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'move:install {--teams : Indicates if team support should be installed}';
+    protected $signature = 'move:install {--teams : Indicates if team support should be installed} {--skip-jetstream}';
 
     /**
      * The console command description.
@@ -25,11 +25,14 @@ class InstallCommand extends Command
 
     public function handle()
     {
-        $this->line('Installing Jetstream. This can take a while');
+        if (! $this->option('skip-jetstream')) {
+            $this->line('Installing Jetstream. This can take a while');
 
-        Artisan::call('jetstream:install', ['stack' => 'livewire', '--teams' => $this->option('teams')]);
+            Artisan::call('jetstream:install', ['stack' => 'livewire', '--teams' => $this->option('teams')]);
 
-        echo Artisan::output();
+            echo Artisan::output();
+        }
+
 
         $this->line('Installing Move');
 

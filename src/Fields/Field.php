@@ -102,6 +102,10 @@ abstract class Field extends FieldElement
         'show' => 'show',
     ];
 
+    protected $index = null;
+    protected $show = null;
+    protected $form = null;
+
     /**
      * Field constructor.
      */
@@ -322,16 +326,32 @@ abstract class Field extends FieldElement
         return strtolower(Str::afterLast(static::class, '\\'));
     }
 
-    public function view(string $displayType, array $data = [])
+    public function view(string $displayTypeKey, array $data = [])
     {
-        $displayType = $this->displayTypes[$displayType] ?? 'index';
+        $this->type = $displayTypeKey;
+
+        $displayType = $this->displayTypes[$displayTypeKey] ?? 'index';
+
+        $data = array_replace_recursive([
+            'field' => $this,
+        ], $data);
+
+        if (isset($this->{$displayType}) && null !== $this->{$displayType}) {
+            $handler = $this->{$displayType};
+
+            return $handler($this, $data);
+        }
+
+        if (! $this->isVisible($this->resource->store, $this->type)) {
+            return null;
+        }
 
         return view('move::'. $displayType .'.' . $this->component, array_replace_recursive([
             'field' => $this,
         ], $data));
     }
 
-    public function isVisible($resource, string $displayType)
+    public function isVisible($resource, ?string $displayType = null)
     {
         if (! $this->areDependenciesSatisfied($resource)) {
             return false;
@@ -387,6 +407,27 @@ abstract class Field extends FieldElement
     public function onlyForValidation()
     {
         $this->removeFromModel();
+
+        return $this;
+    }
+
+    public function index(\Closure $index)
+    {
+        $this->index = $index;
+
+        return $this;
+    }
+
+    public function show(\Closure $show)
+    {
+        $this->show = $show;
+
+        return $this;
+    }
+
+    public function form(\Closure $form)
+    {
+        $this->form = $form;
 
         return $this;
     }

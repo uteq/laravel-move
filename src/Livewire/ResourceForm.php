@@ -40,6 +40,7 @@ class ResourceForm extends FormComponent
         $this->store = collect($this->fields())
             ->mapWithKeys(fn ($field) => [$field->attribute => $field->value])
             ->toArray();
+        $this->model->store = $this->store;
     }
 
     public function handleAfterSaveActions()
@@ -81,6 +82,11 @@ class ResourceForm extends FormComponent
         return $this->resource()->singularLabel() . ' ' . (
             $this->model ? 'edit' : 'create'
         );
+    }
+
+    public function updatedStore()
+    {
+        $this->model->store = $this->store;
     }
 
     public function panels()

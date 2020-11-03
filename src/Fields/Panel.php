@@ -2,11 +2,13 @@
 
 namespace Uteq\Move\Fields;
 
+use Uteq\Move\Concerns\HasDependencies;
 use Uteq\Move\Concerns\Makeable;
 
 class Panel
 {
     use Makeable;
+    use HasDependencies;
 
     public ?string $name = null;
     public array $fields;
@@ -20,7 +22,10 @@ class Panel
     public function resolveFields($resource)
     {
         collect($this->fields)
-            ->each(fn (Field $field) => $field->resolveForDisplay($resource));
+            ->each(function (Field $field) use ($resource) {
+                $field->addDependencies($this->dependencies)
+                    ->resolveForDisplay($resource);
+            });
 
         return $this;
     }
