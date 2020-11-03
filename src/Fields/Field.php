@@ -112,7 +112,7 @@ abstract class Field extends FieldElement
     public function __construct(string $name, string $attribute = null, callable $callableValue = null)
     {
         $this->name = $name;
-        $this->attribute = $attribute;
+        $this->attribute = $attribute ?? Str::snake(Str::singular($name));
         $this->callableValue = $callableValue;
         $this->store = 'store.' . $attribute;
 

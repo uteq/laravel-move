@@ -2,7 +2,9 @@
 
 namespace Uteq\Move;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Uteq\Move\Exceptions\FindResourceException;
 
 class Move
 {
@@ -10,6 +12,7 @@ class Move
     public array $customResourceNamespaces = [];
     public string $prefix = 'move';
     public bool $useSidebarGroups = true;
+    public ?array $resources = null;
 
     public function prefix(string $prefix)
     {
@@ -114,21 +117,36 @@ class Move
 
     public function all()
     {
-        $resources = [];
-        foreach ($this->customResourceNamespaces as $prefix => $namespace) {
-            $resources = array_merge(
-                $resources,
-                $this->getClassNames($this->generatePathFromNamespace($namespace))
-                    ->mapWithKeys(function ($class) use ($prefix) {
-                        $prefix = empty($prefix) ? null : $prefix . '.';
+        if (! $this->resources) {
+            $resources = [];
+            foreach ($this->customResourceNamespaces as $prefix => $namespace) {
+                $resources = array_merge(
+                    $resources,
+                    $this->getClassNames($this->generatePathFromNamespace($namespace))
+                        ->mapWithKeys(function ($class) use ($prefix) {
+                            $prefix = empty($prefix) ? null : $prefix . '.';
 
-                        return [$prefix . Str::lower(Str::afterLast(rtrim($class, '\\'), '\\')) => $class];
-                    })
-                    ->toArray()
-            );
+                            return [$prefix . Str::lower(Str::afterLast(rtrim($class, '\\'), '\\')) => $class];
+                        })
+                        ->toArray()
+                );
+            }
+
+            $this->resources = array_replace($resources, $this->customResources);
         }
 
-        return array_replace($resources, $this->customResources);
+        return $this->resources;
+    }
+
+    public function find($resource)
+    {
+        if (collect($this->all())->first(fn ($value, $key) => $value === $resource)) {
+            return [$resource];
+        }
+
+        return collect($this->all())
+            ->filter(fn ($class, $name) => Str::contains($name, $resource))
+            ->toArray();
     }
 
     public function useSidebarGroups(bool $bool = true)

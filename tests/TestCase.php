@@ -41,7 +41,11 @@ class TestCase extends Orchestra
         parent::setUp();
 
         $this->app->singleton(ResourceFinder::class, function () {
-            return new ResourceFinder(new Filesystem, dirname(dirname(__FILE__)));
+            $finder = new ResourceFinder(new Filesystem(), dirname(__FILE__));
+            $finder->setNamespace('\\Uteq\\Move\\Tests\\');
+            $finder->setAppPath(dirname(__FILE__));
+
+            return $finder;
         });
 
         Factory::guessFactoryNamesUsing(
@@ -88,6 +92,7 @@ class TestCase extends Orchestra
         $app['config']->set('app.key', 'base64:Hupx3yAySikrM2/edkZQNQHslgDWYfiBfCuSThJ5SK8=');
 
         Move::resource('fixtures.user-resource', UserResource::class);
+        Move::resource('fixtures.other-namespace.user-resource', \Uteq\Move\Tests\Fixtures\OtherNamespace\UserResource::class);
 
         include_once __DIR__ . '/../database/migrations/create_move_table.php.stub';
         (new \CreateMoveTable())->up();

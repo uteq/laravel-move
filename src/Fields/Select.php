@@ -48,7 +48,7 @@ class Select extends Field
         return str_replace('.', '/', Move::getByClass($this->resourceName ?? null) ?? '');
     }
 
-    public function resourceName()
+    public function resourceName($model)
     {
         if (! $this->resourceName) {
             return null;
@@ -57,14 +57,15 @@ class Select extends Field
         if ($this->customIndexName) {
             $callback = $this->customIndexName;
 
-            return $callback($this);
+            return $callback($model, $this);
         }
+
 
         $resourceName = $this->resourceName;
 
         $key = $resourceName::$title;
 
-        return optional($resourceName::$model::find($this->value))->$key;
+        return $model->$key;
     }
 
     public function resource($resource)
@@ -108,7 +109,7 @@ class Select extends Field
 
         if ($resourceName = $this->resourceName) {
             return $resourceName::$model::all()
-                ->mapWithKeys(fn ($item) => [$item->getKey() => $item->{$resourceName::$title}])
+                ->mapWithKeys(fn ($item) => [$item->getKey() => $this->resourceName($item)])
                 ->toArray();
         }
 
