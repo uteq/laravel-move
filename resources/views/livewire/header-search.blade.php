@@ -19,7 +19,12 @@
         </div>
 
         @if (strlen($search))
-            <div id="search-dropdown" class="border w-full rounded-bottom bg-white" wire:target="search" wire:loading.remove>
+            <div id="search-dropdown"
+                 class="border w-full rounded-bottom bg-white"
+                 wire:target="search"
+                 wire:loading.remove
+                 style="overflow: auto; max-height: calc(100vh - 64px);"
+            >
                 @forelse ($searchResult as $result)
                     <div class="text-gray-600 px-5 pb-2 pt-3">
                         {{ $result['resource']::label() }}
@@ -32,7 +37,7 @@
                             @endif
                             <li class="w-full focus:bg-green-100 hover:bg-green-50">
                                 <a href="{{ route('move.show', ['resource' => $result['route'], 'model' => $model]) }}" class="cursor-pointer w-full block py-1 px-5">
-                                    {{ $model->{$result['resource']::$title} }}
+                                    {{ $result['resource']::title($model) }}
                                 </a>
                             </li>
                         @endforeach

@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Fields;
 
+use Illuminate\Database\Eloquent\Model;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
@@ -16,6 +17,15 @@ class Select extends Field
     public string $placeholder;
 
     public ?\Closure $customIndexName = null;
+
+    public array $settings = [];
+
+    public function settings(array $settings)
+    {
+        $this->settings = $settings;
+
+        return $this;
+    }
 
     public function indexName(\Closure $indexName)
     {
@@ -48,8 +58,12 @@ class Select extends Field
         return str_replace('.', '/', Move::getByClass($this->resourceName ?? null) ?? '');
     }
 
-    public function resourceName($model)
+    public function resourceName(Model $model = null)
     {
+        if (! $model) {
+            return null;
+        }
+
         if (! $this->resourceName) {
             return null;
         }
@@ -60,12 +74,9 @@ class Select extends Field
             return $callback($model, $this);
         }
 
-
         $resourceName = $this->resourceName;
 
-        $key = $resourceName::$title;
-
-        return $model->$key;
+        return $resourceName::title($model);
     }
 
     public function resource($resource)

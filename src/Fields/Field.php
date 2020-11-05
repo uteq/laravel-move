@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
+use Illuminate\View\View;
 use Uteq\Move\Concerns\HasDependencies;
 use Uteq\Move\Concerns\HasHelpText;
 use Uteq\Move\Concerns\HasRequired;
@@ -89,7 +90,12 @@ abstract class Field extends FieldElement
     /**
      * @var Closure[]
      */
-    public array $beforeStore;
+    public array $beforeStore = [];
+
+    /**
+     * @var Closure[]
+     */
+    public array $afterStore = [];
 
     public string $store;
 
@@ -339,7 +345,11 @@ abstract class Field extends FieldElement
         if (isset($this->{$displayType}) && null !== $this->{$displayType}) {
             $handler = $this->{$displayType};
 
-            return $handler($this, $data);
+            if ($handler instanceof View) {
+                return $handler->with($data);
+            }
+
+            return is_callable($handler) ? $handler($this, $data) : $handler;
         }
 
         if (! $this->isVisible($this->resource->store, $this->type)) {
@@ -388,9 +398,23 @@ abstract class Field extends FieldElement
         return $this;
     }
 
+    public function afterStore(Closure $afterStore)
+    {
+        $this->afterStore[] = $afterStore;
+
+        return $this;
+    }
+
     public function handleBeforeStore($model, $data, $value)
     {
         $handlers = $this->beforeStore;
+
+        return collect($handlers)->each->__invoke($model, $data, $value);
+    }
+
+    public function handleAfterStore($model, $data, $value)
+    {
+        $handlers = $this->afterStore;
 
         return collect($handlers)->each->__invoke($model, $data, $value);
     }
@@ -411,24 +435,33 @@ abstract class Field extends FieldElement
         return $this;
     }
 
-    public function index(\Closure $index)
+    public function index($index)
     {
         $this->index = $index;
 
         return $this;
     }
 
-    public function show(\Closure $show)
+    public function show($show)
     {
         $this->show = $show;
 
         return $this;
     }
 
-    public function form(\Closure $form)
+    public function form($form)
     {
         $this->form = $form;
 
         return $this;
+    }
+
+    public function store()
+    {
+        if (! isset($this->resource->store)) {
+            return null;
+        }
+
+        return $this->resource->store[$this->attribute] ?? null;
     }
 }

@@ -112,6 +112,10 @@ class MoveServiceProvider extends ServiceProvider
                 continue;
             }
 
+            if (! is_subclass_of($class, Resource::class)) {
+                continue;
+            }
+
             $this->app->singleton(Move::getPrefix() . '.' . $alias, function () use ($class) {
                 $model = $class::$model;
 

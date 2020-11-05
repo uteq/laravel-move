@@ -1,4 +1,4 @@
-@php $index = \Str::slug(str_replace('.', '-', 'model.'. $field->attribute)); @endphp
+@php $index = Str::slug(str_replace('.', '-', 'model.'. $field->attribute)) @endphp
 
 <x-move-form.row
     custom
@@ -9,12 +9,13 @@
 >
     <div class="w-full text-black" x-data="{ form : false }">
         <x-move-field.select model="{{ $field->store }}"
-                        placeholder="{{ $field->placeholder ?? null }}"
+                             placeholder="{{ $field->placeholder ?? null }}"
+                             :settings="$field->settings"
+                             :values="array_keys($field->store() ?? [])"
         >
-                <option></option>
-                @foreach ($field->getOptions() as $key => $value)
+            @foreach ($field->getOptions() as $key => $value)
                 <option value="{{ $key }}" @if ($key === $field->value) selected @endif >{{ $value }}</option>
-                @endforeach
+            @endforeach
         </x-move-field.select>
 
         <div x-show="form" style="display: none">
@@ -23,22 +24,21 @@
     </div>
 </x-move-form.row>
 
-
 @push('scripts')
     <script>
-        document.addEventListener("livewire:load", function() {
+        document.addEventListener("livewire:load", function () {
 
-            Livewire.on('closeModal', function() {
-                @this.set('showingAddResource.{{ $index }}', false);
+            Livewire.on('closeModal', function () {
+            @this.set('showingAddResource.{{ $index }}', false);
             });
 
-            Livewire.on('showingAddResource', function() {
+            Livewire.on('showingAddResource', function () {
                 window.$('.select2-{{ $index }}').select2('close');
             });
 
             let $element = window.$('.select2-{{ $index }}');
 
-            $element.on('select2:open', function(e) {
+            $element.on('select2:open', function (e) {
                 window.$(".select2-dropdown:not(:has(a))").append(
                     '<a onclick="window.livewire.emit(\'showAddResource\', \'{{ $index }}\')"'
                     + 'style="padding: 6px;height: 20px;display: inline-table;"'

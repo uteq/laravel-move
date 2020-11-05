@@ -21,6 +21,7 @@ class ResourceTable extends TableComponent
     public $action = '-';
     public $showingAction = false;
     public $showingDelete = false;
+    public $sortable = false;
     public $error = null;
     public $hasError = false;
     public $requestQuery;
@@ -39,6 +40,12 @@ class ResourceTable extends TableComponent
         $this->hydrate();
         $this->computeHasSelected();
         $this->requestQuery = request()->query();
+        $this->sortable = $this->resource()::$sortable;
+    }
+
+    public function updateTaskOrder($order)
+    {
+        // TODO needs implementation
     }
 
     public function resetPage()

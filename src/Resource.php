@@ -49,6 +49,9 @@ abstract class Resource
     /** Where should the global search link to? */
     public static string $globalSearchLink = 'detail';
 
+    /** Where should the global search link to? */
+    public static bool $sortable = false;
+
     /** All endpoints that will be satisfied */
     public static array $redirectEndpoints = [
         'create' => 'index',
@@ -197,9 +200,9 @@ abstract class Resource
      *
      * @return string
      */
-    public function title($model = null)
+    public static function title($model)
     {
-        return ($model ?? $this->resource)->{static::$title};
+        return $model->{static::$title};
     }
 
     public function getForIndex($requestQuery): array
@@ -254,10 +257,14 @@ abstract class Resource
         if (method_exists($this, 'handle' . ucfirst($key))) {
             $fields = $this->handleFieldsBeforeStore($model, $fields, $this);
 
-            return app()->call(
+            $result = app()->call(
                 [$this, 'handle' . ucfirst($key)],
                 ['handler' => $handler, 'model' => $model, 'fields' => $fields, 'dtoMethod' => $dtoMethod]
             );
+
+            $this->handleFieldsAfterStore($model, $fields, $this);
+
+            return $result;
         }
 
         return null;
@@ -282,6 +289,20 @@ abstract class Resource
             $beforeStoreFields
                 ->filter(fn (Field $item) => $item->attribute === $field)
                 ->each(fn (Field $item) => $data[$field] = $item->handleBeforeStore($model, $data, $value));
+        }
+
+        return $data;
+    }
+
+    public function handleFieldsAfterStore(Model $model, array $data, Resource $resource)
+    {
+        $beforeStoreFields = collect($resource->getFields())
+            ->filter(fn ($item) => isset($item->beforeStore));
+
+        foreach ($data as $field => $value) {
+            $beforeStoreFields
+                ->filter(fn (Field $item) => $item->attribute === $field)
+                ->each(fn (Field $item) => $data[$field] = $item->handleAfterStore($model, $data, $value));
         }
 
         return $data;

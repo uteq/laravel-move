@@ -19,7 +19,7 @@
                     {{ $filter->name() }}
                 </h3>
                 <div class="p-3" wire:key="filter.{{ $key }}">
-                    <x-dynamic-component :component="'filters.' . $filter->component()"
+                    <x-dynamic-component :component="'move::filters.' . $filter->component()"
                                          :filter="$filter"
                     />
                 </div>
@@ -39,6 +39,9 @@
 
         <x-slot name="head">
             <tr>
+                @if ($sortable)
+                <x-move-th></x-move-th>
+                @endif
                 <x-move-th></x-move-th>
                 @foreach ($header as $field)
                     <x-move-th>
@@ -70,15 +73,18 @@
             </tr>
         </x-slot>
 
-        <tbody wire:target="edit" wire:loading.remove>
+        <tbody wire:target="edit" wire:loading.remove @if ($sortable) wire:sortable="updateTaskOrder" @endif>
         @forelse ($rows as $i => $row)
-            <tr class="hover:bg-gray-50" wire:key="'table-row' . {{ $loop->index }}">
+            <tr class="hover:bg-gray-50 bg-white shadow" wire:key="'table-row' . {{ $loop->index }}" wire:sortable.item="{{ $row['model']->id }}">
+                @if ($sortable)
+                <x-move-td wire:sortable.handle><x-ri-drag-move-2-fill /></x-move-td>
+                @endif
                 <x-move-td>
                     <x-move-field.checkbox model="selected.{{ $row['model']->id }}"/>
                 </x-move-td>
                 @foreach ($row['fields'] as $field)
                     <x-move-td>
-                        @if ($this->resource()::$title === $field->attribute)
+                        @if ($this->resource()::title($row['model']) === $field->attribute)
                             <button wire:click="edit({{ $row['model']->id }})"
                                     class="text-green-500 cursor-pointer"
                                     wire:loading.attr="disabled"
