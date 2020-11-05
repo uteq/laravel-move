@@ -2,8 +2,6 @@
 
 namespace Uteq\Move\Concerns;
 
-use Illuminate\Support\Arr;
-
 trait HasDependencies
 {
     protected $dependencies = [];

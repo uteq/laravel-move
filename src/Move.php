@@ -2,9 +2,7 @@
 
 namespace Uteq\Move;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Uteq\Move\Exceptions\FindResourceException;
 
 class Move
 {

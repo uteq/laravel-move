@@ -2,7 +2,6 @@
 
 namespace Uteq\Move\Tests\Feature;
 
-use Illuminate\Filesystem\Filesystem;
 use Uteq\Move\ResourceFinder;
 use Uteq\Move\Tests\TestCase;
 
