@@ -19,7 +19,7 @@
         let loadSelect2{{str_replace("-","_", $index)}} = function() {
 
             let $element = window.$('.select2-{{ $index }}');
-            let val = @php echo json_encode(count($values) ? $values : null) @endphp;
+            let val = @php echo json_encode($values && count($values) ? $values : null) @endphp;
             let settings = Object.assign({}, {
                 placeholder: '{{ $placeholder ?: __('Select your option')}}',
                 allowClear: true,
