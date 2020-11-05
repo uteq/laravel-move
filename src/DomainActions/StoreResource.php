@@ -4,7 +4,6 @@ namespace Uteq\Move\DomainActions;
 
 use Illuminate\Database\Eloquent\Model;
 use Uteq\Move\DataTransferObjects\MediaCollection;
-use Uteq\Move\Fields\Field;
 use Uteq\Move\Resource;
 
 class StoreResource
