@@ -10,6 +10,8 @@ class StoreResource
 {
     public function __invoke(Model $model, array $data, Resource $resource)
     {
+        unset($data['store'], $model->store);
+
         $model = $resource->fill(
             // All media should be stripped from the model data
             //  because this action will store the media separate in the after store.

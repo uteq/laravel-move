@@ -13,8 +13,8 @@ class ResourceForm extends FormComponent
 {
     use HasResource;
     use HasStore;
-    use WithFileUploads;
     use HasFiles;
+    use WithFileUploads;
 
     public $showingAddResource = [];
     public $baseRoute = 'move';

@@ -6,6 +6,8 @@
 
 <img src="https://uteq.nl/images/move/move-logo.png" />
 
+<b>This package is still in development and does not have a complete test suite.</b>
+
 Move makes it very easy to create your own Admin Panel using Laravel and Livewire. 
 This package was heavily inspired bij Laravel Nova. And works practically the same, except for some missing features.
  
