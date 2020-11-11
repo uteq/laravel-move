@@ -3,6 +3,7 @@
 namespace Uteq\Move;
 
 use Illuminate\Support\Str;
+use Uteq\Move\Collections\ResourceCollection;
 
 class Move
 {
@@ -31,23 +32,12 @@ class Move
         return $this;
     }
 
-    public function groupedResources()
-    {
-        return collect($this->resources())
-            ->filter(fn ($item) => $item::$group)
-            ->mapToGroups(function ($item) {
-                return [$item::$group => $item];
-            });
-    }
-
     public function resources()
     {
-        $resources = [];
-        foreach ($this->all() as $resource) {
-            $resources[] = $this->resolveResource($resource);
-        }
-
-        return $resources;
+        return new ResourceCollection(
+            collect($this->all())
+                ->map(fn ($resource) => $this->resolveResource($resource))
+        );
     }
 
     public function resourceRoute(string $alias)

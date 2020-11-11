@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Uteq\Move\Concerns\PerformsQueries;
+use Uteq\Move\Concerns\WithAuthorization;
 use Uteq\Move\DomainActions\DeleteResource;
 use Uteq\Move\DomainActions\StoreResource;
 use Uteq\Move\Facades\Move;
@@ -16,6 +17,7 @@ use Uteq\Move\Fields\Panel;
 abstract class Resource
 {
     use PerformsQueries;
+    use WithAuthorization;
 
     // TODO add all needed traits
 
@@ -286,9 +288,11 @@ abstract class Resource
             ->filter(fn ($item) => isset($item->beforeStore));
 
         foreach ($data as $field => $value) {
-            $beforeStoreFields
+            $beforeStoreField = $beforeStoreFields
                 ->filter(fn (Field $item) => $item->attribute === $field)
-                ->each(fn (Field $item) => $data[$field] = $item->handleBeforeStore($model, $data, $value));
+                ->first();
+
+            $data = $beforeStoreField->handleBeforeStore($value, $field, $model, $data);
         }
 
         return $data;
@@ -296,13 +300,15 @@ abstract class Resource
 
     public function handleFieldsAfterStore(Model $model, array $data, Resource $resource)
     {
-        $beforeStoreFields = collect($resource->getFields())
-            ->filter(fn ($item) => isset($item->beforeStore));
+        $afterStoreFields = collect($resource->getFields())
+            ->filter(fn ($item) => isset($item->afterStore));
 
         foreach ($data as $field => $value) {
-            $beforeStoreFields
+            $afterStoreField = $afterStoreFields
                 ->filter(fn (Field $item) => $item->attribute === $field)
-                ->each(fn (Field $item) => $data[$field] = $item->handleAfterStore($model, $data, $value));
+                ->first();
+
+            $data = $afterStoreField->handleAfterStore($value, $field, $model, $data);
         }
 
         return $data;
@@ -401,6 +407,15 @@ abstract class Resource
     public function icon()
     {
         return null;
+    }
+
+    public function name()
+    {
+        return (string) Str::of(static::class)
+            ->afterLast('\\')
+            ->lower()
+            ->kebab()
+            ->plural();
     }
 
     abstract public function fields();

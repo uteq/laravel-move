@@ -98,8 +98,9 @@
                     </x-move-td>
                 @endforeach
                 <x-move-td>
-                    <x-move-table.item-actions id="{{ $row['model']->id }}"
-                                               description="{{ $this->resource()->label() }}"/>
+                    <x-move-table.item-actions
+                        id="{{ $row['model']->id }}"
+                        description="{{ $this->resource()->label() }}" />
                 </x-move-td>
             </tr>
         @empty
@@ -148,13 +149,3 @@
         </div>
     @endif
 </div>
-
-@push('scripts')
-    <script>
-        window.livewire.on('_blank', path => {
-            // open the download in a new tab/window to
-            // prevent livewire component from freezing
-            window.open(path, '_blank');
-        });
-    </script>
-@endpush

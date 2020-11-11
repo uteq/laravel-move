@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
+use Uteq\Move\Actions\UnsetField;
 use Uteq\Move\Concerns\HasDependencies;
 use Uteq\Move\Concerns\HasHelpText;
 use Uteq\Move\Concerns\HasRequired;
@@ -405,23 +406,47 @@ abstract class Field extends FieldElement
         return $this;
     }
 
-    public function handleBeforeStore($model, $data, $value)
+    public function handleBeforeStore($value, $field, $model, $data)
     {
         $handlers = $this->beforeStore;
 
-        return collect($handlers)->each->__invoke($model, $data, $value);
+        if (! count($handlers)) {
+            return $data;
+        }
+
+        foreach ($handlers as $handler) {
+            $data[$field] = $handler($value, $field, $model, $data);
+        }
+
+        return collect($data)
+            ->filter(fn ($value, $field) => $value !== UnsetField::class)
+            ->toArray();
     }
 
-    public function handleAfterStore($model, $data, $value)
+    public function handleAfterStore($value, $field, $model, $data)
     {
         $handlers = $this->afterStore;
 
-        return collect($handlers)->each->__invoke($model, $data, $value);
+        if (! count($handlers)) {
+            return $data;
+        }
+
+        foreach ($handlers as $handler) {
+            $data[$field] = $handler($value, $field, $model, $data);
+        }
+
+        return collect($data)
+            ->filter(fn ($field, $value) => $value !== UnsetField::class)
+            ->toArray();
     }
 
     public function removeFromModel()
     {
         $this->beforeStore[] = function ($model, $data, $value) {
+            if (! isset($model[$this->attribute])) {
+                return;
+            }
+
             unset($model[$this->attribute]);
         };
 

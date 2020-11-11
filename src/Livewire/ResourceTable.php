@@ -18,7 +18,6 @@ class ResourceTable extends TableComponent
     use WithPagination;
     use HasResource;
     use HasSelected;
-    use AuthorizesRequests;
 
     public $action = '-';
     public $showingAction = false;
@@ -43,6 +42,8 @@ class ResourceTable extends TableComponent
         $this->computeHasSelected();
         $this->requestQuery = request()->query();
         $this->sortable = $this->resource()::$sortable;
+
+        $this->resource()->authorizeTo('viewAny');
     }
 
     public function updateTaskOrder($order)

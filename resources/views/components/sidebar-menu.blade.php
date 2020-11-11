@@ -6,7 +6,7 @@
     <div class="mt-5 flex-grow flex flex-col">
         <nav class="flex-1 px-2">
             @if (!\Uteq\Move\Facades\Move::hasSidebarGroups())
-                @foreach(\Uteq\Move\Facades\Move::resources() as $resource)
+                @foreach(\Uteq\Move\Facades\Move::resources()->authorized() as $resource)
                     <x-move-sidebar.link alt-active="{{ $resource->route() }}*"
                                          href="/{{ $resource->route() }}"
                                          :icon="$resource->icon()"
@@ -15,7 +15,7 @@
                     </x-move-sidebar.link>
                 @endforeach
             @else
-                @foreach(\Uteq\Move\Facades\Move::groupedResources() as $key => $resourceGroup)
+                @foreach(\Uteq\Move\Facades\Move::resources()->grouped()->authorized() as $key => $resourceGroup)
                     <x-move-sidebar.link icon="css-import" :active="\Uteq\Move\Facades\Move::activeResource()::$group === $key" href="#">
                         {{$key}}
                         <x-slot name="collapse">

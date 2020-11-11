@@ -41,6 +41,8 @@ class ResourceForm extends FormComponent
             ->mapWithKeys(fn ($field) => [$field->attribute => $field->value])
             ->toArray();
         $this->model->store = $this->store;
+
+        $this->resource()->authorizeTo('update');
     }
 
     public function handleAfterSaveActions()

@@ -23,6 +23,8 @@ class ResourceShow extends Component
     public function mount()
     {
         $this->resource = request()->route()->parameter('resource');
+
+        $this->resource()->authorizeTo('view');
     }
 
     public function render()
