@@ -126,7 +126,7 @@ class ResourceTable extends TableComponent
         return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery), [
             'collection' => $this->collection(),
             'rows' => $this->rows(),
-        ]))->layout(Move::layout(), [
+        ]))->layout($this->resource()::$layout ?? Move::layout(), [
             'header' => $this->resource()->label(),
         ]);
     }

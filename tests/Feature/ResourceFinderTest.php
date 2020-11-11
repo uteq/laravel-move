@@ -12,6 +12,6 @@ class ResourceFinderTest extends TestCase
     {
         $resources = app(ResourceFinder::class)->getClassNames(DIRECTORY_SEPARATOR . 'Fixtures');
 
-        $this->assertStringContainsString($resources->first(), '\\Uteq\\Move\\Tests\\Fixtures\\UserResource');
+        $this->assertStringContainsString($resources->first(), '\\Uteq\\Move\\Tests\\Fixtures\\OtherNamespace\\UserResource');
     }
 }

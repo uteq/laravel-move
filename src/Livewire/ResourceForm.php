@@ -99,9 +99,10 @@ class ResourceForm extends FormComponent
     public function render()
     {
         /** @psalm-suppress UndefinedInterfaceMethod */
-        return view('move::livewire.resource-form')->layout(Move::layout(), [
-            'header' => $this->resource()->singularLabel() .' details',
-        ]);
+        return view('move::livewire.resource-form')
+            ->layout($this->resource()::$layout ?? Move::layout(), [
+                'header' => $this->resource()->singularLabel() .' details',
+            ]);
     }
 
     public function rules($model = null): array

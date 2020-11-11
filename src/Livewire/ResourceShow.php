@@ -34,7 +34,7 @@ class ResourceShow extends Component
             'resource' => $this->resource,
             'model' => $this->model,
             'fields' => $this->resolveFields($this->model),
-        ])->layout(Move::layout(), [
+        ])->layout($this->resource()::$layout ?? Move::layout(), [
             'header' => $this->resource()->singularLabel() .' details',
         ]);
     }

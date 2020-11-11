@@ -4,6 +4,7 @@ namespace Uteq\Move;
 
 use Illuminate\Support\Str;
 use Uteq\Move\Collections\ResourceCollection;
+use Uteq\Move\Exceptions\UnknownResourceException;
 
 class Move
 {
@@ -68,7 +69,7 @@ class Move
         $resource = $this->fullResourceName($resource);
 
         if (! app()->has($resource)) {
-            throw new \Exception(sprintf(
+            throw new UnknownResourceException(sprintf(
                 '%s: The requested resource %s does not exist or has not been added',
                 __METHOD__,
                 str_replace('.', '/', $resource),

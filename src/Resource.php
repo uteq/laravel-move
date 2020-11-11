@@ -54,6 +54,9 @@ abstract class Resource
     /** Where should the global search link to? */
     public static bool $sortable = false;
 
+    /** What layout should be used for the resource? */
+    public static ?string $layout = null;
+
     /** All endpoints that will be satisfied */
     public static array $redirectEndpoints = [
         'create' => 'index',
