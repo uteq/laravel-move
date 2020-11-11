@@ -43,6 +43,10 @@ class Select extends Field
 
     public function showResourceUrl()
     {
+        if (! Move::resolveResource($this->resourceName)->can('view')) {
+            return null;
+        }
+
         if (! $this->value) {
             return null;
         }
@@ -60,6 +64,8 @@ class Select extends Field
 
     public function resourceName(Model $model = null)
     {
+        $model ??= $this->resourceName ? $this->resourceName::$model::find($this->value) : null;
+
         if (! $model) {
             return null;
         }

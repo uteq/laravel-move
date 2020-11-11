@@ -11,7 +11,7 @@
         <x-move-field.select model="{{ $field->store }}"
                              placeholder="{{ $field->placeholder ?? null }}"
                              :settings="$field->settings"
-                             :values="array_keys(is_array($field->store()) ? $field->store() : [$field->store() => true])"
+                             :values="$field->store() ? array_keys(is_array($field->store()) ? $field->store() : [$field->store() => true]) : null"
         >
             @foreach ($field->getOptions() as $key => $value)
                 <option value="{{ $key }}" @if ($key === $field->value) selected @endif >{{ $value }}</option>
