@@ -2,7 +2,6 @@
 
 namespace Uteq\Move\Fields;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Uteq\Move\Actions\UnsetField;
 

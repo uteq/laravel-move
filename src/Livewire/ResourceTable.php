@@ -2,7 +2,6 @@
 
 namespace Uteq\Move\Livewire;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\Response;
