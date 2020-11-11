@@ -55,23 +55,26 @@ trait HasResource
             ->toArray();
     }
 
-    public function resolveFieldRules()
+    public function resolveFieldRules($model)
     {
         return collect($this->fields())
+            ->filter(fn ($field) => $field->isVisible($model, 'update'))
             ->flatMap(fn ($field) => $field->getRules(request()))
             ->toArray();
     }
 
-    public function resolveFieldCreateRules()
+    public function resolveFieldCreateRules($model)
     {
         return collect($this->fields())
+            ->filter(fn ($field) => $field->isVisible($model, 'create'))
             ->flatMap(fn ($field) => $field->getCreationRules(request()))
             ->toArray();
     }
 
-    public function resolveFieldUpdateRules()
+    public function resolveFieldUpdateRules($model)
     {
         return collect($this->fields())
+            ->filter(fn ($field) => $field->isVisible($model, 'update'))
             ->flatMap(fn ($field) => $field->getUpdateRules(request()))
             ->toArray();
     }

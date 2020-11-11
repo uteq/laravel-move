@@ -292,6 +292,10 @@ abstract class Resource
                 ->filter(fn (Field $item) => $item->attribute === $field)
                 ->first();
 
+            if (! $beforeStoreField) {
+                continue;
+            }
+
             $data = $beforeStoreField->handleBeforeStore($value, $field, $model, $data);
         }
 
@@ -307,6 +311,10 @@ abstract class Resource
             $afterStoreField = $afterStoreFields
                 ->filter(fn (Field $item) => $item->attribute === $field)
                 ->first();
+
+            if (! $afterStoreField) {
+                continue;
+            }
 
             $data = $afterStoreField->handleAfterStore($value, $field, $model, $data);
         }

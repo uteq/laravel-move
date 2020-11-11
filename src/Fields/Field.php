@@ -375,11 +375,7 @@ abstract class Field extends FieldElement
             'show' => 'show',
         ][$displayType] ?? $displayType;
 
-        if (! $this->isShownOn($type, $resource, request())) {
-            return false;
-        }
-
-        return true;
+        return $this->isShownOn($type, $resource, request());
     }
 
     public function defaultDisplayType()

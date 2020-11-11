@@ -20,9 +20,7 @@ class Files extends Field
         $this->customRules([
             $attribute . '.*' => ['file','mimes:png,jpg,jpeg,pdf,heic','max:102400'],
             $attribute . '.0' => [
-                new RequiredIf(function () {
-                    return $this->isRequired();
-                }),
+                new RequiredIf(fn () => $this->isRequired()),
             ],
         ]);
     }

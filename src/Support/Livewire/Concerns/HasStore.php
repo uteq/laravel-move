@@ -74,7 +74,7 @@ trait HasStore
 
         $this->handleResourceAction('update', $fields);
 
-        $this->maybeRedirectFromAction('update');
+        return $this->maybeRedirectFromAction('update');
     }
 
     public function create(array $fields)
@@ -91,7 +91,7 @@ trait HasStore
 
         $this->handleResourceAction('create', $fields);
 
-        $this->maybeRedirectFromAction('create');
+        return $this->maybeRedirectFromAction('create');
     }
 
     public function cancel()
@@ -100,7 +100,7 @@ trait HasStore
             return app()->call([$this, $this->actionsMethods['cancel']]);
         }
 
-        $this->maybeRedirectFromAction('cancel');
+        return $this->maybeRedirectFromAction('cancel');
     }
 
     public function customValidate(array $fields, array $rules, array $messages = [], $customAttributes = [])
@@ -137,10 +137,10 @@ trait HasStore
         $endpoint = $this->endpoint($action);
 
         if (! $endpoint) {
-            return;
+            return null;
         }
 
-        $this->redirect($this->endpointRoute($endpoint));
+        return redirect($this->endpointRoute($endpoint));
     }
 
     private function endpoint($key, $default = null)

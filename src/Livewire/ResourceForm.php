@@ -107,12 +107,12 @@ class ResourceForm extends FormComponent
     public function rules($model = null): array
     {
         return array_replace_recursive(
-            $this->resolveFieldRules(),
+            $this->resolveFieldRules($this->store),
             (
                 // TODO model never exists whenever the rules are loaded
                 (optional($model)->id || $this->modelId)
-                    ? $this->resolveFieldUpdateRules()
-                    : $this->resolveFieldCreateRules()
+                    ? $this->resolveFieldUpdateRules($this->store)
+                    : $this->resolveFieldCreateRules($this->store)
             )
         );
     }
