@@ -4,7 +4,6 @@ namespace Uteq\Move\Concerns;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
-use Uteq\Move\Exceptions\AuthorizationFailedException;
 
 trait WithAuthorization
 {
