@@ -42,14 +42,14 @@ class HeaderSearch extends Component
         $resources = collect(Move::all())
             // Only globally Searchable
             ->filter(fn ($resource) => $resource::$globallySearchable === true)
-            ->map(function ($resource, $key) {
+            ->filter(fn ($resource) => Move::resolveResource($resource)->can('viewAny'))
+            ->filter(function ($resource) {
                 $resourceModel = $resource::$model;
 
-                $exists = Schema::hasTable((new $resourceModel)->getTable());
-
-                if (! $exists) {
-                    return null;
-                }
+                return Schema::hasTable((new $resourceModel)->getTable());
+            })
+            ->map(function ($resource, $key) {
+                $resourceModel = $resource::$model;
 
                 $query = $resource::buildIndexQuery(
                     request(),

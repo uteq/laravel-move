@@ -1,15 +1,9 @@
-@props(['href', 'icon' => null, 'active' => false, 'collapse' => null, 'sub' => false, 'altActive' => null])
+@props(['href', 'icon' => null, 'active' => false, 'open' => false, 'collapse' => null, 'sub' => false, 'altActive' => null])
 
 @php
-/**
-    if (!empty($href) && !$altActive) {
-        $altActive = ltrim($href, '/') . '*';
-    }*/
-
     $active = is_string($active) ? request()->is($active) : $active;
     $active = $altActive ? request()->is($altActive) : $active;
     $active = request()->url() === $href ? true : $active;
-
 @endphp
 
 @php
@@ -24,7 +18,7 @@
         );
 @endphp
 
-<div x-data="{ open: {{ $active ? 'true' : 'false' }} }">
+<div x-data="{ open: {{ $open || $active ? 'true' : 'false' }} }">
     <a href="{{ $href }}"
        class="{{ $aClasses }}"
        @click="open = !open"

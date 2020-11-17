@@ -3,7 +3,7 @@
         {{ $field->resourceName() }}
     </a>
 @elseif ($field->resourceName())
-    $field->resourceName()
+    {{ $field->resourceName() }}
 @else
     {{ $field->value }}
 @endif

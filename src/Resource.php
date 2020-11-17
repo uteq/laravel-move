@@ -337,11 +337,27 @@ abstract class Resource
         return $handler($model);
     }
 
-    public function resolveFields(Model $model = null, $type = null)
+    public function resolveFields(Model $model = null, $type = null, $keepPlaceholder = false)
     {
+        $model = $model ?: $this->resource;
+
+        $type = $type ?: (isset($model->id) ? 'edit' : 'create');
+
+        $visibleFields = collect($this->getFields())
+            ->filter(function (Field $field) use ($type, $model, $keepPlaceholder) {
+                // Whenever the field is a placeholder, it should always be added whenever resolving the fields
+                //  This way it can be added to the model data.
+                if ($keepPlaceholder && $field->isPlaceholder) {
+                    return true;
+                }
+
+                return $field->isShownOn($type, $model, request());
+            })
+            ->toArray();
+
         /** @var Field $field */
         $fields = [];
-        foreach ($this->visibleFields($type, $model) as $field) {
+        foreach ($visibleFields as $field) {
             $field->resolveForDisplay($model ?: static::newModel());
 
             $fields[] = $field;
@@ -357,7 +373,7 @@ abstract class Resource
         $type = $type ?: (isset($model->id) ? 'edit' : 'create');
 
         return collect($this->getFields())
-            ->filter(fn ($field) => $field->isShownOn($type, $model, request()))
+            ->filter(fn (Field $field) => $field->isShownOn($type, $model, request()))
             ->toArray();
     }
 

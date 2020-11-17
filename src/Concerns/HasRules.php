@@ -44,6 +44,8 @@ trait HasRules
         $this->customRules[$attribute] = is_callable($rule)
             ? call_user_func($rule, request())
             : $rule;
+
+        return $this;
     }
 
     public function customRules($rules)

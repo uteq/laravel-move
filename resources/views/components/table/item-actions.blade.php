@@ -20,24 +20,24 @@
                     <x-heroicon-o-trash class="text-gray-400 hover:text-gray-600 h-6 w-6" @click="show = true"/>
             </x-slot>
 
-            <x-slot name="title">{{ __($description . ' verwijderen') }}</x-slot>
+            <x-slot name="title">@lang('Delete :resource', ['resource' => $description])</x-slot>
 
             <x-slot name="content">
                 {{ $id }}
-                {{ __('Weet je zeker dat je deze ' . strtolower($description) . ' wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.') }}
+                @lang('Are you sure you want to remove this :resource? This action cannot be undone.', ['resource' => $description])
             </x-slot>
 
             <x-slot name="footer">
                 <x-move-secondary-button
                     x-on:click="show = false"
                     wire:loading.attr="disabled"
-                >{{ __('Cancel') }}</x-move-secondary-button>
+                >@lang('Cancel')</x-move-secondary-button>
 
                 <x-move-button
                     class="ml-2"
                     wire:click="destroy({{ $id }})"
                     wire:loading.attr="disabled"
-                >{{ __($this->resource()->singularLabel() . ' verwijderen') }}</x-move-button>
+                >@lang('Delete :resource', ['resource' => $this->resource()->singularLabel()])</x-move-button>
             </x-slot>
         </x-move-dialog-modal>
     </a>

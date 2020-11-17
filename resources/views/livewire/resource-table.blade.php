@@ -10,7 +10,7 @@
             @if ($this->has_filters)
                 <div class="uppercase underline cursor-pointer text-80 bg-30 p-1 text-center text-xs w-100 block"
                      wire:click="resetFilter">
-                    Filters resetten
+                    @lang('Reset filters')
                 </div>
             @endif
 
@@ -26,7 +26,7 @@
             @endforeach
 
             <h3 class="text-sm text-gray-600 uppercase bg-gray-100 text-80 bg-30 p-2">
-                Per pagina
+                @lang('Per page')
             </h3>
             <div class="p-3">
                 <select wire:model="filter.limit" class="block w-full form-control-sm form-select">
@@ -107,9 +107,9 @@
             <tr>
                 <x-move-td class="hover:bg-gray-50 text-center" colspan="{{ count($header) + 2 }}">
                     <div class="p-10">
-                        <p class="mb-3">Geen items aanwezig</p>
+                        <p class="mb-3">@lang('No items available')</p>
                         <button wire:click="add" class="underline text-green-500">
-                            Create first {{ $this->resource()->singularLabel() }}
+                            @lang('Create first :resource', ['resoure' => $this->resource()->singularLabel()])
                         </button>
                     </div>
                 </x-move-td>
@@ -119,7 +119,7 @@
 
         <tr wire:target="edit" wire:loading>
             <x-move-td class="hover:bg-gray-50 text-center" colspan="{{ count($header) + 2 }}">
-                Laden...
+                @lang('Loading...')
             </x-move-td>
         </tr>
 
@@ -137,7 +137,7 @@
 
             <x-slot name="footer">
                 <x-move-button class="ml-2" wire:click="$toggle('hasError')" wire:loading.attr="disabled">
-                    {{ __('OK') }}
+                    @lang('OK')
                 </x-move-button>
             </x-slot>
         </x-move-dialog-modal>

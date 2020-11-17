@@ -4,7 +4,7 @@
         <div class="flex text-center items-center px-4 py-2 bg-white text-blue rounded-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-teal-800 hover:text-white">
             <x-heroicon-o-cloud-download class="w6 h-6" />
             <span class="ml-2 mt-1 text-base leading-normal">
-                {{ __('Add a new file') }}
+                @lang('Add a new file')
             </span>
         </div>
         <input type="file"
@@ -17,7 +17,7 @@
         />
 
         <div wire:loading wire:target="files.{{ $field->attribute }}">
-            {{ __('File is being uploaded') }}
+            @lang('File is being uploaded')
         </div>
 
     </label>
@@ -41,10 +41,10 @@
                     <div class="border p-3 rounded my-3">
                         <div class="flex justify-end">
                             <div class="mr-auto text-small" wire:target="rotateFile" wire:loading>
-                                Draaien...
+                                @lang('Turning...')
                             </div>
                             <div class="mr-auto text-small" wire:target="removeFile" wire:loading>
-                                Laden...
+                                @lang('Loading...')
                             </div>
 
                             <a wire:click="rotateFile('{{ $field->attribute }}', {{ $i }})" class="cursor-pointer mr-2">

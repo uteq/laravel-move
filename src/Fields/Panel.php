@@ -14,6 +14,7 @@ class Panel
     public array $fields;
     public string $nameOnCreate;
     public string $nameOnUpdate;
+    public array $alert = [];
 
     public function __construct(?string $name = null, array $fields = [])
     {
@@ -58,5 +59,13 @@ class Panel
     public function empty()
     {
         return ! count($this->fields);
+    }
+
+    public function alert($type, $description)
+    {
+        $this->alert[$type] ??= [];
+        $this->alert[$type][] = $description;
+
+        return $this;
     }
 }

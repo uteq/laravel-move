@@ -283,12 +283,12 @@ abstract class FieldElement extends Element
         return $this;
     }
 
-    public function hide()
+    public function hide(bool $value = true)
     {
-        $this->showOnIndex = false;
-        $this->showOnDetail = false;
-        $this->showOnCreation = false;
-        $this->showOnUpdate = false;
+        $this->showOnIndex = ! $value;
+        $this->showOnDetail = ! $value;
+        $this->showOnCreation = ! $value;
+        $this->showOnUpdate = ! $value;
 
         return $this;
     }

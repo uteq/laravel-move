@@ -41,16 +41,16 @@ trait HasResource
         return $this->resource()->newModel()->newQuery()->find($id);
     }
 
-    public function resolveFields(Model $model = null)
+    public function resolveFields(Model $model = null, $keepPlaceholder = false)
     {
         $type = ! $model ? 'create' : ($model->id ? 'update' : 'create');
 
-        return $this->resource()->resolveFields($model, $type);
+        return $this->resource()->resolveFields($model, $type, $keepPlaceholder);
     }
 
     public function resolveAndMapFields(Model $model)
     {
-        return collect($this->resolveFields($this->model))
+        return collect($this->resolveFields($this->model, true))
             ->mapWithKeys(fn ($field) => [$field->attribute => $this->store[$field->attribute]])
             ->toArray();
     }

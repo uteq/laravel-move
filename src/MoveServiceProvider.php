@@ -53,6 +53,7 @@ class MoveServiceProvider extends ServiceProvider
 
             $this->registerComponent('a');
             $this->registerComponent('action-message');
+            $this->registerComponent('alert');
             $this->registerComponent('button');
             $this->registerComponent('card');
             $this->registerComponent('dialog-modal');
@@ -146,6 +147,10 @@ class MoveServiceProvider extends ServiceProvider
 
     public function configurePublishers()
     {
+        $this->publishes([
+            __DIR__ . '/../config/move.php' => config_path('move.php'),
+        ], 'config');
+
         $this->publishes([
             __DIR__ . '/../config/move.php' => config_path('move.php'),
         ], 'config');

@@ -98,16 +98,16 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    {{ __('Weet u zeker dat u deze actie uit wilt voeren?') }}
+                    @lang('Are you sure you want to perform this action?')
                 </x-slot>
 
                 <x-slot name="footer">
                     <x-move-secondary-button wire:click="$toggle('showingDelete')" wire:loading.attr="disabled">
-                        {{ __('Cancel') }}
+                        @lang('Cancel')
                     </x-move-secondary-button>
 
                     <x-move-button class="ml-2" wire:click="handleDelete" wire:loading.attr="disabled">
-                        {{ __('Voer actie uit') }}
+                        @lang('Perform action')
                     </x-move-button>
                 </x-slot>
             </x-move-dialog-modal>

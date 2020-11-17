@@ -100,6 +100,10 @@ abstract class Field extends FieldElement
 
     public string $store;
 
+    public ?Closure $before = null;
+
+    public bool $isPlaceholder = false;
+
     public array $displayTypes = [
         'edit' => 'form',
         'update' => 'form',
@@ -108,6 +112,10 @@ abstract class Field extends FieldElement
         'index' => 'index',
         'show' => 'show',
     ];
+
+    public string $folder = 'move::';
+
+    public string $unique;
 
     protected $index = null;
     protected $show = null;
@@ -121,12 +129,25 @@ abstract class Field extends FieldElement
         $this->name = $name;
         $this->attribute = $attribute ?? Str::snake(Str::singular($name));
         $this->callableValue = $callableValue;
-        $this->store = 'store.' . $attribute;
+        $this->store = $this->storePrefix() . '.' . $attribute;
+        $this->unique = Str::random(20);
 
         if (method_exists($this, 'init')) {
             /** @psalm-suppress InvalidArgument */
             app()->call([$this, 'init']);
         }
+    }
+
+    public function isPlaceholder(bool $value = true)
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function storePrefix()
+    {
+        return 'store';
     }
 
     public function formAttribute($formAttribute)
@@ -357,7 +378,7 @@ abstract class Field extends FieldElement
             return null;
         }
 
-        return view('move::'. $displayType .'.' . $this->component, array_replace_recursive([
+        return view($this->folder . $displayType .'.' . $this->component, array_replace_recursive([
             'field' => $this,
         ], $data));
     }
@@ -406,6 +427,10 @@ abstract class Field extends FieldElement
     {
         $handlers = $this->beforeStore;
 
+        if (method_exists($this, 'initBeforeStore')) {
+            $handlers[] = $this->initBeforeStore($value, $field, $model, $data);
+        }
+
         if (! count($handlers)) {
             return $data;
         }
@@ -422,6 +447,10 @@ abstract class Field extends FieldElement
     public function handleAfterStore($value, $field, $model, $data)
     {
         $handlers = $this->afterStore;
+
+        if (method_exists($this, 'initAfterStore')) {
+            $handlers[] = $this->initAfterStore($value, $field, $model, $data);
+        }
 
         if (! count($handlers)) {
             return $data;
@@ -484,5 +513,12 @@ abstract class Field extends FieldElement
         }
 
         return $this->resource->store[$this->attribute] ?? null;
+    }
+
+    public function before(Closure $before)
+    {
+        $this->before = $before;
+
+        return $this;
     }
 }

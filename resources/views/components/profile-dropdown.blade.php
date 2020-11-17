@@ -7,16 +7,16 @@
 
         <!-- Account Management -->
         <div class="block px-4 py-2 text-xs text-gray-400">
-            {{ __('Accountbeheer') }}
+            @lang('Account Management')
         </div>
 
         <x-move-dropdown-link href="/user/profile">
-            {{ __('Profiel') }}
+            @lang('Profile')
         </x-move-dropdown-link>
 
         @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
             <x-move-dropdown-link href="/user/api-tokens">
-                {{ __('API Tokens') }}
+                @lang('API Tokens')
             </x-move-dropdown-link>
         @endif
 
@@ -25,17 +25,17 @@
         <!-- Team Management -->
         @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
             <div class="block px-4 py-2 text-xs text-gray-400">
-                {{ __('Manage Team') }}
+                @lang('Manage Team')
             </div>
 
             <!-- Team Settings -->
             <x-move-dropdown-link href="/teams/{{ optional(Auth::user())->currentTeam->id }}">
-                {{ __('Team Settings') }}
+                @lang('Team Settings')
             </x-move-dropdown-link>
 
             @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
                 <x-move-dropdown-link href="/teams/create">
-                    {{ __('Create New Team') }}
+                    @lang('Create New Team')
                 </x-move-dropdown-link>
             @endcan
 
@@ -43,7 +43,7 @@
 
             <!-- Team Switcher -->
             <div class="block px-4 py-2 text-xs text-gray-400">
-                {{ __('Switch Teams') }}
+                @lang('Switch Teams')
             </div>
 
             @foreach (Auth::user()->allTeams() as $team)
@@ -60,7 +60,7 @@
             <x-move-dropdown-link href="{{ route('logout') }}"
                                  onclick="event.preventDefault();
                                  this.closest('form').submit();">
-                {{ __('Logout') }}
+                @lang('Logout')
             </x-move-dropdown-link>
         </form>
 

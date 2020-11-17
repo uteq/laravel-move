@@ -18,20 +18,20 @@
 
             <x-move-dialog-modal wire:model="confirmingDestroy.{{ $model->id }}" wire:key="confirm.destroy">
                 <x-slot name="title">
-                    {{ __($this->resource()->singularLabel() . ' verwijderen') }}
+                    @lang('Delete :resource', ['resource' => $this->resource()->singularLabel()])
                 </x-slot>
 
                 <x-slot name="content">
-                    {{ __('Weet je zeker dat je deze ' . strtolower($this->resource()->singularLabel()) . ' wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.') }}
+                    @lang('Are you sure you want to remove this :resource? This action cannot be undone.', ['resource' => strtolower($this->resource()->singularLabel())])
                 </x-slot>
 
                 <x-slot name="footer">
                     <x-move-secondary-button x-on:click="show = false" wire:click="hideConfirmDestroy({{ $model->id }})" wire:loading.attr="disabled">
-                        {{ __('Cancel') }}
+                        @lang('Cancel')
                     </x-move-secondary-button>
 
                     <x-move-button class="ml-2" wire:click="destroy({{ $model->id }})" wire:loading.attr="disabled">
-                        {{ __($this->resource()->singularLabel() . ' verwijderen') }}
+                        @lang('Delete :resource', ['resource' => $this->resource()->singularLabel()])
                     </x-move-button>
                 </x-slot>
             </x-move-dialog-modal>
