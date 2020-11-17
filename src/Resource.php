@@ -155,7 +155,7 @@ abstract class Resource
     /**
      * Return a fresh resource instance.
      */
-    protected static function newResource(): self
+    public static function newResource(): self
     {
         return new static(static::newModel());
     }

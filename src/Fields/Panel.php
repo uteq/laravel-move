@@ -68,4 +68,12 @@ class Panel
 
         return $this;
     }
+
+    public function render($model)
+    {
+        return view('move::form.panel', [
+            'panel' => $this,
+            'model' => $model,
+        ]);
+    }
 }
