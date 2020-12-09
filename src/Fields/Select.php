@@ -3,7 +3,6 @@
 namespace Uteq\Move\Fields;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
@@ -146,8 +145,7 @@ class Select extends Field
         }
 
         if ($resourceName = $this->resourceName) {
-
-            $customQuery = $this->customQuery ?? fn($builder) => $builder;
+            $customQuery = $this->customQuery ?? fn ($builder) => $builder;
 
             return $customQuery($this->queryHandler($resourceName))
                 ->get()

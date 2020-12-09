@@ -106,7 +106,7 @@ trait HasFiles
 
     public function updatedFiles($data, string $key)
     {
-        if (!isset($this->tempUploadedFiles[$key])) {
+        if (! isset($this->tempUploadedFiles[$key])) {
             $this->tempUploadedFiles[$key] = [];
         }
 
