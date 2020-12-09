@@ -104,9 +104,9 @@ trait HasFiles
         return new MediaCollection($urls);
     }
 
-    public function updatedFiles($data, $key)
+    public function updatedFiles($data, string $key)
     {
-        if (! isset($this->tempUploadedFiles[$key])) {
+        if (!isset($this->tempUploadedFiles[$key])) {
             $this->tempUploadedFiles[$key] = [];
         }
 

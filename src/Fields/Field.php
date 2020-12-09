@@ -140,7 +140,7 @@ abstract class Field extends FieldElement
 
     public function isPlaceholder(bool $value = true)
     {
-        $this->value = $value;
+        $this->isPlaceholder = $value;
 
         return $this;
     }

@@ -51,6 +51,7 @@ trait HasResource
     public function resolveAndMapFields(Model $model)
     {
         return collect($this->resolveFields($this->model, true))
+            ->filter(fn ($field) => isset($this->store[$field->attribute]))
             ->mapWithKeys(fn ($field) => [$field->attribute => $this->store[$field->attribute]])
             ->toArray();
     }

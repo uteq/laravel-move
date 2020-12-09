@@ -27,6 +27,13 @@ trait HasDependencies
         return $this;
     }
 
+    public function dependsOnNotNull(string $field)
+    {
+        $this->dependencies[$field] = ['not_null' => true];
+
+        return $this;
+    }
+
     public function dependsOnEmpty(string $field)
     {
         $this->dependencies[$field] = ['empty' => true];
@@ -56,12 +63,18 @@ trait HasDependencies
             'callback' => fn ($value, $result) => $value($result),
             'value' => fn ($value, $result) => $result == $value,
             'not' => fn ($value, $result) => $result != $value,
+            'not_null' => fn ($value, $result) => $result !== null,
             'empty' => fn ($value, $result) => empty($result),
             'nullOrZero' => fn ($value, $result) => in_array($result, [null, 0, '0']),
         ];
 
+        if (($this->type ?? 'form') !== 'form') {
+            return true;
+        }
+
         foreach ($this->dependencies as $field => $condition) {
             foreach ($condition as $type => $value) {
+
                 if (! $rules[$type]($value, $data[$field] ?? $data->{$field} ?? null)) {
                     return false;
                 }

@@ -3,6 +3,7 @@
 namespace Uteq\Move\Fields;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
@@ -19,6 +20,10 @@ class Select extends Field
     public ?\Closure $customIndexName = null;
 
     public array $settings = [];
+
+    public $query = null;
+
+    public $customQuery = null;
 
     public function settings(array $settings)
     {
@@ -118,6 +123,22 @@ class Select extends Field
         return $this;
     }
 
+    public function query($query)
+    {
+        $this->query = $query;
+
+        return $this;
+    }
+
+    protected function queryHandler($resourceName)
+    {
+        $handler = $this->query;
+
+        return $handler
+            ? $handler($resourceName::relationQuery(), $this)
+            : $resourceName::relationQuery();
+    }
+
     public function getOptions(): array
     {
         if (count($this->options)) {
@@ -125,11 +146,22 @@ class Select extends Field
         }
 
         if ($resourceName = $this->resourceName) {
-            return $resourceName::$model::all()
+
+            $customQuery = $this->customQuery ?? fn($builder) => $builder;
+
+            return $customQuery($this->queryHandler($resourceName))
+                ->get()
                 ->mapWithKeys(fn ($item) => [$item->getKey() => $this->resourceName($item)])
                 ->toArray();
         }
 
         return [];
+    }
+
+    public function customQuery($customQuery)
+    {
+        $this->customQuery = $customQuery;
+
+        return $this;
     }
 }

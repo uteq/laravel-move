@@ -7,4 +7,3 @@
 @else
     {{ $field->value }}
 @endif
-

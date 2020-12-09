@@ -18,36 +18,41 @@
         );
 @endphp
 
-<div x-data="{ open: {{ $open || $active ? 'true' : 'false' }} }">
+<div x-data="{ open: {{ $active || $open ? 'true' : 'false' }} }">
     <a href="{{ $href }}"
        class="{{ $aClasses }}"
        @click="open = !open"
     >
         @if ($icon)
-            <x-dynamic-component component="{{ $icon }}" class="mr-3 h-6 w-6 text-gray-200"/>
+            {{ $icon }}
+{{--            <x-dynamic-component component="{{ $icon }}" class="mr-3 h-6 w-6 text-gray-200"/>--}}
         @endif
 
         @if ($sub && $active && !$icon)
-            <x-go-chevron-right-24 class="mr-5 h-4 w-4 text-green-200"/>
+            <svg class="mr-5 h-4 w-4 text-green-200" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                <path fill-rule="evenodd" d="M8.72 18.78a.75.75 0 001.06 0l6.25-6.25a.75.75 0 000-1.06L9.78 5.22a.75.75 0 00-1.06 1.06L14.44 12l-5.72 5.72a.75.75 0 000 1.06z"></path>
+            </svg>
         @endif
 
         {{ $slot }}
 
         @if ($collapse)
-            <x-dynamic-component component="heroicon-o-chevron-down"
-                                 class="ml-auto mr-2 h-5 w-5 transform"
-                                 style="display: none"
-                                 x-show="open"
-            ></x-dynamic-component>
-            <x-dynamic-component component="heroicon-o-chevron-right"
-                                 class="ml-auto mr-2 h-5 w-5 transform"
-                                 x-show="!open"
-            ></x-dynamic-component>
+            <div x-show="open" class="ml-auto mr-2" style="display: none">
+                <svg class="h-5 w-5 transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+
+            <div x-show="!open" class="ml-auto mr-2">
+                <svg class="h-5 w-5 transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </div>
         @endif
     </a>
 
     @if ($collapse)
-        <div class="mt-1 space-y-1 {{ $active ? 'block' : 'hidden' }}" :class="{'block': open, 'hidden': ! open}">
+        <div class="mt-1 space-y-1 {{ $active || $open ? 'block' : 'hidden' }}" :class="{'block': open, 'hidden': ! open}">
             {{ $collapse }}
         </div>
     @endif

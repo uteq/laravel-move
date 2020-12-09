@@ -160,6 +160,11 @@ abstract class Resource
         return new static(static::newModel());
     }
 
+    public static function relationQuery()
+    {
+        return static::$model::query();
+    }
+
     /**
      * Determine if the resource is soft deleted.
      *

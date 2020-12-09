@@ -1,7 +1,8 @@
 <div>
-    <x-move-table.header add-action="add"
-                             add-text="Create {{ $this->resource()->singularLabel() }}"
-                             search
+    <x-move-table.header add-action="{{ $this->addRoute() }}"
+                         add-is-route
+                         :add-text="__('Create :resource', ['resource' => $this->resource()->singularLabel()])"
+                         search
     ></x-move-table.header>
 
     <x-move-table class="mt-4 table-hover">
@@ -77,7 +78,14 @@
         @forelse ($rows as $i => $row)
             <tr class="hover:bg-gray-50 bg-white shadow" wire:key="'table-row' . {{ $loop->index }}" wire:sortable.item="{{ $row['model']->id }}">
                 @if ($sortable)
-                <x-move-td wire:sortable.handle><x-ri-drag-move-2-fill /></x-move-td>
+                <x-move-td wire:sortable.handle>
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <g>
+                            <path fill="none" d="M0 0h24v24H0z"></path>
+                            <path d="M12 22l-4-4h8l-4 4zm0-20l4 4H8l4-4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM2 12l4-4v8l-4-4zm20 0l-4 4V8l4 4z"></path>
+                        </g>
+                    </svg>
+                </x-move-td>
                 @endif
                 <x-move-td>
                     <x-move-field.checkbox model="selected.{{ $row['model']->id }}"/>
@@ -109,7 +117,7 @@
                     <div class="p-10">
                         <p class="mb-3">@lang('No items available')</p>
                         <button wire:click="add" class="underline text-green-500">
-                            @lang('Create first :resource', ['resoure' => $this->resource()->singularLabel()])
+                            @lang('Create first :resource', ['resource' => $this->resource()->singularLabel()])
                         </button>
                     </div>
                 </x-move-td>
@@ -148,4 +156,8 @@
             {{ $collection->withQueryString()->links() }}
         </div>
     @endif
+
+    <x-move-modal wire:model="showingActionResult">
+        {!! $actionResult !!}
+    </x-move-modal>
 </div>

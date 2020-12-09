@@ -24,7 +24,9 @@
 
     <div class="h-screen flex overflow-hidden bg-gray-100">
 
+        @if (! ($withoutSidebar ?? false))
         <x-move-sidebar />
+        @endif
 
         <div class="flex flex-col w-0 flex-1 overflow-hidden">
             <div class="relative z-5 flex-shrink-0 flex h-16 bg-white shadow">

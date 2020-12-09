@@ -3,6 +3,7 @@
 namespace Uteq\Move\Livewire;
 
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\Response;
 use Uteq\Move\Concerns\HasResource;
@@ -20,6 +21,8 @@ class ResourceTable extends TableComponent
 
     public $action = '-';
     public $showingAction = false;
+    public $showingActionResult = false;
+    protected $actionResult;
     public $showingDelete = false;
     public $sortable = false;
     public $error = null;
@@ -105,6 +108,11 @@ class ResourceTable extends TableComponent
             }
         }
 
+        if ($result instanceof View) {
+            $this->showingActionResult = true;
+            $this->actionResult = $result;
+        }
+
         /** @psalm-suppress InvalidArgument */
         app()->call([$this, 'render']);
     }
@@ -127,6 +135,7 @@ class ResourceTable extends TableComponent
         return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery), [
             'collection' => $this->collection(),
             'rows' => $this->rows(),
+            'actionResult' => $this->actionResult,
         ]))->layout($this->resource()::$layout ?? Move::layout(), [
             'header' => $this->resource()->label(),
         ]);

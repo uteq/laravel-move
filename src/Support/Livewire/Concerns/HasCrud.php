@@ -19,7 +19,12 @@ trait HasCrud
 
     public function show(int $id)
     {
-        $this->redirectRoute($this->crudBaseRoute . '.show', [
+        $this->redirect($this->showRoute($id));
+    }
+
+    public function showRoute(int $id)
+    {
+        return route($this->crudBaseRoute . '.show', [
             'resource' => $this->resource,
             'model' => $this->modelById($id),
         ]);
@@ -27,7 +32,12 @@ trait HasCrud
 
     public function edit(int $id)
     {
-        $this->redirectRoute($this->crudBaseRoute . '.edit', [
+        $this->redirect($this->editRoute($id));
+    }
+
+    public function editRoute(int $id)
+    {
+        return route($this->crudBaseRoute . '.edit', [
             'resource' => $this->resource,
             'model' => $this->modelById($id),
         ]);
@@ -35,7 +45,12 @@ trait HasCrud
 
     public function add()
     {
-        $this->redirectRoute($this->crudBaseRoute . '.create', [
+        $this->redirect($this->addRoute());
+    }
+
+    public function addRoute()
+    {
+        return route($this->crudBaseRoute . '.create', [
             'resource' => $this->resource,
         ]);
     }
@@ -61,6 +76,6 @@ trait HasCrud
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();
         $destroyer($model);
 
-        redirect()->route('move.index', ['resource' => $this->resource]);
+        return $this->redirectRoute('move.index', ['resource' => $this->resource]);
     }
 }
