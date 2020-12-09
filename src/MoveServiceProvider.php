@@ -118,8 +118,10 @@ class MoveServiceProvider extends ServiceProvider
             }
 
             $this->app->singleton(Move::getPrefix() . '.' . $alias, function () use ($class) {
+                /** @psalm-suppress UndefinedPropertyFetch */
                 $model = $class::$model;
 
+                /** @psalm-suppress UndefinedClass */
                 return new $class(new $model());
             });
         }

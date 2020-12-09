@@ -33,12 +33,11 @@ class HasMany extends Select
         return $this;
     }
 
-    public function handleAfterStore($model, $data, $value)
+    public function handleAfterStore($value, $field, $model, $data)
     {
-        parent::handleAfterStore($model, $data, $value);
+        parent::handleAfterStore($value, $field, $model, $data);
 
-        $resourceModel = $this->resourceName::$model;
-        $relation = $this->relation ?? (new $resourceModel)->getTable();
+        $relation = $this->relation;
 
         $ids = collect($value)
             ->filter(fn ($value) => ! empty($value))

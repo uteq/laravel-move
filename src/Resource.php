@@ -162,6 +162,7 @@ abstract class Resource
 
     public static function relationQuery()
     {
+        /** @psalm-suppress UndefinedPropertyFetch */
         return static::$model::query();
     }
 
@@ -363,7 +364,7 @@ abstract class Resource
         /** @var Field $field */
         $fields = [];
         foreach ($visibleFields as $field) {
-            $field->resolveForDisplay($model ?: static::newModel());
+            $field->resolveForDisplay($model);
 
             $fields[] = $field;
         }
