@@ -41,7 +41,7 @@ class TestCase extends Orchestra
         });
 
         Factory::guessFactoryNamesUsing(
-            fn(string $modelName) => 'Uteq\\Move\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Uteq\\Move\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
         );
     }
 
