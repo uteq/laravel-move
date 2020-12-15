@@ -103,6 +103,11 @@ trait HasStore
         return $this->maybeRedirectFromAction('cancel');
     }
 
+    public function cancelRoute()
+    {
+        return $this->endpointRoute('index');
+    }
+
     public function customValidate(array $fields, array $rules, array $messages = [], $customAttributes = [])
     {
         try {

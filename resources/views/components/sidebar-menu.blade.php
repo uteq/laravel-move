@@ -5,7 +5,9 @@
     </a>
     <div class="mt-5 flex-grow flex flex-col">
         <nav class="flex-1 px-2">
-            @if (!\Uteq\Move\Facades\Move::hasSidebarGroups())
+            @if (isset($custom) && $custom !== null)
+                {!! $custom !!}
+            @elseif (!\Uteq\Move\Facades\Move::hasSidebarGroups())
                 @foreach(\Uteq\Move\Facades\Move::resources()->authorized()->values() as $resource)
                     <x-move-sidebar.link alt-active="{{ $resource->route() }}*"
                                          href="/{{ $resource->route() }}"

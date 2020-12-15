@@ -18,7 +18,8 @@
                     </svg>
                 </button>
             </div>
-            <x-move-sidebar-menu/>
+
+            <x-move-sidebar-menu :custom="$slot ?? null"/>
         </div>
     </div>
 </div>
@@ -29,6 +30,6 @@
 >
     <div class="flex flex-col w-64">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
-        <x-move-sidebar-menu/>
+        <x-move-sidebar-menu :custom="$slot ?? null"/>
     </div>
 </div>

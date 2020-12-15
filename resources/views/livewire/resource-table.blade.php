@@ -116,9 +116,9 @@
                 <x-move-td class="hover:bg-gray-50 text-center" colspan="{{ count($header) + 2 }}">
                     <div class="p-10">
                         <p class="mb-3">@lang('No items available')</p>
-                        <button wire:click="add" class="underline text-green-500">
+                        <a href="{{ $this->addRoute() }}" class="underline text-green-500">
                             @lang('Create first :resource', ['resource' => $this->resource()->singularLabel()])
-                        </button>
+                        </a>
                     </div>
                 </x-move-td>
             </tr>

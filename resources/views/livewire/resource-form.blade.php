@@ -18,7 +18,7 @@
             </div>
         </x-move-action-message>
 
-        <x-move-a wire:click="cancel">
+        <x-move-a href="{{ $this->cancelRoute() }}">
             Cancel
         </x-move-a>
 
