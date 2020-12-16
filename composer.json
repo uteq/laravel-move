@@ -23,16 +23,15 @@
         "laravel/jetstream": "^1.5",
         "livewire/livewire": "^2.3.0",
         "maatwebsite/excel": "^3.1",
-        "spatie/data-transfer-object": "^1.13",
-        "spatie/laravel-medialibrary": "^8.7",
-        "spatie/laravel-searchable": "^1.7"
+        "spatie/data-transfer-object": "^2.6",
+        "spatie/laravel-medialibrary": "^9.4"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.8",
         "friendsofphp/php-cs-fixer": "^2.16",
         "orchestra/testbench": "^6.0",
         "phpunit/phpunit": "^9.3",
-        "vimeo/psalm": "^3.11"
+        "vimeo/psalm": "^4.3"
     },
     "autoload": {
         "psr-4": {
