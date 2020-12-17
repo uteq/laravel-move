@@ -3,6 +3,7 @@
 namespace Uteq\Move\Fields;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
@@ -140,6 +141,12 @@ class Select extends Field
 
     public function getOptions(): array
     {
+        if (Arr::isAssoc($this->options)) {
+            return collect($this->options)
+                ->map(fn ($value, $key) => ['key' => $key, 'value' => $value])
+                ->toArray();
+        }
+
         if (count($this->options)) {
             return $this->options;
         }

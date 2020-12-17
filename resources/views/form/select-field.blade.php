@@ -13,8 +13,8 @@
                              :settings="$field->settings"
                              :values="$field->store() ? array_keys(is_array($field->store()) ? $field->store() : [$field->store() => true]) : null"
         >
-            @foreach ($field->getOptions() as $key => $value)
-                <option value="{{ $key }}" @if ($key === $field->value) selected @endif >{{ $value }}</option>
+            @foreach ($field->getOptions() as $key => $item)
+                <option value="{{ $item['key'] }}" @if ($item['key'] === $field->value) selected @endif >{{ $item['value'] }}</option>
             @endforeach
         </x-move-field.select>
 
