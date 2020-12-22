@@ -10,7 +10,7 @@
            x-data
            x-ref="input"
            x-init="window.flatpickr($refs.input, {{ json_encode($config) }})"
-        {!! $attributes->merge(['class' => 'flex-1 form-input block w-full min-w-0 rounded-none rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5']) !!}
+        {!! $attributes->merge(['class' => 'flex-1 form-input block w-full min-w-0 rounded-none rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5 border-gray-300 rounded']) !!}
     />
 
     <div class="absolute top-0 right-0 px-3 py-2" data-toggle>
