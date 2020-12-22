@@ -16,13 +16,15 @@ class Password extends Field
         $this->callableValue = fn () => null;
 
         $this->beforeStore(function ($value, $field, $model, $data) {
-            if ($value) {
-                $model->password = bcrypt($value);
-            } else {
-                unset($model->password);
+            if (! $model->id) {
+                return $value;
             }
 
-            return UnsetField::class;
+            if ($value) {
+                return bcrypt($value);
+            } else {
+                return UnsetField::class;
+            }
         });
     }
 

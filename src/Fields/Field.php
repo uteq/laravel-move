@@ -465,9 +465,15 @@ abstract class Field extends FieldElement
             ->toArray();
     }
 
-    public function removeFromModel()
+    public function removeFromModel(\Closure $conditions = null)
     {
-        $this->beforeStore[] = function ($model, $data, $value) {
+        $this->beforeStore[] = function ($value, $field, $model, $data) use ($conditions) {
+            if ($conditions
+                && ! ($conditions($value, $field, $model, $data))
+            ) {
+                return $value;
+            }
+
             if (! isset($model[$this->attribute])) {
                 return;
             }
@@ -478,9 +484,9 @@ abstract class Field extends FieldElement
         return $this;
     }
 
-    public function onlyForValidation()
+    public function onlyForValidation(\Closure $conditions = null)
     {
-        $this->removeFromModel();
+        $this->removeFromModel($conditions);
 
         return $this;
     }
