@@ -109,7 +109,6 @@ class MoveServiceProvider extends ServiceProvider
 
     public function configureNamespaces()
     {
-
         foreach (Move::all() as $alias => $class) {
             if (! isset($class::$model)) {
                 throw new \Exception(sprintf(
