@@ -11,8 +11,8 @@
             @continue
         @endif
 
-        <div class="w-full md:w-1/2 @if ($i % 1 === 0) pr-6 @endif ">
-            <div wire:key="file{{ $field->attribute }}{{ $loop->index }}{{ $i }}" class="border p-3 rounded my-3">
+        <div class="w-full md:w-1/2 @if ($i % 1 === 0) pr-6 @endif " wire:key="receipts.{{ $loop->index }}">
+            <div class="border p-3 rounded my-3">
 
                 @if ($file->guessExtension() === 'pdf')
 
@@ -36,13 +36,13 @@
 
                 @else
                     <div class="col p-2 justify-content-center">
-                        <div wire:click="showFile({{ $i }})" class="cursor-pointer" data-lightbox="roadtrip">
+                        <div wire:click="showFile('{{ $i }}')" class="cursor-pointer" data-lightbox="roadtrip">
                             <img src="{{ $file->getUrl() }}"
                                  class="card-img"
                             />
                         </div>
 
-                        <x-move-modal id="showingFile.{{ $i }}" wire:model="showFile">
+                        <x-move-modal key="showingFile.{{ $i }}" id="showingFile.{{ $i }}" wire:model="showFile">
                             <img src="{{ $file->getUrl() }}"
                                  class="card-img"
                             />
