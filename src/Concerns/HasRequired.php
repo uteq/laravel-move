@@ -47,11 +47,11 @@ trait HasRequired
                 }
 
                 if ($this->type === 'create') {
-                    return in_array('required', $this->getCreationRules(request())[$this->attribute]);
+                    return in_array('required', $this->getCreationRules(request())[$this->attribute] ?? []);
                 }
 
                 if ($this->type === 'update') {
-                    return in_array('required', $this->getUpdateRules(request())[$this->attribute]);
+                    return in_array('required', $this->getUpdateRules(request())[$this->attribute] ?? []);
                 }
             }
 

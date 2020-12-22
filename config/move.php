@@ -15,4 +15,6 @@ return [
         // You are allowed to over
         'web',
     ],
+
+    'load_resource_routes' => true,
 ];

@@ -5,7 +5,7 @@
 <div wire:ignore class="w-full">
     <select name="{{ $model }}"
             id="{{ $model }}"
-            {{ $attributes->merge(['class' => 'select2-'. $index .' form-select w-full']) }}
+            {{ $attributes->merge(['class' => 'select2-'. $index .' form-select rounded border-none shadow w-full']) }}
     >
         @if (($settings['multiple'] ?? false) !== true)<option></option>@endif
         @forelse($options as $key => $label)

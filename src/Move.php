@@ -60,8 +60,21 @@ class Move
         return Move::resolveResource(request()->route()->parameter('resource'));
     }
 
-    public function resolveResource(string $resource)
+    public function activeResourceGroup()
     {
+        if (! $activeResource = $this->activeResource()) {
+            return null;
+        }
+
+        return $activeResource::$group;
+    }
+
+    public function resolveResource(string $resource = null)
+    {
+        if (! $resource) {
+            return null;
+        }
+
         if ($this->getByClass($resource)) {
             $resource = $this->getByClass($resource);
         }

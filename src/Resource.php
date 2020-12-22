@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Uteq\Move\Concerns\PerformsQueries;
 use Uteq\Move\Concerns\WithAuthorization;
+use Uteq\Move\Contracts\PanelInterface;
 use Uteq\Move\DomainActions\DeleteResource;
 use Uteq\Move\DomainActions\StoreResource;
 use Uteq\Move\Facades\Move;
@@ -400,16 +401,17 @@ abstract class Resource
     public function panels($resource, string $displayType)
     {
         $panels = collect($this->fields())
-            ->filter(fn ($field) => $field instanceof Panel);
+            ->filter(fn ($field) => $field instanceof PanelInterface);
 
-        $panels->prepend(new Panel(
-            null,
-            collect($this->fields())
-                ->filter(fn ($field) => $field instanceof Field)
-                ->toArray()
-        ));
+        $fields = collect($this->fields())
+            ->filter(fn ($field) => $field instanceof Field)
+            ->toArray();
 
-        $panels = $panels->each(fn (Panel $panel) => $panel->resolveFields($resource))
+        if (count($fields)) {
+            $panels->prepend(new Panel(null, $fields));
+        }
+
+        $panels = $panels->each(fn (PanelInterface $panel) => $panel->resolveFields($resource))
             ->map(function ($panel) use ($resource, $displayType) {
                 $panel->fields = collect($panel->fields)
                     ->filter(fn (Field $field) => $field->isVisible($resource->store, $displayType))

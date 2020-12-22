@@ -16,6 +16,8 @@ use Uteq\Move\Resource;
  * @method static getByClass($class)
  * @method static array all()
  * @method static getClassNames($path)
+ * @method static prefix(string $prefix)
+ * @method static useSidebarGroups(bool $bool = true)
  * @package Uteq\Move\Facades
  * @see \Uteq\Move\Move
  */

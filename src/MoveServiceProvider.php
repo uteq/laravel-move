@@ -6,6 +6,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Livewire;
 use Uteq\Move\Commands\InstallCommand;
@@ -108,16 +109,32 @@ class MoveServiceProvider extends ServiceProvider
 
     public function configureNamespaces()
     {
+
         foreach (Move::all() as $alias => $class) {
             if (! isset($class::$model)) {
-                continue;
+                throw new \Exception(sprintf(
+                    '%s: The $model attribute is required for resource `%s` / `%s`',
+                    __METHOD__,
+                    $alias,
+                    $class
+                ));
             }
 
             if (! is_subclass_of($class, Resource::class)) {
-                continue;
+                throw new \Exception(sprintf(
+                    '%s: `%s` / `%s` should extend %s',
+                    __METHOD__,
+                    $alias,
+                    $class,
+                    Resource::class
+                ));
             }
 
-            $this->app->singleton(Move::getPrefix() . '.' . $alias, function () use ($class) {
+            $alias = Str::startsWith($alias, Move::getPrefix())
+                ? $alias
+                : Move::getPrefix() . '.' . $alias;
+
+            $this->app->singleton($alias, function () use ($class) {
                 /** @psalm-suppress UndefinedPropertyFetch */
                 $model = $class::$model;
 

@@ -27,20 +27,23 @@ Route::group(['middleware' => Move::routeMiddlewares()], function () {
         ->name('move.download')
         ->middleware(ValidateSignature::class);
 
-    // Resources
-    Route::get('{resource}/create', ResourceForm::class)
-        ->where('resource', '([^0-9]*)')
-        ->name('move.create');
+    if (config('move.load_resource_routes') === true) {
 
-    Route::get('{resource}/{model}/edit', ResourceForm::class)
-        ->where('resource', '([^0-9]*)')
-        ->name('move.edit');
+        // Resources
+        Route::get('{resource}/create', ResourceForm::class)
+            ->where('resource', '([^0-9]*)')
+            ->name('move.create');
 
-    Route::get('{resource}/{model}/show', ResourceShow::class)
-        ->where('resource', '([^0-9]*)')
-        ->name('move.show');
+        Route::get('{resource}/{model}/edit', ResourceForm::class)
+            ->where('resource', '([^0-9]*)')
+            ->name('move.edit');
 
-    Route::get('{resource}', ResourceTable::class)
-        ->where('resource', '(.*)')
-        ->name('move.index');
+        Route::get('{resource}/{model}/show', ResourceShow::class)
+            ->where('resource', '([^0-9]*)')
+            ->name('move.show');
+
+        Route::get('{resource}', ResourceTable::class)
+            ->where('resource', '(.*)')
+            ->name('move.index');
+    }
 });

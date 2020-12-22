@@ -4,8 +4,9 @@ namespace Uteq\Move\Fields;
 
 use Uteq\Move\Concerns\HasDependencies;
 use Uteq\Move\Concerns\Makeable;
+use Uteq\Move\Contracts\PanelInterface;
 
-class Panel
+class Panel implements PanelInterface
 {
     use Makeable;
     use HasDependencies;
@@ -15,6 +16,9 @@ class Panel
     public string $nameOnCreate;
     public string $nameOnUpdate;
     public array $alert = [];
+
+    public string $component = 'form.panel';
+    public string $folder = 'move::';
 
     public function __construct(?string $name = null, array $fields = [])
     {
@@ -71,7 +75,7 @@ class Panel
 
     public function render($model)
     {
-        return view('move::form.panel', [
+        return view($this->folder . $this->component, [
             'panel' => $this,
             'model' => $model,
         ]);

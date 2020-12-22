@@ -30,7 +30,7 @@
                 @lang('Per page')
             </h3>
             <div class="p-3">
-                <select wire:model="filter.limit" class="block w-full form-control-sm form-select">
+                <select wire:model="filter.limit" class="block w-full form-control-sm form-select rounded-md border-gray-300">
                     @foreach ($this->resource()::perPageOptions() as $option)
                         <option value="{{ $option }}">{{ $option }}</option>
                     @endforeach
