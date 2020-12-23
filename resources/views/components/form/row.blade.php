@@ -1,4 +1,4 @@
-@props(['model', 'required' => false, 'label', 'type' => 'input', 'helpText' => null, 'custom' => false, 'width' => null])
+@props(['model', 'required' => false, 'label', 'type' => 'input', 'helpText' => null, 'custom' => false, 'width' => null, 'flex' => true])
 
 @php $labelValue = $label @endphp
 
@@ -11,7 +11,7 @@
             />
 
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-                <div class="{{$width}} flex @if (!$custom) @if ($type === 'checkbox') mt-2 @else rounded-md shadow-sm @endif @endif">
+                <div class="{{$width}} @if ($flex) flex @endif @if (!$custom) @if ($type === 'checkbox') mt-2 @else rounded-md shadow-sm @endif @endif">
                     @if (!$custom)
                     <x-dynamic-component component="move::field.{{ $type }}"
                                          model="{{ $model }}"

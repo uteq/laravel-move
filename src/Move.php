@@ -13,6 +13,7 @@ class Move
     public string $prefix = 'move';
     public bool $useSidebarGroups = true;
     public ?array $resources = null;
+    public ?bool $loadResourceRoutes = null;
 
     public function prefix(string $prefix)
     {
@@ -161,6 +162,20 @@ class Move
     public function hasSidebarGroups()
     {
         return $this->useSidebarGroups;
+    }
+
+    public function loadResourceRoutes(bool $value = true): self
+    {
+        $this->loadResourceRoutes = $value;
+
+        return $this;
+    }
+
+    public function shouldLoadResourceRoutes()
+    {
+        return $this->loadResourceRoutes !== null
+            ? $this->loadResourceRoutes
+            : config('move.load_resource_routes');
     }
 
     public function getClassNames($path)

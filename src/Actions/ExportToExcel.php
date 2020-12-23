@@ -25,6 +25,8 @@ abstract class ExportToExcel extends Action implements FromCollection, WithCusto
     public \Uteq\Move\Resource $resource;
     public Collection $collection;
 
+    public ?string $type = null;
+
     public function handleLivewireRequest(
         \Uteq\Move\Resource $resource,
         Collection $collection,
@@ -37,9 +39,22 @@ abstract class ExportToExcel extends Action implements FromCollection, WithCusto
         return $this->handle();
     }
 
+    public function registerType()
+    {
+        //
+    }
+
+    public function registerHeadings()
+    {
+        //
+    }
+
     public function handle()
     {
-        $response = Excel::download($this, 'test.xlsx', null, $this->headings());
+        $this->registerType();
+        $this->registerHeadings();
+
+        $response = Excel::download($this, 'test.xlsx', $this->type, $this->headings());
 
         if (! $response instanceof BinaryFileResponse || $response->isInvalid()) {
             throw new InvalidExcelDownloadException('Resource could not be exported.', 500);
@@ -47,7 +62,7 @@ abstract class ExportToExcel extends Action implements FromCollection, WithCusto
 
         return [
             'handle' => function ($livewire) use ($response) {
-                $name = strtolower($livewire->resource()->label() . '-' . now()->isoFormat('DD-MMMM-YYYY')) . '.xlsx';
+                $name = strtolower($livewire->resource()->label() . '-' . now()->isoFormat('DD-MMMM-YYYY')) . '.' . ($this->type ? strtolower($this->type) : 'xlsx');
 
                 return response()->download($response->getFile()->getPathname(), $name);
             },
