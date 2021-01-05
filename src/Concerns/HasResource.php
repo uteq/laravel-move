@@ -18,7 +18,7 @@ trait HasResource
     {
         $this->initializeHasMountActions();
 
-        $this->beforeMount(function() {
+        $this->beforeMount(function () {
             $this->fields = collect($this->getFieldsProperty());
         });
 

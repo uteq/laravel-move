@@ -388,7 +388,7 @@ abstract class Resource
     {
         $panelFields = collect($this->fields())
             ->filter(fn ($field) => $field instanceof Panel)
-            ->flatMap(fn($panel) => collect($panel->fields));
+            ->flatMap(fn ($panel) => collect($panel->fields));
 
         $fields = collect($this->fields())
             ->filter(fn ($field) => $field instanceof Field);

@@ -71,7 +71,7 @@ trait HasFiles
     {
         $this->fields
             ->filter(fn ($field) => $field instanceof Files)
-            ->each(function(Files $field) {
+            ->each(function (Files $field) {
                 $key = $field->attribute;
 
                 $this->store[$key] = $this->getFilesPaths($field);
