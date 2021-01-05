@@ -21,3 +21,6 @@ window.$ = $;
 require('select2');
 
 $('.select2').select2();
+
+import Quill from 'quill';
+window.Quill = Quill;

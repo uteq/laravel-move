@@ -26,7 +26,11 @@ class Status extends Field
 
     public function resolveAttribute($resource, $attribute)
     {
-        return parent::resolveAttribute($resource, $attribute) == $this->trueValue
+        if (! $this->resolveTrueValue()) {
+            return false;
+        }
+
+        return parent::resolveAttribute($resource, $attribute) == $this->resolveTrueValue()
             ? true
             : false;
     }
@@ -36,10 +40,19 @@ class Status extends Field
         if ($request->exists($requestAttribute)) {
             $value = $request[$requestAttribute];
 
+            $falseValue = $this->falseValue;
+
             $model->{$attribute} = $value == true
-                ? $this->trueValue
-                : $this->falseValue;
+                ? $this->resolveTrueValue()
+                : (is_callable($falseValue) ? $falseValue($this) : $falseValue);
         }
+    }
+
+    public function resolveTrueValue()
+    {
+        $trueValue = $this->trueValue;
+
+        return (is_callable($trueValue) ? $trueValue($this, $this->attribute) : $trueValue);
     }
 
     public function trueValue($value)

@@ -35,10 +35,12 @@ class ResourceTable extends TableComponent
 
     protected $queryString = ['search', 'filter', 'order'];
 
-    protected $crudBaseRoute = 'move';
+    protected $crudBaseRoute = null;
 
     public function mount(string $resource)
     {
+        $this->crudBaseRoute ??= move()::getPrefix();
+
         $this->resource = $resource;
         $this->filter['limit'] = $this->filter('limit', $this->resource()->defaultPerPage());
         $this->hydrate();

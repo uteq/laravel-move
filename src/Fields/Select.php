@@ -55,7 +55,7 @@ class Select extends Field
             return null;
         }
 
-        return route('move.show', [
+        return route(move()::getPrefix() . '.show', [
             'resource' => $this->resourceRouteName(),
             'model' => $this->value,
         ]);

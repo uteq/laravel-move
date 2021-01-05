@@ -16,7 +16,7 @@
                wire:model="files.{{ $field->attribute }}"
                accept="image/*, .pdf, application/pdf, application/heic"
                capture="camera"
-               multiple
+               {{ $field->isMultiple ? 'multiple' : null }}
         />
 
         <div wire:loading wire:target="files.{{ $field->attribute }}">

@@ -42,7 +42,7 @@
                 window.$(".select2-dropdown:not(:has(a))").append(
                     '<a onclick="window.livewire.emit(\'showAddResource\', \'{{ $index }}\')"'
                     + 'style="padding: 6px;height: 20px;display: inline-table;"'
-                    + 'class="text-center w-full text-green-500 text-bold cursor-pointer"'
+                    + 'class="text-center w-full text-{{ Move::getThemeColor() }}-500 text-bold cursor-pointer"'
                     + '>+ {{ $field->name }} toevoegen</a>'
                 );
             });

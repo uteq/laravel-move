@@ -388,9 +388,7 @@ abstract class Resource
     {
         $panelFields = collect($this->fields())
             ->filter(fn ($field) => $field instanceof Panel)
-            ->flatMap(function ($panel) {
-                return collect($panel->fields);
-            });
+            ->flatMap(fn($panel) => collect($panel->fields));
 
         $fields = collect($this->fields())
             ->filter(fn ($field) => $field instanceof Field);
@@ -458,4 +456,25 @@ abstract class Resource
     abstract public function filters();
 
     abstract public function actions();
+
+    /**
+     * Return a test store for the resource form.
+     * This can be used for testing.
+     * This adds the given values to the supplied fields
+     *
+     * ```
+     * <?php
+     *
+     * $faker = new \Faker\Factory();
+     *
+     * [
+     *     'name' => $faker->sentence(6),
+     * ];
+     *
+     * @return array
+     */
+    public function testStore()
+    {
+        return [];
+    }
 }

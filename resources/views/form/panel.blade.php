@@ -7,7 +7,7 @@
                     <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
                         <div></div>
                         <div class="mt-1 sm:mt-0 sm:col-span-2">
-                            {!! render($before($field)) !!}
+                            {!! render($before($field, $model)) !!}
                         </div>
                     </div>
                 </div>

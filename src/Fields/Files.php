@@ -8,6 +8,8 @@ class Files extends Field
 {
     public string $component = 'files-field';
 
+    public bool $isMultiple = true;
+
     public function __construct(
         string $name,
         string $attribute,
@@ -23,6 +25,13 @@ class Files extends Field
                 new RequiredIf(fn () => $this->isRequired()),
             ],
         ]);
+    }
+
+    public function isSingular(bool $value = true)
+    {
+        $this->isMultiple = ! $value;
+
+        return $this;
     }
 
     public function media()

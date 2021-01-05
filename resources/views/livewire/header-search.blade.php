@@ -4,7 +4,7 @@
       action="#"
       method="GET"
 >
-    <label for="search_field" class="sr-only">Press / to search</label>
+    <label for="search_field" class="sr-only">{{ __('Press / to search') }}</label>
     <div class="relative w-full text-gray-400 focus-within:text-gray-600">
         <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
@@ -35,8 +35,8 @@
                             @if (!is_object($model))
                                 @continue
                             @endif
-                            <li class="w-full focus:bg-green-100 hover:bg-green-50">
-                                <a href="{{ route('move.show', ['resource' => $result['route'], 'model' => $model]) }}" class="cursor-pointer w-full block py-1 px-5">
+                            <li class="w-full focus:bg-{{ Move::getThemeColor() }}-100 hover:bg-{{ Move::getThemeColor() }}-50">
+                                <a href="{{ route(move()::getPrefix() . '.show', ['resource' => $result['route'], 'model' => $model]) }}" class="cursor-pointer w-full block py-1 px-5">
                                     {{ $result['resource']::title($model) }}
                                 </a>
                             </li>

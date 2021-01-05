@@ -34,7 +34,7 @@ class StoreResource
      */
     public function withoutMedia(Model $model, array $data)
     {
-        return [$this->modelWithoutMedia($model), $this->dataWithoutMedia($data)];
+        return [$this->modelWithoutMedia($model, $data), $this->dataWithoutMedia($data)];
     }
 
     /**
@@ -43,12 +43,12 @@ class StoreResource
      * @param Model $model
      * @return Model
      */
-    public function modelWithoutMedia(Model $model)
+    public function modelWithoutMedia(Model $model, $data)
     {
-        collect($model->getAttributes())
+        collect($data)
             ->filter(fn ($attribute) => $attribute instanceof MediaCollection)
-            ->each(function ($attribute, $key) use ($model) {
-                unset($model->{$key});
+            ->each(function ($attribute, $key) use (&$model) {
+                unset($model[$key]);
             });
 
         return $model;
@@ -69,9 +69,9 @@ class StoreResource
 
     public function afterStore(Model $model, array $data, Resource $resource)
     {
-        $beforeSaveActions = method_exists($resource, 'afterStore') ? $resource->afterStore() : [];
+        $afterStoreActions = method_exists($resource, 'afterStore') ? $resource->afterStore() : [];
 
-        collect($beforeSaveActions)->each->__invoke($this, $model, $data);
+        collect($afterStoreActions)->each->__invoke($this, $model, $data);
 
         /** @psalm-suppress InvalidArgument */
         app()->call([$this, 'syncMedia'], ['model' => $model, 'data' => $data]);

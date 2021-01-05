@@ -5,16 +5,23 @@ namespace Uteq\Move\Concerns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Uteq\Move\Facades\Move;
-use Uteq\Move\Resource;
 
 trait HasResource
 {
+    use HasMountActions;
+
     public $resource;
     public $model = null;
     public ?int $modelId = null;
 
     public function initializeHasResource()
     {
+        $this->initializeHasMountActions();
+
+        $this->beforeMount(function() {
+            $this->fields = collect($this->getFieldsProperty());
+        });
+
         $this->model ??= (Move::resolveResource(request()->route()->parameter('resource'))->model());
         $this->modelId = optional($this->model)->id;
     }
@@ -58,7 +65,7 @@ trait HasResource
 
     public function resolveFieldRules($model)
     {
-        return collect($this->fields())
+        return $this->fields
             ->filter(fn ($field) => $field->isVisible($model, 'update'))
             ->flatMap(fn ($field) => $field->getRules(request()))
             ->toArray();
@@ -66,7 +73,7 @@ trait HasResource
 
     public function resolveFieldCreateRules($model)
     {
-        return collect($this->fields())
+        return $this->fields
             ->filter(fn ($field) => $field->isVisible($model, 'create'))
             ->flatMap(fn ($field) => $field->getCreationRules(request()))
             ->toArray();
@@ -74,7 +81,7 @@ trait HasResource
 
     public function resolveFieldUpdateRules($model)
     {
-        return collect($this->fields())
+        return $this->fields
             ->filter(fn ($field) => $field->isVisible($model, 'update'))
             ->flatMap(fn ($field) => $field->getUpdateRules(request()))
             ->toArray();
@@ -94,11 +101,18 @@ trait HasResource
         $this->emit('saved', $this->{$this->property});
     }
 
+    public function getFieldsProperty()
+    {
+        return collect(
+            $this->model
+                ? $this->resolveFields($this->model)
+                : $this->resource()->resolveFields($this->resource()->model())
+        );
+    }
+
     public function fields()
     {
-        return $this->model
-            ? $this->resolveFields($this->model)
-            : $this->resource()->resolveFields($this->resource()->model());
+        return $this->fields;
     }
 
     public function filters()

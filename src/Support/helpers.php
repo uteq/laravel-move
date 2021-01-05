@@ -30,3 +30,8 @@ function render($string, $__data = [])
 
     return ob_get_clean();
 }
+
+function move()
+{
+    return new \Uteq\Move\Facades\Move();
+}

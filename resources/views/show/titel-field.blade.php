@@ -3,5 +3,5 @@
         {{ $field->value }}
     </a>
 @else
-{{ $field->value }}
+    {{ $field->value }}
 @endif

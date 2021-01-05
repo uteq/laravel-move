@@ -94,7 +94,7 @@
                     <x-move-td>
                         @if ($this->resource()::title($row['model']) === $field->attribute)
                             <button wire:click="edit({{ $row['model']->id }})"
-                                    class="text-green-500 cursor-pointer"
+                                    class="text-{{ Move::getThemeColor() }}-500 cursor-pointer"
                                     wire:loading.attr="disabled"
                                     wire:loading.class="text-gray-500"
                             >
@@ -116,7 +116,7 @@
                 <x-move-td class="hover:bg-gray-50 text-center" colspan="{{ count($header) + 2 }}">
                     <div class="p-10">
                         <p class="mb-3">@lang('No items available')</p>
-                        <a href="{{ $this->addRoute() }}" class="underline text-green-500">
+                        <a href="{{ $this->addRoute() }}" class="underline text-{{ Move::getThemeColor() }}-500">
                             @lang('Create first :resource', ['resource' => $this->resource()->singularLabel()])
                         </a>
                     </div>

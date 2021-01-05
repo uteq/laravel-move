@@ -14,6 +14,7 @@ class Move
     public bool $useSidebarGroups = true;
     public ?array $resources = null;
     public ?bool $loadResourceRoutes = null;
+    public string $themeColor = 'green';
 
     public function prefix(string $prefix)
     {
@@ -25,6 +26,18 @@ class Move
     public function getPrefix()
     {
         return $this->prefix;
+    }
+
+    public function themeColor(string $color)
+    {
+        $this->themeColor = $color;
+
+        return $this;
+    }
+
+    public function getThemeColor()
+    {
+        return $this->themeColor;
     }
 
     public function resource(string $alias, $class)

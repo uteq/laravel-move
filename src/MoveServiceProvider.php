@@ -101,7 +101,7 @@ class MoveServiceProvider extends ServiceProvider
 
         Route::group([
             'domain' => config('move.domain', null),
-            'prefix' => config('move.path', Move::getPrefix()),
+            'prefix' => config('move.path', move()::getPrefix()),
         ], function () {
             $this->loadRoutesFrom(__DIR__ . '/../routes/move.php');
         });
@@ -129,9 +129,9 @@ class MoveServiceProvider extends ServiceProvider
                 ));
             }
 
-            $alias = Str::startsWith($alias, Move::getPrefix())
+            $alias = Str::startsWith($alias, move()::getPrefix())
                 ? $alias
-                : Move::getPrefix() . '.' . $alias;
+                : move()::getPrefix() . '.' . $alias;
 
             $this->app->singleton($alias, function () use ($class) {
                 /** @psalm-suppress UndefinedPropertyFetch */

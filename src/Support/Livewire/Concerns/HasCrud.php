@@ -2,6 +2,8 @@
 
 namespace Uteq\Move\Support\Livewire\Concerns;
 
+use Uteq\Move\Facades\Move;
+
 trait HasCrud
 {
     public $confirmingDestroy = false;
@@ -24,6 +26,8 @@ trait HasCrud
 
     public function showRoute(int $id)
     {
+        $this->crudBaseRoute ??= move()::getPrefix();
+
         return route($this->crudBaseRoute . '.show', [
             'resource' => $this->resource,
             'model' => $this->modelById($id),
@@ -37,6 +41,8 @@ trait HasCrud
 
     public function editRoute(int $id)
     {
+        $this->crudBaseRoute ??= move()::getPrefix();
+
         return route($this->crudBaseRoute . '.edit', [
             'resource' => $this->resource,
             'model' => $this->modelById($id),
@@ -50,6 +56,8 @@ trait HasCrud
 
     public function addRoute()
     {
+        $this->crudBaseRoute ??= move()::getPrefix();
+
         return route($this->crudBaseRoute . '.create', [
             'resource' => $this->resource,
         ]);
@@ -76,6 +84,6 @@ trait HasCrud
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();
         $destroyer($model);
 
-        return $this->redirectRoute('move.index', ['resource' => $this->resource]);
+        return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => $this->resource]);
     }
 }

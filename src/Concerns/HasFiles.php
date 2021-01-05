@@ -41,7 +41,7 @@ trait HasFiles
      */
     public function rotateFile(string $field, int $i, int $degrees = -90)
     {
-        $field = collect($this->fields())
+        $field = $this->fields
             ->where('attribute', $field)
             ->first();
 
@@ -69,15 +69,13 @@ trait HasFiles
 
     public function beforeStore($data)
     {
-        foreach ($this->fields() as $field) {
-            if (! $field instanceof Files) {
-                continue;
-            }
+        $this->fields
+            ->filter(fn ($field) => $field instanceof Files)
+            ->each(function(Files $field) {
+                $key = $field->attribute;
 
-            $key = $field->attribute;
-
-            $this->store[$key] = $this->getFilesPaths($field);
-        }
+                $this->store[$key] = $this->getFilesPaths($field);
+            });
     }
 
     public function getFilesPaths(Field $field)
@@ -112,13 +110,13 @@ trait HasFiles
 
         $this->tempUploadedFiles[$key] = array_merge(
             array_values($this->tempUploadedFiles[$key]),
-            array_values($data)
+            array_values(is_array($data) ? $data : [$data])
         );
     }
 
     public function getTemporaryUrl(File $file)
     {
-        return URL::temporarySignedRoute('move.preview-file', now()->addMinutes(30), [
+        return URL::temporarySignedRoute(move()::getPrefix() . '.preview-file', now()->addMinutes(30), [
             'filename' => $file->getFilename(),
         ]);
     }

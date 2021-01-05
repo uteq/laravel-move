@@ -45,7 +45,7 @@ class TemporaryUploadedResourceFile extends UploadedFile implements ResourceFile
 
     public function getUrl(): string
     {
-        return URL::temporarySignedRoute('move.preview-file', now()->addMinutes(30), [
+        return URL::temporarySignedRoute(move()::getPrefix() . '.preview-file', now()->addMinutes(30), [
             'filename' => $this->media->getFilename(),
         ]);
     }

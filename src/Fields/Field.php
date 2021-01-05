@@ -323,7 +323,7 @@ abstract class Field extends FieldElement
     {
         $resource = Move::getByClass(get_class($resource));
 
-        return route('move.edit', [
+        return route(move()::getPrefix() . '.edit', [
             'resource' => str_replace('.', '/', $resource),
             'model' => $this->value,
         ]);

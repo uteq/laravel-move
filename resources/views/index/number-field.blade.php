@@ -1,5 +1,5 @@
 @if ($field->clickable)
-    <a href="{{ $field->resourceUrl($resource) }}" class="underline text-green-500">
+    <a href="{{ $field->resourceUrl($resource) }}" class="underline text-{{ Move::getThemeColor() }}-500">
         {{ $field->value }}
     </a>
 @else

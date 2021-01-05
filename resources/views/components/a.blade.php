@@ -1,4 +1,4 @@
-@props(['button' => false, 'color' => 'green'])
+@props(['button' => false, 'color' => Move::getThemeColor()])
 
 <a {{ $attributes->merge([
         'class' => $button
