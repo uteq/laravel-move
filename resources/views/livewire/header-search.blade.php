@@ -35,7 +35,7 @@
                             @if (!is_object($model))
                                 @continue
                             @endif
-                            <li class="w-full focus:bg-{{ Move::getThemeColor() }}-100 hover:bg-{{ Move::getThemeColor() }}-50">
+                            <li class="w-full focus:bg-{{ move()::getThemeColor() }}-100 hover:bg-{{ move()::getThemeColor() }}-50">
                                 <a href="{{ route(move()::getPrefix() . '.show', ['resource' => $result['route'], 'model' => $model]) }}" class="cursor-pointer w-full block py-1 px-5">
                                     {{ $result['resource']::title($model) }}
                                 </a>

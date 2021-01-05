@@ -3,14 +3,14 @@
     <x-move-dropdown orientation="left" wire:key="table-filter.checkbox">
         <x-slot name="trigger">
             <button class="flex items-center cursor-pointer active:border relative mt-2">
-                <span class="form-checkbox @if ($this->has_selected) bg-{{ Move::getThemeColor() }}-700 @endif h-5 w-5 text-{{ Move::getThemeColor() }}-600 cursor-pointer">
+                <span class="form-checkbox @if ($this->has_selected) bg-{{ move()::getThemeColor() }}-700 @endif h-5 w-5 text-{{ move()::getThemeColor() }}-600 cursor-pointer">
                     @if ($this->has_selected)
                         <!-- heroicon-s-check -->
                         <svg class="w-4 h-4 position-relative text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="left: 1px; top: 1px; position: relative">
                           <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                         </svg>
                     @endif
-                    <svg class="text-{{ Move::getThemeColor() }}-600 h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="text-{{ move()::getThemeColor() }}-600 h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </span>
@@ -40,7 +40,7 @@
                 </optgroup>
             </select>
 
-            <button class="active:border @if ($this->action !== '-') bg-{{ Move::getThemeColor() }}-600 hover:bg-{{ Move::getThemeColor() }}-500 cursor-pointer @else bg-gray-200 disabled cursor-default @endif py-1 px-4 rounded-md mr-2"
+            <button class="active:border @if ($this->action !== '-') bg-{{ move()::getThemeColor() }}-600 hover:bg-{{ move()::getThemeColor() }}-500 cursor-pointer @else bg-gray-200 disabled cursor-default @endif py-1 px-4 rounded-md mr-2"
                     wire:click="showAction"
                     wire:loading.attr="disabled"
                     @if ($this->action === '-') disabled="disabled" @endif
@@ -75,7 +75,7 @@
 
         <x-move-dropdown orientation="right" wire:key="table-filter.filters">
             <x-slot name="trigger">
-                <button class="flex items-center cursor-pointer active:border relative items-center cursor-pointer @if ($this->has_filters) bg-{{ Move::getThemeColor() }}-600  hover:bg-{{ Move::getThemeColor() }}-500 @else bg-gray-100 @endif py-1 pr-2 pl-1 rounded-md mr-2">
+                <button class="flex items-center cursor-pointer active:border relative items-center cursor-pointer @if ($this->has_filters) bg-{{ move()::getThemeColor() }}-600  hover:bg-{{ move()::getThemeColor() }}-500 @else bg-gray-100 @endif py-1 pr-2 pl-1 rounded-md mr-2">
                     <svg class="@if ($this->has_filters) text-white @else text-gray-600 @endif  h-6 w-6 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                     </svg>

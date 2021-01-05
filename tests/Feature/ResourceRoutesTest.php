@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Tests\Feature;
 
+use Uteq\Move\Facades\Move;
 use Uteq\Move\Tests\TestCase;
 
 class ResourceRoutesTest extends TestCase
@@ -11,7 +12,7 @@ class ResourceRoutesTest extends TestCase
     {
         $this
             ->withoutMiddleware()
-            ->get('move/fixtures/user-resource')
+            ->get(move()::getPrefix() . '/fixtures/user-resource')
             ->assertOk()
             ->assertSeeText('User');
     }

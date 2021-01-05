@@ -162,4 +162,9 @@ class Select extends Field
 
         return $this;
     }
+
+    public function ajaxUrl()
+    {
+
+    }
 }
