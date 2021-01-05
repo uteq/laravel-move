@@ -165,6 +165,5 @@ class Select extends Field
 
     public function ajaxUrl()
     {
-
     }
 }
