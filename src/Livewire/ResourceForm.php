@@ -2,7 +2,6 @@
 
 namespace Uteq\Move\Livewire;
 
-use Illuminate\Support\Collection;
 use Livewire\WithFileUploads;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
@@ -54,10 +53,13 @@ class ResourceForm extends FormComponent
 
             // This will add the test store data to the resource form
             ->map(function ($value, $field) use ($testStore) {
+                if (config('app.debug') !== true) {
+                    return $value;
+                }
 
-                if (config('app.debug') !== true) return $value;
-
-                if ($value !== null) return $value;
+                if ($value !== null) {
+                    return $value;
+                }
 
                 return $testStore[$field] ?? null;
             })
