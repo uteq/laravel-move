@@ -1,5 +1,5 @@
 <div
-    class="flex flex-col flex-grow border-r border-gray-600 pt-5 pb-4 overflow-y-auto bg-gradient-to-b from-{{ move()::getThemeColor() }}-700 to-{{ move()::getThemeColor() }}-500">
+    class="flex flex-col flex-grow border-r border-gray-600 pt-5 pb-4 overflow-y-auto bg-gradient-to-b from-primary-700 to-primary-500">
     <a class="flex items-center flex-shrink-0 px-4" href="/">
         <h1 class="text-2xl text-white font-black">
             {{ config('app.name') }}</a>

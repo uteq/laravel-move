@@ -9,12 +9,12 @@
 @php
     $aClasses = $sub
         ? ($active
-            ? 'group w-full flex items-center pl-2 pr-2 py-2 text-sm leading-5 font-medium bg-'. move()::getThemeColor() .'-700 text-gray-200 rounded-md hover:text-white hover:bg-'. move()::getThemeColor() .'-800 focus:outline-none focus:text-white focus:bg-'. move()::getThemeColor() .'-800 transition ease-in-out duration-150'
-            : 'group w-full flex items-center '. ($icon ? 'pl-2' : 'pl-11') .' pr-2 py-2 text-sm leading-5 font-medium text-gray-200 rounded-md hover:text-white hover:bg-'. move()::getThemeColor() .'-700 focus:outline-none focus:text-white focus:bg-'. move()::getThemeColor() .'-800 transition ease-in-out duration-150'
+            ? 'group w-full flex items-center pl-2 pr-2 py-2 text-sm leading-5 font-medium bg-primary-700 text-gray-200 rounded-md hover:text-white hover:bg-primary-800 focus:outline-none focus:text-white focus:bg-primary-800 transition ease-in-out duration-150'
+            : 'group w-full flex items-center '. ($icon ? 'pl-2' : 'pl-11') .' pr-2 py-2 text-sm leading-5 font-medium text-gray-200 rounded-md hover:text-white hover:bg-primary-700 focus:outline-none focus:text-white focus:bg-primary-800 transition ease-in-out duration-150'
         )
         : ($active
-            ? 'mt-1 group w-full flex items-center pl-2 py-2 text-sm leading-5 font-medium text-white rounded-md bg-'. move()::getThemeColor() .'-900 focus:outline-none focus:bg-'. move()::getThemeColor() .'-800 transition ease-in-out duration-150'
-            : 'mt-1 group w-full flex items-center pl-2 pr-1 py-2 text-sm leading-5 font-medium rounded-md bg-'. move()::getThemeColor() .'-500 text-gray-200 hover:text-white hover:bg-'. move()::getThemeColor() .'-700 focus:outline-none focus:text-white focus:bg-'. move()::getThemeColor() .'-800 transition ease-in-out duration-150'
+            ? 'mt-1 group w-full flex items-center pl-2 py-2 text-sm leading-5 font-medium text-white rounded-md bg-primary-900 focus:outline-none focus:bg-primary-800 transition ease-in-out duration-150'
+            : 'mt-1 group w-full flex items-center pl-2 pr-1 py-2 text-sm leading-5 font-medium rounded-md bg-primary-500 text-gray-200 hover:text-white hover:bg-primary-700 focus:outline-none focus:text-white focus:bg-primary-800 transition ease-in-out duration-150'
         );
 @endphp
 

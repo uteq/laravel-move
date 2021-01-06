@@ -48,7 +48,7 @@
                     <x-move-th>
                         @if ($field->sortable)
                             <div class="flex cursor-pointer" wire:click="sort('{{ $field->attribute }}')">
-                                {{ $field->name() }}
+                                {!! $field->name() !!}
 
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="8"
@@ -66,7 +66,7 @@
                                 </svg>
                             </div>
                         @else
-                            {{ $field->name() }}
+                            {!! $field->name() !!}
                         @endif
                     </x-move-th>
                 @endforeach
@@ -94,14 +94,14 @@
                     <x-move-td>
                         @if ($this->resource()::title($row['model']) === $field->attribute)
                             <button wire:click="edit({{ $row['model']->id }})"
-                                    class="text-{{ move()::getThemeColor() }}-500 cursor-pointer"
+                                    class="text-primary-500 cursor-pointer"
                                     wire:loading.attr="disabled"
                                     wire:loading.class="text-gray-500"
                             >
-                                {{ $field->render('index') }}
+                                {!! $field->render('index') !!}
                             </button>
                         @else
-                            {{ $field->render('index') }}
+                            {!! $field->render('index') !!}
                         @endif
                     </x-move-td>
                 @endforeach
@@ -116,7 +116,7 @@
                 <x-move-td class="hover:bg-gray-50 text-center" colspan="{{ count($header) + 2 }}">
                     <div class="p-10">
                         <p class="mb-3">@lang('No items available')</p>
-                        <a href="{{ $this->addRoute() }}" class="underline text-{{ move()::getThemeColor() }}-500">
+                        <a href="{{ $this->addRoute() }}" class="underline text-primary-500">
                             @lang('Create first :resource', ['resource' => $this->resource()->singularLabel()])
                         </a>
                     </div>
