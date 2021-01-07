@@ -23,7 +23,27 @@
             let settings = Object.assign({}, {
                 placeholder: '{{ $placeholder ?: __('Select your option')}}',
                 allowClear: true,
-            }, {!! json_encode($settings, JSON_FORCE_OBJECT) !!});
+            }, {!! json_encode($settings) !!});
+
+            function fix(obj) {
+                for (const index in obj) {
+                    let value = obj[index];
+
+                    if (typeof value === 'string' && value.startsWith('function')) {
+                        eval('value = ' + value);
+                    }
+
+                    if (typeof value === 'object') {
+                        value = fix(value);
+                    }
+
+                    obj[index] = value;
+                }
+
+                return obj;
+            }
+
+            settings = fix(settings);
 
             // For value to work somehow it needs to initiated twice.
             //  Not very well for performance, but for now it'll have to do

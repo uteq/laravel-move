@@ -3,6 +3,7 @@
 namespace Uteq\Move\Fields;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
@@ -23,6 +24,8 @@ class Select extends Field
     public $query = null;
 
     public $customQuery = null;
+
+    public ?string $ajaxUrl = null;
 
     public function settings(array $settings)
     {
@@ -47,11 +50,11 @@ class Select extends Field
 
     public function showResourceUrl()
     {
-        if (! Move::resolveResource($this->resourceName)->can('view')) {
+        if (!Move::resolveResource($this->resourceName)->can('view')) {
             return null;
         }
 
-        if (! $this->value) {
+        if (!$this->value) {
             return null;
         }
 
@@ -70,11 +73,11 @@ class Select extends Field
     {
         $model ??= $this->resourceName ? $this->resourceName::$model::find($this->value) : null;
 
-        if (! $model) {
+        if (!$model) {
             return null;
         }
 
-        if (! $this->resourceName) {
+        if (!$this->resourceName) {
             return null;
         }
 
@@ -91,7 +94,7 @@ class Select extends Field
 
     public function resource($resource)
     {
-        if (! class_exists($resource)) {
+        if (!class_exists($resource)) {
             throw new \Exception(sprintf(
                 '%s: the given resource %s does not exist',
                 __METHOD__,
@@ -99,7 +102,7 @@ class Select extends Field
             ));
         }
 
-        if (! is_subclass_of($resource, Resource::class)) {
+        if (!is_subclass_of($resource, Resource::class)) {
             throw new \Exception(sprintf(
                 '%s: the given resource %s is not a subclass of %s',
                 __METHOD__,
@@ -145,11 +148,11 @@ class Select extends Field
         }
 
         if ($resourceName = $this->resourceName) {
-            $customQuery = $this->customQuery ?? fn ($builder) => $builder;
+            $customQuery = $this->customQuery ?? fn($builder) => $builder;
 
             return $customQuery($this->queryHandler($resourceName))
                 ->get()
-                ->mapWithKeys(fn ($item) => [$item->getKey() => $this->resourceName($item)])
+                ->mapWithKeys(fn($item) => [$item->getKey() => $this->resourceName($item)])
                 ->toArray();
         }
 
@@ -163,7 +166,15 @@ class Select extends Field
         return $this;
     }
 
-    public function ajaxUrl()
+    public function ajax(array $ajax)
     {
+        $this->settings['ajax'] = array_replace_recursive([
+            'url' => null,
+            'dateType' => 'json',
+            'delay' => 250
+        ], $ajax);
+
+
+        return $this;
     }
 }
