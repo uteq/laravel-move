@@ -17,4 +17,6 @@ return [
     ],
 
     'load_resource_routes' => true,
+
+    'use_resource_seeders' => env('MOVE_USE_RESOURCE_SEEDERS', false),
 ];
