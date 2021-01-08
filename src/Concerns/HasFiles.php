@@ -67,15 +67,17 @@ trait HasFiles
         $this->loadFiles($field);
     }
 
-    public function beforeStore($data)
+    public function beforeStore(array $store)
     {
         $this->fields
             ->filter(fn ($field) => $field instanceof Files)
-            ->each(function (Files $field) {
+            ->each(function (Files $field) use ($store) {
                 $key = $field->attribute;
 
-                $this->store[$key] = $this->getFilesPaths($field);
+                $store[$key] = $this->getFilesPaths($field);
             });
+
+        return $store;
     }
 
     public function getFilesPaths(Field $field)

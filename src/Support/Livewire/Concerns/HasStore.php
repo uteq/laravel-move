@@ -46,12 +46,14 @@ trait HasStore
     {
         $this->{$this->property}->refresh();
 
+        $store = $this->store;
+
         if (method_exists($this, 'beforeStore')) {
-            $this->beforeStore($this->{$this->property});
+            $store = $this->beforeStore($store);
         }
 
         $data = [
-            'fields' => $this->resolveAndMapFields($this->model),
+            'fields' => $this->resolveAndMapFields($this->model, $store),
         ];
 
         /** @psalm-suppress InvalidArgument */

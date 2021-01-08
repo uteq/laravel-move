@@ -22,7 +22,7 @@ trait HasResource
             $this->fields = collect($this->getFieldsProperty());
         });
 
-        $this->model ??= (Move::resolveResource(request()->route()->parameter('resource'))->model());
+        $this->model ??= (Move::resolveResource(request()->route()->parameter('resource') ?: $this->resource)->model());
         $this->modelId = optional($this->model)->id;
     }
 
@@ -55,15 +55,15 @@ trait HasResource
         return $this->resource()->resolveFields($model, $type, $keepPlaceholder);
     }
 
-    public function resolveAndMapFields(Model $model, array $fields = null)
+    public function resolveAndMapFields(Model $model, array $store, array $fields = null)
     {
-        $model->fill($this->store);
+        $model->fill($store);
 
         $fields ??= $this->resolveFields($model, true);
 
         return collect($fields)
-            ->filter(fn ($field) => isset($this->store[$field->attribute]))
-            ->mapWithKeys(fn ($field) => [$field->attribute => $this->store[$field->attribute]])
+            ->filter(fn ($field) => isset($store[$field->attribute]))
+            ->mapWithKeys(fn ($field) => [$field->attribute => $store[$field->attribute]])
             ->toArray();
     }
 

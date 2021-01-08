@@ -28,12 +28,11 @@ class ResourceForm extends FormComponent
     public $showingAddResource = [];
     public $baseRoute = 'move';
     public $showForm = false;
-    public array $modelData = [];
+    public $activeStep;
     public array $meta = [];
     public array $stepsData = [];
-    public $activeStep;
-    public $completedSteps = [];
-    public $availableSteps = [];
+    public array $completedSteps = [];
+    public array $availableSteps = [];
 
     protected $property = 'model';
     protected $label;
@@ -188,7 +187,7 @@ class ResourceForm extends FormComponent
         $step = $this->step($step);
         $fields = $step->allFields();
 
-        $resolvedFields = $this->resolveAndMapFields($this->model, $fields);
+        $resolvedFields = $this->resolveAndMapFields($this->model, $this->store, $fields);
 
         $rules = collect($fields)
             ->mapWithKeys(fn ($field) => [
