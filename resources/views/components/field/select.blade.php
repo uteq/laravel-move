@@ -25,7 +25,7 @@
                 allowClear: true,
             }, {!! json_encode($settings) !!});
 
-            function fix(obj) {
+            function parse(obj) {
                 for (const index in obj) {
                     let value = obj[index];
 
@@ -34,7 +34,7 @@
                     }
 
                     if (typeof value === 'object') {
-                        value = fix(value);
+                        value = parse(value);
                     }
 
                     obj[index] = value;
@@ -43,7 +43,7 @@
                 return obj;
             }
 
-            settings = fix(settings);
+            settings = parse(settings);
 
             // For value to work somehow it needs to initiated twice.
             //  Not very well for performance, but for now it'll have to do

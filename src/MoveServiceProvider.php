@@ -72,6 +72,7 @@ class MoveServiceProvider extends ServiceProvider
             $this->registerComponent('sidebar-menu');
             $this->registerComponent('status');
             $this->registerComponent('switchable-team');
+            $this->registerComponent('step');
             $this->registerComponent('table');
             $this->registerComponent('td');
             $this->registerComponent('th');
@@ -167,15 +168,11 @@ class MoveServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../config/move.php' => config_path('move.php'),
-        ], 'config');
-
-        $this->publishes([
-            __DIR__ . '/../config/move.php' => config_path('move.php'),
-        ], 'config');
+        ], 'move-config');
 
         $this->publishes([
             __DIR__ . '/../resources/views' => base_path('resources/views/vendor/move'),
-        ], 'views');
+        ], 'move-views');
 
 //        $migrationFileName = 'create_move_table.php';
 //        if (! $this->migrationFileExists($migrationFileName)) {

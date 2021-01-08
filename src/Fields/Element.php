@@ -7,12 +7,15 @@ use Illuminate\View\Component;
 use Uteq\Move\Concerns\AuthorizedToSee;
 use Uteq\Move\Concerns\Makeable;
 use Uteq\Move\Concerns\Metable;
+use Uteq\Move\Contracts\ElementInterface;
+use Uteq\Move\Fields\Concerns\ShowsConditionally;
 
-abstract class Element extends Component
+abstract class Element extends Component implements ElementInterface
 {
-    use Metable;
     use AuthorizedToSee;
+    use Metable;
     use Makeable;
+    use ShowsConditionally;
 
     /**
      * The element's component.
@@ -22,16 +25,14 @@ abstract class Element extends Component
     public string $component;
 
     /**
-     * Indicates if the element is only shown on the detail screen.
-     *
-     * @var bool
+     * The assigned panel, if available.
      */
-    public bool $onlyOnDetail = false;
+    public string $panel;
 
     /**
      * Determine if the element should be displayed for the given request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return bool
      */
     public function authorize(Request $request)
@@ -57,17 +58,5 @@ abstract class Element extends Component
     public function component()
     {
         return $this->component;
-    }
-
-    /**
-     * Specify that the element should only be shown on the detail view.
-     *
-     * @return $this
-     */
-    public function onlyOnDetail()
-    {
-        $this->onlyOnDetail = true;
-
-        return $this;
     }
 }

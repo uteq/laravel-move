@@ -15,4 +15,10 @@
         @endif
         {{ $field->render($model->id ? 'edit' : 'create') }}
     @endforeach
+
+    @foreach ($panel->panels() as $subPanel)
+        @if ($subPanel->empty()) @continue @endif
+
+        {{ $subPanel->render($model) }}
+    @endforeach
 </x-move-panel>

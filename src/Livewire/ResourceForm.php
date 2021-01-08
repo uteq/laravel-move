@@ -2,11 +2,14 @@
 
 namespace Uteq\Move\Livewire;
 
+use Illuminate\Support\Collection;
+use Illuminate\Validation\Validator;
 use Livewire\WithFileUploads;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Facades\Move;
+use Uteq\Move\Fields\Step;
 use Uteq\Move\Support\Livewire\Concerns\HasStore;
 use Uteq\Move\Support\Livewire\FormComponent;
 
@@ -26,6 +29,11 @@ class ResourceForm extends FormComponent
     public $baseRoute = 'move';
     public $showForm = false;
     public array $modelData = [];
+    public array $meta = [];
+    public array $stepsData = [];
+    public $activeStep;
+    public $completedSteps = [];
+    public $availableSteps = [];
 
     protected $property = 'model';
     protected $label;
@@ -46,26 +54,37 @@ class ResourceForm extends FormComponent
 
         $this->baseRoute = move()::getPrefix();
 
-        $testStore = $this->resource()->testStore() ?? [];
-
         $this->store = $this->fields()
             ->mapWithKeys(fn ($field) => [$field->attribute => $field->value])
+            ->toArray();
+
+        if (Move::usesTestStore()) {
+            $testStore = $this->resource()->testStore() ?? [];
 
             // This will add the test store data to the resource form
-            ->map(function ($value, $field) use ($testStore) {
-                if (config('app.debug') !== true) {
-                    return $value;
-                }
-
+            $this->store = collect($this->store)->map(function ($value, $field) use ($testStore) {
                 if ($value !== null) {
                     return $value;
                 }
 
                 return $testStore[$field] ?? null;
-            })
-            ->toArray();
+            })->toArray();
+        }
+
+        $this->meta = $this->resource()->meta();
 
         $this->model->store = $this->store;
+
+        if ($step = $this->steps()->first()) {
+            $this->activeStep = $step->name;
+            $this->availableSteps[] = $this->activeStep;
+        }
+
+        if ($this->model->id) {
+            $this->availableSteps = $this->steps()
+                ->map(fn ($step) => $step->name)
+                ->toArray();
+        }
 
         $this->resource()->authorizeTo('update');
 
@@ -118,9 +137,86 @@ class ResourceForm extends FormComponent
         $this->model->store = $this->store;
     }
 
-    public function panels()
+    public function setActiveStep($stepName = null)
     {
-        return $this->resource()->panels($this->model, isset($model->id) ? 'update' : 'create');
+        $step = $this->steps()->firstWhere('name', $stepName ?: $this->activeStep);
+
+        if ($step->disabled()) {
+            return $this;
+        }
+
+        $this->validateStep(null, false);
+
+        $this->activeStep = $stepName;
+
+        return $this;
+    }
+
+    public function activeStep()
+    {
+        return $this->activeStep;
+    }
+
+    public function step($step = null)
+    {
+        return $this->steps()
+            ->firstWhere('name', $step ?: $this->activeStep);
+    }
+
+    public function panels(): Collection
+    {
+        return $this->resource()
+            ->panels($this, $this->model, isset($model->id) ? 'update' : 'create');
+    }
+
+    public function steps()
+    {
+        return $this->panels()
+            ->filter(fn ($panel) => $panel instanceof Step)
+            ->reject(fn ($panel) => $panel->empty());
+    }
+
+    public function notSteps()
+    {
+        return $this->panels()
+            ->reject(fn ($panel) => $panel instanceof Step)
+            ->reject(fn ($panel) => $panel->empty());
+    }
+
+    public function validateStep($step = null, $setNext = true)
+    {
+        $step = $this->step($step);
+        $fields = $step->allFields();
+
+        $resolvedFields = $this->resolveAndMapFields($this->model, $fields);
+
+        $rules = collect($fields)
+            ->mapWithKeys(fn ($field) => [
+                $field->attribute => $field->rules
+            ])
+            ->toArray();
+
+        $data = $this->customValidate($resolvedFields, $rules);
+
+        // TODO Save in specific storage when creating a supplier product
+
+        if (!$this->model->id) {
+            $this->completedSteps[] = $step->name;
+        }
+
+        if ($setNext && isset($step->next)) {
+            $this->availableSteps[] = $step->next;
+            $this->activeStep = $step->next;
+        }
+    }
+
+    public function allStepsAvailable()
+    {
+        $steps = $this->steps();
+
+        $count = $steps->filter(fn ($step) => in_array($step->name, $this->availableSteps))->count();
+
+        return $count == $steps->count();
     }
 
     public function action($store, $method, ...$args)
@@ -128,7 +224,7 @@ class ResourceForm extends FormComponent
         $matchingFields = $this->fields
             ->filter(fn ($field) => $field->store === $store);
 
-        foreach ($matchingFields as $key => $field) {
+        foreach ($matchingFields as $field) {
             $field->{$method}($this, $field, $args);
         }
 

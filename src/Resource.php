@@ -6,19 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Uteq\Move\Concerns\Metable;
 use Uteq\Move\Concerns\PerformsQueries;
 use Uteq\Move\Concerns\WithAuthorization;
+use Uteq\Move\Contracts\ElementInterface;
 use Uteq\Move\Contracts\PanelInterface;
 use Uteq\Move\DomainActions\DeleteResource;
 use Uteq\Move\DomainActions\StoreResource;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Field;
 use Uteq\Move\Fields\Panel;
+use Uteq\Move\Fields\Step;
 
 abstract class Resource
 {
     use PerformsQueries;
     use WithAuthorization;
+    use Metable;
 
     // TODO add all needed traits
 
@@ -82,6 +86,10 @@ abstract class Resource
     public function __construct(Model $resource)
     {
         $this->resource = $resource;
+
+        if (method_exists($this, 'initialize')) {
+            app()->call($this, 'initialize');
+        }
     }
 
     /**
@@ -351,7 +359,7 @@ abstract class Resource
         $type = $type ?: (isset($model->id) ? 'edit' : 'create');
 
         $visibleFields = collect($this->getFields())
-            ->filter(function (Field $field) use ($type, $model, $keepPlaceholder) {
+            ->filter(function (ElementInterface $field) use ($type, $model, $keepPlaceholder) {
                 // Whenever the field is a placeholder, it should always be added whenever resolving the fields
                 //  This way it can be added to the model data.
                 if ($keepPlaceholder && $field->isPlaceholder) {
@@ -380,23 +388,33 @@ abstract class Resource
         $type = $type ?: (isset($model->id) ? 'edit' : 'create');
 
         return collect($this->getFields())
-            ->filter(fn (Field $field) => $field->isShownOn($type, $model, request()))
+            ->filter(fn (ElementInterface $element) => $element->isShownOn($type, $model, request()))
             ->toArray();
+    }
+
+    public function fieldsFromRecursive($fields)
+    {
+        $panelFields = [];
+
+        foreach ($fields as $field) {
+            if ($field instanceof Panel) {
+                $panelFields = array_merge($panelFields, $this->fieldsFromRecursive($field->fields));
+            }
+
+            if ($field instanceof Field) {
+                $panelFields[] = $field;
+            }
+        }
+
+        return $panelFields;
     }
 
     public function getFields()
     {
-        $panelFields = collect($this->fields())
-            ->filter(fn ($field) => $field instanceof Panel)
-            ->flatMap(fn ($panel) => collect($panel->fields));
-
-        $fields = collect($this->fields())
-            ->filter(fn ($field) => $field instanceof Field);
-
-        return $fields->merge($panelFields)->toArray();
+        return $this->fieldsFromRecursive($this->fields());
     }
 
-    public function panels($resource, string $displayType)
+    public function panels($resourceForm, $resource, string $displayType)
     {
         $panels = collect($this->fields())
             ->filter(fn ($field) => $field instanceof PanelInterface);
@@ -409,14 +427,37 @@ abstract class Resource
             $panels->prepend(new Panel(null, $fields));
         }
 
-        $panels = $panels->each(fn (PanelInterface $panel) => $panel->resolveFields($resource))
-            ->map(function ($panel) use ($resource, $displayType) {
-                $panel->fields = collect($panel->fields)
-                    ->filter(fn (Field $field) => $field->isVisible($resource->store, $displayType))
-                    ->toArray();
+        $panels = $this->recursivePanels($panels, $resourceForm, $resource, $displayType);
 
-                return $panel;
-            });
+        return $panels;
+    }
+
+    public function recursivePanels($panels, $resourceForm, $resource, $displayType)
+    {
+        foreach ($panels as &$panel) {
+            if (! $panel instanceof PanelInterface) {
+                continue;
+            }
+
+            $elements = $panel->fields;
+
+            $panel->resolveForDisplay($this->resource, $resourceForm, $this);
+            $panel->resolveFields($resource);
+
+            $panel->fields = collect($elements)
+                ->filter(fn ($field) => $field instanceof Field)
+                ->filter(fn (Field $field) => $field->isVisible($resource->store, $displayType))
+                ->toArray();
+
+            $panel->panels = collect($elements)
+                ->filter(fn ($field) => $field instanceof PanelInterface)
+                ->filter(fn (Panel $panel) => $panel->isVisible($resource->store, $displayType))
+                ->toArray();
+
+            if (count($panel->panels)) {
+                $panel->panels = $this->recursivePanels($panel->panels, $resourceForm, $resource, $displayType);
+            }
+        }
 
         return $panels;
     }

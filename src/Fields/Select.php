@@ -10,7 +10,7 @@ class Select extends Field
 {
     public string $component = 'select-field';
 
-    public array $options = [];
+    public $options;
 
     public $resourceName = null;
 
@@ -117,9 +117,7 @@ class Select extends Field
 
     public function options($options): self
     {
-        $this->options = is_callable($options)
-            ? $options($this->resourceName ?? null)
-            : $options;
+        $this->options = $options;
 
         return $this;
     }
@@ -142,8 +140,14 @@ class Select extends Field
 
     public function getOptions(): array
     {
-        if (count($this->options)) {
-            return $this->options;
+        $options = $this->options;
+
+        $options = is_callable($options)
+            ? $options($this ?? null)
+            : $options;
+
+        if (count($options ??= [])) {
+            return $options;
         }
 
         if ($resourceName = $this->resourceName) {
@@ -172,7 +176,6 @@ class Select extends Field
             'dateType' => 'json',
             'delay' => 250,
         ], $ajax);
-
 
         return $this;
     }

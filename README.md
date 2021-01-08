@@ -84,12 +84,12 @@ https://jetstream.laravel.com/1.x/installation.html#installing-jetstream
 
 You can publish the config file with:
 ```bash
-php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="config"
+php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="move-config"
 ```
 
 You can publish the view files with:
 ```bash
-php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="views"
+php artisan vendor:publish --provider="Uteq\Move\MoveServiceProvider" --tag="move-views"
 ```
 
 ## Usage

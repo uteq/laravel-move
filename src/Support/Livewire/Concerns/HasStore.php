@@ -81,7 +81,7 @@ trait HasStore
     {
         $this->customValidate($fields, $this->rules($this->{$this->property}));
 
-        // This ensures that the fields data is formatted as the user want it
+        // This ensures that the fields data is formatted as the user wants it
         //  this will for example prevent a empty value to be seen as 0
         //  and skipped by the rules
         $data = $this->resource()
@@ -117,7 +117,7 @@ trait HasStore
             $target = new ObjectPrybar($e->validator);
 
             $messages = new MessageBag(collect($messages->getMessages())
-                ->mapWithKeys(fn ($message, $key) => [$this->property . '.' . $key => $message])
+                ->mapWithKeys(fn ($message, $key) => ['store.' . $key => $message])
                 ->toArray());
 
             $target->setProperty('messages', $messages);
