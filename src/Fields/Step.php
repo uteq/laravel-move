@@ -23,7 +23,7 @@ class Step extends Panel
 
     public function active()
     {
-        if (!isset($this->resourceForm)) {
+        if (! isset($this->resourceForm)) {
             return false;
         }
 

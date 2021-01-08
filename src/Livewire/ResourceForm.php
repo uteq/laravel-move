@@ -3,7 +3,6 @@
 namespace Uteq\Move\Livewire;
 
 use Illuminate\Support\Collection;
-use Illuminate\Validation\Validator;
 use Livewire\WithFileUploads;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
@@ -191,7 +190,7 @@ class ResourceForm extends FormComponent
 
         $rules = collect($fields)
             ->mapWithKeys(fn ($field) => [
-                $field->attribute => $field->rules
+                $field->attribute => $field->rules,
             ])
             ->toArray();
 
@@ -199,7 +198,7 @@ class ResourceForm extends FormComponent
 
         // TODO Save in specific storage when creating a supplier product
 
-        if (!$this->model->id) {
+        if (! $this->model->id) {
             $this->completedSteps[] = $step->name;
         }
 
