@@ -16,7 +16,6 @@ use Uteq\Move\DomainActions\StoreResource;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Field;
 use Uteq\Move\Fields\Panel;
-use Uteq\Move\Fields\Step;
 
 abstract class Resource
 {

@@ -73,7 +73,7 @@ class Panel implements PanelInterface, ElementInterface
         }
 
         collect($this->fields)
-            ->each(fn(ElementInterface $element) => $element->addDependencies($this->dependencies)
+            ->each(fn (ElementInterface $element) => $element->addDependencies($this->dependencies)
                 ->resolveForDisplay($resource));
 
         return $this;
@@ -120,6 +120,7 @@ class Panel implements PanelInterface, ElementInterface
             'model' => $model,
         ]);
     }
+
     /**
      * Determine if the element should be displayed for the given request.
      *
