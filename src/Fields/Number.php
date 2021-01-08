@@ -18,6 +18,7 @@ class Number extends Field
         $this->beforeStore(function ($value, $field, $model, $data) use ($decimals) {
             $value = str_replace('.', '', $value);
             $value = str_replace(',', '.', $value);
+
             return $value
                 ? number_format((float)$value, $decimals, '.', '')
                 : null;
