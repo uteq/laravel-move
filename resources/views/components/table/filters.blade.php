@@ -3,14 +3,14 @@
     <x-move-dropdown orientation="left" wire:key="table-filter.checkbox">
         <x-slot name="trigger">
             <button class="flex items-center cursor-pointer active:border relative mt-2">
-                <span class="form-checkbox @if ($this->has_selected) bg-primary-700 @endif h-5 w-5 text-primary-600 cursor-pointer">
+                <span class="form-checkbox border rounded-md @if ($this->has_selected) bg-primary-600 @endif h-5 w-5 text-primary-600 cursor-pointer">
                     @if ($this->has_selected)
                         <!-- heroicon-s-check -->
                         <svg class="w-4 h-4 position-relative text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="left: 1px; top: 1px; position: relative">
                           <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                         </svg>
                     @endif
-                    <svg class="text-primary-600 h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="absolute top-0 text-primary-600 h-4 w-4 ml-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </span>
@@ -40,18 +40,20 @@
                 </optgroup>
             </select>
 
-            <button class="active:border @if ($this->action !== '-') bg-primary-600 hover:bg-primary-500 cursor-pointer @else bg-gray-200 disabled cursor-default @endif py-1 px-4 rounded-md mr-2"
-                    wire:click="showAction"
-                    wire:loading.attr="disabled"
-                    @if ($this->action === '-') disabled="disabled" @endif
-            >
-                <svg class="text-white w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-            </button>
-
             @if ($this->action())
             <x-move-dialog-modal wire:model="showingAction">
+                <x-slot name="button">
+                    <button class="active:border @if ($this->action !== '-') bg-primary-600 hover:bg-primary-500 cursor-pointer @else bg-gray-200 disabled cursor-default @endif py-1 px-4 rounded-md mr-2"
+                            x-on:click="show = true"
+                            wire:loading.attr="disabled"
+                            @if ($this->action === '-') disabled="disabled" @endif
+                    >
+                        <svg class="text-white w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </button>
+                </x-slot>
+
                 <x-slot name="title">
                      {{ $this->action()->name }}
                 </x-slot>
@@ -98,12 +100,12 @@
                     </button>
                 </x-slot>
 
-                <button class="p-2" wire:click="showDelete('{{ $id }}')">
+                <button class="p-2" wire:click="showDelete">
                     Selectie verwijderen ({{ count($this->selected) }})
                 </button>
             </x-move-dropdown>
 
-            <x-move-dialog-modal wire:model="showingDelete.{{ $id }}">
+            <x-move-dialog-modal wire:model="showingDelete">
                 <x-slot name="title">
                     {{ count($this->selected) }} Item(s) verwijderen
                 </x-slot>

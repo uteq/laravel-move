@@ -30,13 +30,13 @@ switch ($maxWidth ?? '2xl') {
     @endif
 
     <div x-show="show {{ $showType }} {{ $show }}"
-         x-on:close.stop="show = false"
-         x-on:keydown.escape.window="show = false"
+         x-on:close.stop="show = null"
+         x-on:keydown.escape.window="show = null"
          class="fixed top-0 inset-x-0 px-4 pt-6 sm:px-0 sm:flex sm:items-top sm:justify-center"
          style="display: none;"
     >
         <div class="fixed inset-0 transform transition-all z-10"
-             x-on:click="show = false"
+             x-on:click="show = null"
              x-transition:enter="ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"

@@ -38,7 +38,7 @@
                     <div class="col p-2 justify-content-center">
                         <x-move-modal key="showingFile.{{ $i }}" show="{{ $i }}" show-type="===" id="showingFile.{{ $i }}" wire:model="showFile">
                             <x-slot name="button">
-                                <div @click="show = {{ $i }}" class="cursor-pointer" data-lightbox="roadtrip">
+                                <div x-on:click="show = {{ $i }}" class="cursor-pointer" data-lightbox="roadtrip">
                                     <img src="{{ $file->getUrl() }}"
                                          class="card-img"
                                     />

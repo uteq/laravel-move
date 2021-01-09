@@ -21,7 +21,7 @@
 <div x-data="{ open: {{ $active || $open ? 'true' : 'false' }} }">
     <a href="{{ $href }}"
        class="{{ $aClasses }}"
-       @click="open = !open"
+       x-on:click="open = !open"
     >
         @if ($icon)
             {{ $icon }}

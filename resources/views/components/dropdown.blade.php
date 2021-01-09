@@ -4,7 +4,7 @@
     <div x-data="{ open: false }"
          {{ $attributes->merge(['class' => 'relative']) }}
     >
-        <div @click="open = true">
+        <div x-on:click="open = true">
             {{ $trigger }}
         </div>
 

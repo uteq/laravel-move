@@ -1,4 +1,4 @@
-<button @click="mobileMenuOpen = ! mobileMenuOpen; sidebarMenuOpen = ! sidebarMenuOpen"
+<button x-on:click="mobileMenuOpen = ! mobileMenuOpen; sidebarMenuOpen = ! sidebarMenuOpen"
         class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:bg-gray-100 focus:text-gray-600"
         aria-label="Open sidebar"
 >
