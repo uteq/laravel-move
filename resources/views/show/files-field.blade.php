@@ -36,13 +36,15 @@
 
                 @else
                     <div class="col p-2 justify-content-center">
-                        <div wire:click="showFile('{{ $i }}')" class="cursor-pointer" data-lightbox="roadtrip">
-                            <img src="{{ $file->getUrl() }}"
-                                 class="card-img"
-                            />
-                        </div>
+                        <x-move-modal key="showingFile.{{ $i }}" show="{{ $i }}" show-type="===" id="showingFile.{{ $i }}" wire:model="showFile">
+                            <x-slot name="button">
+                                <div @click="show = {{ $i }}" class="cursor-pointer" data-lightbox="roadtrip">
+                                    <img src="{{ $file->getUrl() }}"
+                                         class="card-img"
+                                    />
+                                </div>
+                            </x-slot>
 
-                        <x-move-modal key="showingFile.{{ $i }}" id="showingFile.{{ $i }}" wire:model="showFile">
                             <img src="{{ $file->getUrl() }}"
                                  class="card-img"
                             />

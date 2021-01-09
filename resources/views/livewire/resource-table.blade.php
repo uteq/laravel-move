@@ -108,7 +108,8 @@
                 <x-move-td>
                     <x-move-table.item-actions
                         id="{{ $row['model']->id }}"
-                        description="{{ $this->resource()->label() }}" />
+                        description="{{ $this->resource()->label() }}"
+                    />
                 </x-move-td>
             </tr>
         @empty

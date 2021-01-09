@@ -16,7 +16,7 @@ class ResourceShow extends Component
     use LoadableFiles;
     use FilesModal;
 
-    public $confirmingDestroy = false;
+    public $confirmingDestroy = null;
 
     protected $crudBaseRoute = 'move';
 

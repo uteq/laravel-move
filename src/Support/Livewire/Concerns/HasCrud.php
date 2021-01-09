@@ -2,11 +2,9 @@
 
 namespace Uteq\Move\Support\Livewire\Concerns;
 
-use Uteq\Move\Facades\Move;
-
 trait HasCrud
 {
-    public $confirmingDestroy = false;
+    public $confirmingDestroy = null;
 
     protected $crudActions = [
         'show' => 'show',
@@ -63,11 +61,11 @@ trait HasCrud
         ]);
     }
 
-    public function confirmDestroy()
+    public function confirmDestroy($id)
     {
         $this->dispatchBrowserEvent(static::class . '.confirming-destroy');
 
-        $this->confirmingDestroy = true;
+        $this->confirmingDestroy = [$id];
     }
 
     public function hideConfirmDestroy()

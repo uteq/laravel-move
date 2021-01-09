@@ -23,7 +23,7 @@ class ResourceTable extends TableComponent
     public $showingAction = false;
     public $showingActionResult = false;
     protected $actionResult;
-    public $showingDelete = false;
+    public $showingDelete = [];
     public $sortable = false;
     public $error = null;
     public $hasError = false;

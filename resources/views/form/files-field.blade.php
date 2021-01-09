@@ -69,9 +69,9 @@
                             </div>
 
                         @else
-                            <x-move-modal id="showingFile{{ $i }}" wire:model="showFile">
+                            <x-move-modal id="showingFile{{ $i }}" show="{{ $i }}" show-type="===" wire:model="showFile">
                                 <x-slot name="button">
-                                    <div @click="show = true" class="cursor-pointer flex" data-lightbox="roadtrip">
+                                    <div @click="show = {{ $i }}" class="cursor-pointer flex" data-lightbox="roadtrip">
                                         <img src="{{ $file->withVersion($this->rotatedFiles)->getUrl() }}"
                                              class="w-1/3 h-auto object-contain object-left"
                                         />

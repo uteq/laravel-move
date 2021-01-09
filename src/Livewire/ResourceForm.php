@@ -2,7 +2,9 @@
 
 namespace Uteq\Move\Livewire;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
@@ -227,6 +229,14 @@ class ResourceForm extends FormComponent
         }
 
         return $this;
+    }
+
+    public function set($attribute, $value)
+    {
+        $attribute = Str::before($attribute, '.');
+        $attributePath = Str::after($attribute, '.');
+
+        Arr::set($this->{$attribute}, $attributePath, $value);
     }
 
     /**

@@ -98,12 +98,12 @@
                     </button>
                 </x-slot>
 
-                <button class="p-2" wire:click="showDelete">
+                <button class="p-2" wire:click="showDelete('{{ $id }}')">
                     Selectie verwijderen ({{ count($this->selected) }})
                 </button>
             </x-move-dropdown>
 
-            <x-move-dialog-modal wire:model="showingDelete">
+            <x-move-dialog-modal wire:model="showingDelete.{{ $id }}">
                 <x-slot name="title">
                     {{ count($this->selected) }} Item(s) verwijderen
                 </x-slot>
