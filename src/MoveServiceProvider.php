@@ -100,6 +100,12 @@ class MoveServiceProvider extends ServiceProvider
         Route::get('move/move.js', [MoveJavaScriptAssets::class, 'source']);
         Route::get('move/move.css', [MoveStyleAssets::class, 'source']);
 
+        Route::bind('model', function ($value) {
+            $resource = Move::activeResource();
+
+            return $resource->model()::find($value) ?: $resource::newModel();
+        });
+
         Route::group([
             'domain' => config('move.domain', null),
             'prefix' => config('move.path', move()::getPrefix()),

@@ -9,12 +9,6 @@ use Uteq\Move\Livewire\ResourceForm;
 use Uteq\Move\Livewire\ResourceShow;
 use Uteq\Move\Livewire\ResourceTable;
 
-Route::bind('model', function ($value) {
-    $resource = Move::activeResource();
-
-    return $resource->model()::find($value) ?: $resource::newModel();
-});
-
 Route::group(['middleware' => Move::routeMiddlewares()], function () {
 
     Route::get('preview-file/{filename}', PreviewFileController::class)
