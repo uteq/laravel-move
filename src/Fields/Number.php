@@ -7,6 +7,11 @@ class Number extends Field
 {
     public string $component = 'number-field';
 
+    public function init()
+    {
+        $this->numberFormat(0, ',', '');
+    }
+
     public function numberFormat(int $decimals = 0, string $decimalSeparator = '.', string $thousandSeparator = ','): self
     {
         $this->displayCallback = function ($value, $resource, $attribute) use ($decimals, $decimalSeparator, $thousandSeparator) {
