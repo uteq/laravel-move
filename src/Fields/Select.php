@@ -188,7 +188,7 @@ class Select extends Field
                         return 'Minimaal 2 karakters vereist';
                     }
                     JS
-            ]
+            ],
         ], $settings);
 
         return $this;
@@ -197,7 +197,6 @@ class Select extends Field
     public function resolveDefaultOption($option)
     {
         $this->options(function ($field) use ($option) {
-
             $store = isset($field->resource->store)
                 ? isset($field->resource->store)
                 : $field->resource->getAttributes();

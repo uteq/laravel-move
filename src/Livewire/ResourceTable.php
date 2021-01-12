@@ -103,6 +103,7 @@ class ResourceTable extends TableComponent
         if ($result instanceof Response || is_string($result)) {
             $this->showingActionResult = true;
             $this->actionResult = $result;
+
             return null;
         }
 
