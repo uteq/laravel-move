@@ -12,6 +12,12 @@
     </div>
 
     <div class="px-6 py-4 bg-gray-100 text-right">
-        {{ $footer }}
+        @if ($footer ?? null)
+            {{ $footer }}
+        @else
+            <x-move-button x-on:click="show = false">
+                {{ __('OK') }}
+            </x-move-button>
+        @endif
     </div>
 </x-move-modal>

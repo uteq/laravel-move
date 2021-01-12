@@ -158,7 +158,12 @@
         </div>
     @endif
 
-    <x-move-modal wire:model="showingActionResult">
-        {!! $actionResult !!}
-    </x-move-modal>
+    <x-move-dialog-modal wire:model="showingActionResult" class="p-4">
+        <x-slot name="title">
+            {{ __('Response from action') }}
+        </x-slot>
+        <x-slot name="content">
+            {!! $actionResult !!}
+        </x-slot>
+    </x-move-dialog-modal>
 </div>

@@ -169,13 +169,43 @@ class Select extends Field
         return $this;
     }
 
-    public function ajax(array $ajax)
+    public function ajax(string $url, $defaultOption = null, array $settings = [])
     {
-        $this->settings['ajax'] = array_replace_recursive([
-            'url' => null,
-            'dateType' => 'json',
-            'delay' => 250,
-        ], $ajax);
+        is_callable($defaultOption)
+            ? $this->resolveDefaultOption($defaultOption)
+            : $this->options(fn () => $defaultOption);
+
+        $this->settings = array_replace_recursive([
+            'ajax' => [
+                'url' => $url,
+                'dateType' => 'json',
+                'delay' => 250,
+            ],
+            'minimumInputLength' => 2,
+            'language' => [
+                'inputTooShort' => <<<JS
+                    function() {
+                        return 'Minimaal 2 karakters vereist';
+                    }
+                    JS
+            ]
+        ], $settings);
+
+        return $this;
+    }
+
+    public function resolveDefaultOption($option)
+    {
+        $this->options(function ($field) use ($option) {
+
+            $store = isset($field->resource->store)
+                ? isset($field->resource->store)
+                : $field->resource->getAttributes();
+
+            return is_callable($option)
+                ? $option($store[$this->attribute] ?? null)
+                : $option;
+        });
 
         return $this;
     }

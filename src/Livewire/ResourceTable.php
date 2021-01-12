@@ -100,6 +100,12 @@ class ResourceTable extends TableComponent
 
         $this->showAction(false);
 
+        if ($result instanceof Response || is_string($result)) {
+            $this->showingActionResult = true;
+            $this->actionResult = $result;
+            return null;
+        }
+
         // This enables the action to perform its own logic after
         //  it was successful as if we were in a Livewire Component
         if (isset($result['handle']) && is_callable($result['handle'])) {
