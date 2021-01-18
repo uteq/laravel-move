@@ -15,7 +15,7 @@ class Date extends Field
 
     public function init()
     {
-        $this->callableValue = fn ($date) => optional($date)->format('d-m-Y');
+        $this->valueCallback = fn ($date) => optional($date)->format('d-m-Y');
     }
 
     public function format(string $format)
@@ -25,9 +25,9 @@ class Date extends Field
         return $this;
     }
 
-    public function resolveUsing($callableValue)
+    public function resolveUsing($valueCallback)
     {
-        $this->callableValue = $callableValue;
+        $this->valueCallback = $valueCallback;
 
         return $this;
     }

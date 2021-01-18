@@ -14,13 +14,11 @@ class Number extends Field
 
     public function numberFormat(int $decimals = 0, string $decimalSeparator = '.', string $thousandSeparator = ','): self
     {
-        $this->displayCallback = function ($value, $resource, $attribute) use ($decimals, $decimalSeparator, $thousandSeparator) {
-            return $value
-                ? number_format((float)$value, $decimals, $decimalSeparator, $thousandSeparator)
-                : null;
-        };
+        $this->resourceDataCallback = fn ($value, $resource, $attribute) => $value
+            ? number_format((float)$value, $decimals, $decimalSeparator, $thousandSeparator)
+            : null;
 
-        $this->beforeStore(function ($value, $field, $model, $data) use ($decimals) {
+        $this->beforeStore(function ($value) use ($decimals) {
             $value = str_replace('.', '', $value);
             $value = str_replace(',', '.', $value);
 

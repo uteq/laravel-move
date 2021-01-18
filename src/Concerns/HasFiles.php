@@ -82,7 +82,7 @@ trait HasFiles
 
     public function getFilesPaths(Field $field)
     {
-        $field->resolveForDisplay($this->model ?: static::newModel());
+        $field->applyResourceData($this->model ?: static::newModel());
 
         $urls = $this->loadFiles($field, true)
             ->map(function (ResourceFileContract $file, $key) use ($field) {

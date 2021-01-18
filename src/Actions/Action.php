@@ -5,6 +5,7 @@ namespace Uteq\Move\Actions;
 use Illuminate\Support\Collection;
 use Uteq\Move\Concerns\Makeable;
 use Uteq\Move\Concerns\Metable;
+use Illuminate\Database\Eloquent\Model;
 
 class Action
 {
@@ -62,7 +63,7 @@ class Action
         $fields = [];
         foreach ($this->fields() as $field) {
             $fields[] = $field->type('update')
-                ->resolveForDisplay($resource->resource)
+                ->applyResourceData($resource->resource)
                 ->formAttribute('actionFields');
         }
 

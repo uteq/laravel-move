@@ -4,10 +4,12 @@ namespace Uteq\Move;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Uteq\Move\Concerns\GloballySearchable;
 use Uteq\Move\Concerns\Metable;
-use Uteq\Move\Concerns\PerformsQueries;
+use Uteq\Move\Concerns\QueryBuilder;
 use Uteq\Move\Concerns\WithAuthorization;
 use Uteq\Move\Contracts\ElementInterface;
 use Uteq\Move\Contracts\PanelInterface;
@@ -19,46 +21,25 @@ use Uteq\Move\Fields\Panel;
 
 abstract class Resource
 {
-    use PerformsQueries;
+    use QueryBuilder;
     use WithAuthorization;
     use Metable;
+    use GloballySearchable;
 
-    // TODO add all needed traits
-
-    /** The single value that should be used to represent the resource when being displayed. */
     public static string $title = 'id';
 
-    /** The columns that should be searched. */
     public static array $search = [];
 
-    /** The relationships that should be eager loaded when performing an index query.. */
     public static array $with = [];
 
-    /** The cached soft deleting statuses for various resources.*/
     public static array $softDeletes = [];
 
-    /** The per-page options used at the resource index. */
     public static array $perPageOptions = [10, 25, 50, 100];
 
-    /** The per-page options used at the resource index. */
     public static ?int $defaultPerPage = null;
 
-    /** This enables that clicking the title will redirect to the show page. */
-    public static bool $fastEdit = true;
-
-    /** Indicates if the resource should be globally searchable. */
-    public static bool $globallySearchable = true;
-
-    /** The number of results to display in the global search. */
-    public static int $globalSearchResults = 5;
-
-    /** Where should the global search link to? */
-    public static string $globalSearchLink = 'detail';
-
-    /** Where should the global search link to? */
     public static bool $sortable = false;
 
-    /** What layout should be used for the resource? */
     public static ?string $layout = null;
 
     /** All endpoints that will be satisfied */
@@ -68,20 +49,22 @@ abstract class Resource
         'cancel' => 'index',
     ];
 
+    /**
+     * Overwrite this to use your own action handlers
+     * This can be useful for event sourcing.
+     *
+     * @var array|string[]
+     */
     public static array $defaultActionHandlers = [
         'update' => StoreResource::class,
         'create' => StoreResource::class,
         'delete' => DeleteResource::class,
     ];
 
-    /** The underlying model resource instance. */
     public Model $resource;
 
     public static string $group = 'Resources';
 
-    /**
-     * Creates a new resource instance.
-     */
     public function __construct(Model $resource)
     {
         $this->resource = $resource;
@@ -91,9 +74,23 @@ abstract class Resource
         }
     }
 
-    /**
-     * Get the searchable columns for the resource.
-     */
+    public static function newModel(): ?Model
+    {
+        return isset(static::$model)
+            ? new ($model = static::$model)
+            : null;
+    }
+
+    public static function singularLabel(): string
+    {
+        return Str::singular(static::label());
+    }
+
+    public static function label(): string
+    {
+        return move_class_to_label(get_called_class());
+    }
+
     public static function searchableColumns(): array
     {
         return empty(static::$search)
@@ -101,39 +98,6 @@ abstract class Resource
             : static::$search;
     }
 
-    /**
-     * Get a fresh instance of the model represented by the resource.
-     */
-    public static function newModel(): ?Model
-    {
-        if (! isset(static::$model)) {
-            return null;
-        }
-
-        $model = static::$model;
-
-        return new $model;
-    }
-
-    /**
-     * Get the displayable singular label of the resource.
-     */
-    public static function singularLabel(): string
-    {
-        return Str::singular(static::label());
-    }
-
-    /**
-     * Get the displayable label of the resource.
-     */
-    public static function label(): string
-    {
-        return Str::plural(Str::title(Str::snake(class_basename(get_called_class()), ' ')));
-    }
-
-    /**
-     * Get meta information about this resource for client side comsumption.
-     */
     public static function additionalInformation(Request $request): array
     {
         return [];
@@ -144,53 +108,34 @@ abstract class Resource
         return static::$defaultPerPage ?: collect(static::$perPageOptions)->first();
     }
 
-    /**
-     * The pagination per-page options configured for this resource.
-     */
     public static function perPageOptions(): array
     {
         return static::$perPageOptions;
     }
 
-    /**
-     * Get the URI key for the resource.
-     */
     public static function uriKey(): string
     {
         return Str::plural(Str::kebab(class_basename(get_called_class())));
     }
 
-    /**
-     * Return a fresh resource instance.
-     */
     public static function newResource(): self
     {
         return new static(static::newModel());
     }
 
-    public static function relationQuery()
+    public static function relationQuery(): Builder
     {
         /** @psalm-suppress UndefinedPropertyFetch */
         return static::$model::query();
     }
 
-    /**
-     * Determine if the resource is soft deleted.
-     *
-     * @return bool
-     */
-    public function isSoftDeleted()
+    public function isSoftDeleted(): bool
     {
-        return static::softDeletes()
+        return static::usesSoftDeletes()
             && ! is_null($this->resource->{$this->resource->getDeletedAtColumn()});
     }
 
-    /**
-     * Determine if this resource uses soft deletes.
-     *
-     * @return bool
-     */
-    public static function softDeletes()
+    public static function usesSoftDeletes()
     {
         if (! isset(static::$model)) {
             return false;
@@ -205,20 +150,11 @@ abstract class Resource
             class_uses_recursive(static::newModel())
         );
     }
-
-    /**
-     * Get the underlying model instance for the resource.
-     */
     public function model(): Model
     {
         return $this->resource;
     }
 
-    /**
-     * Get the value that should be displayed to represent the resource.
-     *
-     * @return string
-     */
     public static function title($model)
     {
         return $model->{static::$title};
@@ -236,24 +172,44 @@ abstract class Resource
 
         $filter = $requestQuery['filter'] ?? [];
 
-        $query = $this->buildIndexQuery(
-            request(),
-            $filter,
-            static::$model::query(),
-            $filter['search'] ?? '',
-            $this->filters() ?? [],
-            $requestQuery['order'] ?? [],
-        );
-
         return [
             'resource' => $this,
             'header' => $this->visibleFields('index'),
-            'collection' => $query,
+            'collection' => $this->buildIndexQuery(
+                request(),
+                $filter,
+                static::$model::query(),
+                $filter['search'] ?? '',
+                $this->filters() ?? [],
+                $requestQuery['order'] ?? [],
+            ),
         ];
     }
 
-    public function getForDetail()
+    public function getForDetail(): array
     {
+        if (! isset(static::$model)) {
+            throw new \Exception(sprintf(
+                '%s: The parameter public static $model should be defined on resource %s',
+                __METHOD__,
+                static::class,
+            ));
+        }
+
+        $filter = $requestQuery['filter'] ?? [];
+
+        return [
+            'resource' => $this,
+            'header' => $this->visibleFields('detail'),
+            'collection' => $this->buildIndexQuery(
+                request(),
+                $filter,
+                static::$model::query(),
+                $filter['search'] ?? '',
+                $this->filters() ?? [],
+                $requestQuery['order'] ?? [],
+            ),
+        ];
     }
 
     public function handler($key)
@@ -372,7 +328,7 @@ abstract class Resource
         /** @var Field $field */
         $fields = [];
         foreach ($visibleFields as $field) {
-            $field->resolveForDisplay($model);
+            $field->applyResourceData($model);
 
             $fields[] = $field;
         }
@@ -440,7 +396,7 @@ abstract class Resource
 
             $elements = $panel->fields;
 
-            $panel->resolveForDisplay($this->resource, $resourceForm, $this);
+            $panel->applyResourceData($this->resource, $resourceForm, $this);
             $panel->resolveFields($resource);
 
             $panel->fields = collect($elements)

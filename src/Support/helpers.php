@@ -35,3 +35,8 @@ function move()
 {
     return new \Uteq\Move\Facades\Move();
 }
+
+function move_class_to_label($class)
+{
+    return Str::plural(Str::title(Str::snake(class_basename($class), ' ')));
+}

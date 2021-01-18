@@ -19,11 +19,10 @@ class HasMany extends Select
     {
         $this->resourceName = $this->findResourceName($name, $resource);
 
-        parent::__construct($name, $attribute, function ($data, $model, $c) {
-            return $data instanceof Collection
-                ? $data->mapWithKeys(fn ($item) => [$item->id => $item->name])
-                : $data;
-        });
+        parent::__construct($name, $attribute, fn ($data) => $data instanceof Collection
+            ? $data->mapWithKeys(fn ($item) => [$item->id => $item->name])
+            : $data
+        );
     }
 
     public function relation(string $relation)
@@ -33,7 +32,7 @@ class HasMany extends Select
         return $this;
     }
 
-    public function handleAfterStore($value, $field, $model, $data)
+    public function handleAfterStore($value, $field, $model, $data): self
     {
         parent::handleAfterStore($value, $field, $model, $data);
 

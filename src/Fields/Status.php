@@ -17,25 +17,37 @@ class Status extends Field
 
     public $falseValue = false;
 
-    public function headerInfoPopup($text)
+    public function headerInfoPopup($text): self
     {
         $this->infoPopupText = $text;
 
         return $this;
     }
 
-    public function resolveAttribute($resource, $attribute)
+    public function trueValue($value): self
+    {
+        $this->trueValue = $value;
+
+        return $this;
+    }
+
+    public function falseValue($value): self
+    {
+        $this->falseValue = $value;
+
+        return $this;
+    }
+
+    public function getResourceAttributeValue($resource, $attribute)
     {
         if (! $this->resolveTrueValue()) {
             return false;
         }
 
-        return parent::resolveAttribute($resource, $attribute) == $this->resolveTrueValue()
-            ? true
-            : false;
+        return parent::getResourceAttributeValue($resource, $attribute) == $this->resolveTrueValue();
     }
 
-    protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute)
+    protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute): void
     {
         if ($request->exists($requestAttribute)) {
             $value = $request[$requestAttribute];
@@ -53,19 +65,5 @@ class Status extends Field
         $trueValue = $this->trueValue;
 
         return (is_callable($trueValue) ? $trueValue($this, $this->attribute) : $trueValue);
-    }
-
-    public function trueValue($value)
-    {
-        $this->trueValue = $value;
-
-        return $this;
-    }
-
-    public function falseValue($value)
-    {
-        $this->falseValue = $value;
-
-        return $this;
     }
 }

@@ -19,6 +19,8 @@ class ResourceTable extends TableComponent
     use HasResource;
     use HasSelected;
 
+    protected static $viewType = 'index';
+
     public $action = '-';
     public $showingAction = false;
     public $showingActionResult = false;

@@ -9,11 +9,11 @@ class Password extends Field
 {
     public string $component = 'password-field';
 
-    public function __construct(string $name, string $attribute = null, callable $callableValue = null)
+    public function __construct(string $name, string $attribute = null, callable $valueCallback = null)
     {
-        parent::__construct($name, $attribute, $callableValue);
+        parent::__construct($name, $attribute, $valueCallback);
 
-        $this->callableValue = fn () => null;
+        $this->valueCallback = fn () => null;
 
         $this->beforeStore(function ($value, $field, $model, $data) {
             if (! $model->id) {

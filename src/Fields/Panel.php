@@ -84,7 +84,7 @@ class Panel implements PanelInterface, ElementInterface
 
         collect($this->fields)
             ->each(fn (ElementInterface $element) => $element->addDependencies($this->dependencies)
-                ->resolveForDisplay($resource));
+                ->applyResourceData($resource));
 
         return $this;
     }
@@ -162,7 +162,7 @@ class Panel implements PanelInterface, ElementInterface
         return $this->component;
     }
 
-    public function resolveForDisplay($model, $resourceForm = null, $resource = null)
+    public function applyResourceData($model, $resourceForm = null, $resource = null)
     {
         $this->resourceForm = $resourceForm;
         $this->resource = $resource;

@@ -33,7 +33,7 @@ switch ($maxWidth ?? '2xl') {
 
 <div id="{{ $id }}" x-data="{ show: @entangle($attributes->wire('model')) }" class="z-10">
 
-    @if ($button)src/Concerns/PerformsQueries.php:33
+    @if ($button)
         {!! $button !!}
     @endif
 

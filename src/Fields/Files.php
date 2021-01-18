@@ -13,9 +13,9 @@ class Files extends Field
     public function __construct(
         string $name,
         string $attribute,
-        callable $callableValue = null
+        callable $valueCallback = null
     ) {
-        parent::__construct($name, $attribute, $callableValue);
+        parent::__construct($name, $attribute, $valueCallback);
 
         $this->hideFromIndex();
 

@@ -27,6 +27,8 @@ class ResourceForm extends FormComponent
     use HasFiles;
     use WithFileUploads;
 
+    protected static $viewType = 'edit';
+
     public $showModal = null;
 
     public $showingAddResource = [];

@@ -9,9 +9,9 @@ class Textarea extends Field
     /** The number of rows used for the textarea. */
     public int $rows = 5;
 
-    public function __construct(string $name, string $attribute = null, callable $callableValue = null)
+    public function __construct(string $name, string $attribute = null, callable $valueCallback = null)
     {
-        parent::__construct($name, $attribute, $callableValue);
+        parent::__construct($name, $attribute, $valueCallback);
 
         $this->hideFromIndex();
     }

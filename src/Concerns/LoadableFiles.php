@@ -13,7 +13,7 @@ trait LoadableFiles
 
     public function loadFiles(Field $field, $withDeleted = false)
     {
-        $field->resolveForDisplay($this->model);
+        $field->applyResourceData($this->model);
 
         $existingFiles = collect($field->media())
             ->map(fn ($file) => new ResourceFile($file));
@@ -27,19 +27,17 @@ trait LoadableFiles
         $this->files = $existingFiles
             ->merge($newFiles)
             ->filter(fn ($file) => file_exists($file->getPath()))
-            ->when($withDeleted === false && isset($this->deletedFiles), function ($collection) use ($field) {
-                return $collection
-                    ->filter(fn ($file, $key) => ! isset($this->deletedFiles[$field->attribute][$key]));
-            })
+            ->when(
+                $withDeleted === false && isset($this->deletedFiles),
+                fn ($collection) => $collection
+                    ->filter(fn ($file, $key) => ! isset($this->deletedFiles[$field->attribute][$key]))
+            )
             ->count();
 
         return $existingFiles
             ->merge($newFiles)
-            ->when($withDeleted === false && isset($this->deletedFiles), function ($collection) use ($field) {
-                return $collection->filter(
-                    fn ($file, $key) =>
-                ! isset($this->deletedFiles[$field->attribute][$key])
-                );
-            });
+            ->when($withDeleted === false && isset($this->deletedFiles), fn ($collection) => $collection->filter(
+                fn ($file, $key) => ! isset($this->deletedFiles[$field->attribute][$key])
+            ));
     }
 }

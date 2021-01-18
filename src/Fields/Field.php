@@ -31,23 +31,19 @@ abstract class Field extends FieldElement
     public string $name;
     public ?string $attribute;
     public ?string $type;
-    public string $placeholder;
+    public ?string $placeholder = null;
     public bool $clickable = false;
 
-    /**
-     * The field's resolved value.
-     *
-     * @var mixed
-     */
+    /** @var mixed */
     public $value;
 
     /** @var callable|Closure|null */
-    protected $callableValue;
+    protected $valueCallback;
 
     /**
      * The callback to be used to resolve the field's display value.
      */
-    public ?Closure $displayCallback = null;
+    public ?Closure $resourceDataCallback = null;
 
     /**
      * Indicates if the field is nullable.
@@ -88,7 +84,7 @@ abstract class Field extends FieldElement
     /**
      * Define your own field filler here
      */
-    public Closure $fillCallback;
+    public ?Closure $fillCallback = null;
 
     /**
      * @var Closure[]
@@ -125,12 +121,16 @@ abstract class Field extends FieldElement
 
     /**
      * Field constructor.
+     *
+     * @param string $name
+     * @param string|null $attribute
+     * @param callable|null $valueCallback
      */
-    public function __construct(string $name, string $attribute = null, callable $callableValue = null)
+    public function __construct(string $name, string $attribute = null, callable $valueCallback = null)
     {
         $this->name = $name;
         $this->attribute = $attribute ?? Str::snake(Str::singular($name));
-        $this->callableValue = $callableValue;
+        $this->valueCallback = $valueCallback;
         $this->store = $this->storePrefix() . '.' . $attribute;
         $this->unique = Str::random(20);
 
@@ -140,95 +140,103 @@ abstract class Field extends FieldElement
         }
     }
 
-    public function isPlaceholder(bool $value = true)
+    public function isPlaceholder(bool $value = true): self
     {
         $this->isPlaceholder = $value;
 
         return $this;
     }
 
-    public function storePrefix()
+    public function storePrefix(): string
     {
         return 'store';
     }
 
-    public function formAttribute($formAttribute)
+    public function formAttribute($formAttribute): self
     {
         $this->formAttribute = $formAttribute;
 
         return $this;
     }
 
-    public function name()
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function attribute()
+    public function attribute(): string
     {
         return $this->attribute;
     }
 
-    public function type($type)
+    public function type($type): self
     {
         $this->type = $type;
 
         return $this;
     }
 
-    public function model()
+    public function model(): string
     {
         return $this->formAttribute . '.' . $this->attribute;
     }
 
     /**
-     * Resolve the field's value for display.
+     * Applies the resource data to the current field
      *
      * @param  mixed  $resource
      * @param  string|null  $attribute
      */
-    public function resolveForDisplay($resource, $attribute = null)
-    {
+    public function applyResourceData(
+        $resource,
+        $attribute = null
+    ): self {
         $this->resource = $resource;
 
-        $attribute = $attribute ?? $this->attribute;
-
-        if (! $this->displayCallback) {
-            $this->resolve($resource, $attribute);
-        } else {
-            tap(
-                $this->value ?? $this->resolveAttribute($resource, $attribute),
-                fn ($value) => $this->value = call_user_func($this->displayCallback, $value, $resource, $attribute)
-            );
-        }
+        $this->resourceDataCallback
+            ? tap(
+                $this->value ?? $this->getResourceAttributeValue($resource, $this->attribute),
+                fn ($value) => $this->value = call_user_func(
+                    $this->resourceDataCallback,
+                    $value,
+                    $resource,
+                    $this->attribute,
+                )
+            )
+            : $this->fillFromResource($resource, $this->attribute);
 
         return $this;
     }
 
     /**
-     * Resolve the field's value.
+     * Fills the field values from resource
      *
-     * @param  mixed  $resource
+     * @param  mixed $resource
      * @param  string|null  $attribute
      * @return void
      */
-    public function resolve($resource, $attribute = null)
+    public function fillFromResource($resource, $attribute = null): void
     {
         $this->resource = $resource;
 
-        $attribute = $attribute ?? $this->attribute;
+        $value = $this->getResourceAttributeValue($resource, $this->attribute);
 
-        if (! $this->callableValue) {
-            $this->value = $this->resolveAttribute($resource, $attribute);
-        } elseif (is_callable($this->callableValue)) {
-            tap(
-                $this->resolveAttribute($resource, $attribute),
-                fn ($value) => $this->value = call_user_func($this->callableValue, $value, $resource, $attribute)
-            );
-        }
+        $this->value = $this->valueCallback
+            ? tap($value, fn ($value) => call_user_func(
+                $this->valueCallback,
+                $value,
+                $resource,
+                $this->attribute
+            ))
+            : $value;
     }
 
-    protected function resolveAttribute($resource, $attribute)
+    /**
+     * @param $resource
+     * @param $attribute
+     * @return array|mixed
+     */
+    protected function getResourceAttributeValue($resource, $attribute)
     {
         return data_get($resource, str_replace('->', '.', $attribute));
     }
@@ -242,30 +250,27 @@ abstract class Field extends FieldElement
      * @param  string|null  $requestAttribute
      * @return void
      */
-    public function fillInto(Request $request, $model, $attribute, $requestAttribute = null)
+    public function fillInto(Request $request, $model, $attribute, $requestAttribute = null): void
     {
         $this->fillAttribute($request, $requestAttribute ?? $this->attribute, $model, $attribute);
     }
 
     /**
-     * Hydrate the given attribute on the model based on the incoming request.
-     *
-     * @param  Request  $request
-     * @param  string  $requestAttribute
-     * @param  object  $model
-     * @param  string  $attribute
-     * @return void
+     * @param Request $request
+     * @param $requestAttribute
+     * @param $model
+     * @param $attribute
      */
-    protected function fillAttribute(Request $request, $requestAttribute, $model, $attribute)
-    {
-        if (isset($this->fillCallback)) {
-            call_user_func(
-                $this->fillCallback,
-                $request,
-                $model,
-                $attribute,
-                $requestAttribute
-            );
+    protected function fillAttribute(
+        Request $request,
+        $requestAttribute,
+        $model,
+        $attribute
+    ): void {
+        $filler = $this->fillCallback;
+
+        if (is_callable($filler)) {
+            $filler($request, $model, $attribute, $requestAttribute);
 
             return;
         }
@@ -274,54 +279,49 @@ abstract class Field extends FieldElement
     }
 
     /**
-     * Hydrate the given attribute on the model based on the incoming request.
-     *
-     * @param  Request  $request
-     * @param  string  $requestAttribute
-     * @param  object  $model
-     * @param  string  $attribute
-     * @return void
+     * @param Request $request
+     * @param $requestAttribute
+     * @param $model
+     * @param $attribute
      */
-    protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute)
+    protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute): void
     {
-        if ($request->exists($requestAttribute)) {
-            $value = $request[$requestAttribute];
-
-            $model->{$attribute} = $this->isNullValue($value) ? null : $value;
+        if (! $request->exists($requestAttribute)) {
+            return;
         }
+
+        $value = $request[$requestAttribute];
+
+        $model->{$attribute} = $this->isNullValue($value)
+            ? null
+            : $value;
     }
 
     /**
-     * Check value for null value.
-     *
-     * @param  mixed $value
+     * @param $value
      * @return bool
      */
-    protected function isNullValue($value)
+    protected function isNullValue($value): bool
     {
-        if (! $this->nullable) {
-            return false;
-        }
+        $nullValues = $this->nullValues;
 
-        return is_callable($this->nullValues)
-            ? ($this->nullValues)($value)
-            : in_array($value, (array) $this->nullValues);
+        return $this->nullable
+            ? (is_callable($nullValues) ? $nullValues($value) : in_array($value, $nullValues))
+            : false;
     }
 
     /**
-     * Specify a callback that should be used to hydrate the model attribute for the field.
-     *
-     * @param  Closure $fillCallback
+     * @param Closure $fillCallback
      * @return $this
      */
-    public function fillUsing($fillCallback)
+    public function fillUsing(Closure $fillCallback): self
     {
         $this->fillCallback = $fillCallback;
 
         return $this;
     }
 
-    public function resourceUrl($resource)
+    public function resourceUrl($resource): string
     {
         $resource = Move::getByClass(get_class($resource));
 
@@ -331,14 +331,14 @@ abstract class Field extends FieldElement
         ]);
     }
 
-    public function clickable($clickable = true)
+    public function clickable($clickable = true): self
     {
         $this->clickable = is_callable($clickable) ? $clickable($this) : $clickable;
 
         return $this;
     }
 
-    public function cleanModel(Model $model)
+    public function cleanModel(Model $model): Model
     {
         return $model;
     }
@@ -351,7 +351,7 @@ abstract class Field extends FieldElement
         return $this->attribute;
     }
 
-    public function key()
+    public function key(): string
     {
         return strtolower(Str::afterLast(static::class, '\\'));
     }
@@ -385,7 +385,7 @@ abstract class Field extends FieldElement
         ], $data));
     }
 
-    public function isVisible($resource, ?string $displayType = null)
+    public function isVisible($resource, ?string $displayType = null): bool
     {
         if (! $this->areDependenciesSatisfied($resource)) {
             return false;
@@ -401,7 +401,7 @@ abstract class Field extends FieldElement
         return $this->isShownOn($type, $resource, request());
     }
 
-    public function defaultDisplayType()
+    public function defaultDisplayType(): string
     {
         return $this->type ?? Str::afterLast(request()->route()->getName(), '.');
     }
@@ -411,21 +411,21 @@ abstract class Field extends FieldElement
         return $this->view(...func_get_args());
     }
 
-    public function beforeStore(Closure $beforeStore)
+    public function beforeStore(Closure $beforeStore): self
     {
         $this->beforeStore[] = $beforeStore;
 
         return $this;
     }
 
-    public function afterStore(Closure $afterStore)
+    public function afterStore(Closure $afterStore): self
     {
         $this->afterStore[] = $afterStore;
 
         return $this;
     }
 
-    public function handleBeforeStore($value, $field, $model, $data)
+    public function handleBeforeStore($value, $field, $model, $data): array
     {
         $handlers = $this->beforeStore;
 
@@ -442,11 +442,12 @@ abstract class Field extends FieldElement
         }
 
         return collect($data)
+            /** @psalm-suppress UnusedClosureParam */
             ->filter(fn ($value, $field) => $value !== UnsetField::class)
             ->toArray();
     }
 
-    public function handleAfterStore($value, $field, $model, $data)
+    public function handleAfterStore($value, $field, $model, $data): array
     {
         $handlers = $this->afterStore;
 
@@ -463,11 +464,12 @@ abstract class Field extends FieldElement
         }
 
         return collect($data)
+            /** @psalm-suppress UnusedClosureParam */
             ->filter(fn ($field, $value) => $value !== UnsetField::class)
             ->toArray();
     }
 
-    public function removeFromModel(\Closure $conditions = null)
+    public function removeFromModel(\Closure $conditions = null): self
     {
         $this->beforeStore[] = function ($value, $field, $model, $data) use ($conditions) {
             if ($conditions
@@ -486,28 +488,28 @@ abstract class Field extends FieldElement
         return $this;
     }
 
-    public function onlyForValidation(\Closure $conditions = null)
+    public function onlyForValidation(\Closure $conditions = null): self
     {
         $this->removeFromModel($conditions);
 
         return $this;
     }
 
-    public function index($index)
+    public function index($index): self
     {
         $this->index = $index;
 
         return $this;
     }
 
-    public function show($show)
+    public function show($show): self
     {
         $this->show = $show;
 
         return $this;
     }
 
-    public function form($form)
+    public function form($form): self
     {
         $this->form = $form;
 
@@ -527,21 +529,21 @@ abstract class Field extends FieldElement
             : $store[$this->attribute] ?? $default;
     }
 
-    public function before(Closure $before)
+    public function before(Closure $before): self
     {
         $this->before = $before;
 
         return $this;
     }
 
-    public function placeholder($placeholder)
+    public function placeholder(string $placeholder): self
     {
         $this->placeholder = $placeholder;
 
         return $this;
     }
 
-    public function getPlaceholder($resource)
+    public function getPlaceholder($resource): string
     {
         return $this->placeholder ?? __('Add a :label', [
             'label' => lcfirst($resource->singularLabel()) . ' ' . lcfirst($this->name),

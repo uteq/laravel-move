@@ -35,6 +35,11 @@ trait HasResource
 
     public function resource()
     {
+        return $this->resolvedResource;
+    }
+
+    public function getResolvedResourceProperty()
+    {
         return Move::resolveResource($this->resource);
     }
 
@@ -131,10 +136,15 @@ trait HasResource
 
     public function query(): Builder
     {
-        return $this->resource()->getForIndex($this->requestQuery)['collection'];
+        return $this->resource()->{'getFor' . ucfirst(static::$viewType)}($this->requestQuery)['collection'];
     }
 
     public function collection()
+    {
+        return $this->cachedCollection;
+    }
+
+    public function getCachedCollectionProperty()
     {
         return $this->query()
             ->paginate($this->filter('limit', $this->resource()->defaultPerPage()));

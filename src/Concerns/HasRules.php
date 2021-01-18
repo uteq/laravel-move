@@ -64,6 +64,10 @@ trait HasRules
     {
         $rulesBuilder = $this->rules;
 
+        if (! isset($this->attribute)) {
+            throw new \Exception(sprintf('%s, The attribute property should be set', __METHOD__));
+        }
+
         $rules = [
             $this->attribute => is_callable($rulesBuilder) ? $rulesBuilder($request) : $rulesBuilder,
         ];
@@ -78,6 +82,10 @@ trait HasRules
      */
     public function getCreationRules(Request $request)
     {
+        if (! isset($this->attribute)) {
+            throw new \Exception(sprintf('%s, The attribute property should be set', __METHOD__));
+        }
+
         $rules = [
             $this->attribute => is_callable($this->creationRules)
                 ? call_user_func($this->creationRules, $request)

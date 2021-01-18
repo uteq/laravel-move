@@ -6,27 +6,29 @@ class Id extends Field
 {
     public string $component = 'text-field';
 
+    /**
+     * Id constructor.
+     * @param string $name
+     * @param string $attribute
+     * @param callable|null $valueCallback
+     */
     public function __construct(
         string $name = 'Id',
         string $attribute = 'id',
-        callable $callableValue = null
+        callable $valueCallback = null
     ) {
-        parent::__construct($name, $attribute, $callableValue);
+        parent::__construct($name, $attribute, $valueCallback);
 
         $this->onlyOnIndex();
         $this->sortable();
     }
 
     /**
-     * Resolve a BIGINT ID field as a string for compatibility with JavaScript.
-     *
      * @return $this
      */
     public function asBigInt()
     {
-        $this->callableValue = function ($id) {
-            return (string) $id;
-        };
+        $this->valueCallback = fn ($id) => (string) $id;
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Fields;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
@@ -14,8 +15,6 @@ class Select extends Field
 
     public $resourceName = null;
 
-    public string $placeholder;
-
     public ?\Closure $customIndexName = null;
 
     public array $settings = [];
@@ -26,6 +25,8 @@ class Select extends Field
 
     public ?string $ajaxUrl = null;
 
+    protected static $resourceCache = [];
+
     public function settings(array $settings)
     {
         $this->settings = $settings;
@@ -33,21 +34,14 @@ class Select extends Field
         return $this;
     }
 
-    public function indexName(\Closure $indexName)
+    public function indexName(\Closure $indexName): self
     {
         $this->customIndexName = $indexName;
 
         return $this;
     }
 
-    public function placeholder(string $placeholder)
-    {
-        $this->placeholder = $placeholder;
-
-        return $this;
-    }
-
-    public function showResourceUrl()
+    public function showResourceUrl(): ?string
     {
         if (! Move::resolveResource($this->resourceName)->can('view')) {
             return null;
@@ -63,14 +57,16 @@ class Select extends Field
         ]);
     }
 
-    public function resourceRouteName()
+    public function resourceRouteName(): string
     {
         return str_replace('.', '/', Move::getByClass($this->resourceName ?? null) ?? '');
     }
 
-    public function resourceName(Model $model = null)
+    public function resourceName(Model $model = null): ?string
     {
-        $model ??= $this->resourceName ? $this->resourceName::$model::find($this->value) : null;
+        $model ??= $this->resourceName
+            ? $this->cachedResource($this->resourceName, $this->value, $model)
+            : null;
 
         if (! $model) {
             return null;
@@ -91,7 +87,17 @@ class Select extends Field
         return $resourceName::title($model);
     }
 
-    public function resource($resource)
+    public function cachedResource($name, $value, $model): ?Model
+    {
+        if (! isset(static::$resourceCache[$name][$value]) || empty(static::$resourceCache[$name][$value])) {
+            static::$resourceCache[$name] ??= [];
+            static::$resourceCache[$name][$value] = $name::$model::find($value);
+        }
+
+        return static::$resourceCache[$name][$value];
+    }
+
+    public function resource($resource): self
     {
         if (! class_exists($resource)) {
             throw new \Exception(sprintf(
@@ -122,14 +128,14 @@ class Select extends Field
         return $this;
     }
 
-    public function query($query)
+    public function query($query): self
     {
         $this->query = $query;
 
         return $this;
     }
 
-    protected function queryHandler($resourceName)
+    protected function queryHandler($resourceName): Builder
     {
         $handler = $this->query;
 
@@ -162,14 +168,14 @@ class Select extends Field
         return [];
     }
 
-    public function customQuery($customQuery)
+    public function customQuery($customQuery): self
     {
         $this->customQuery = $customQuery;
 
         return $this;
     }
 
-    public function ajax(string $url, $defaultOption = null, array $settings = [])
+    public function ajax(string $url, $defaultOption = null, array $settings = []): self
     {
         is_callable($defaultOption)
             ? $this->resolveDefaultOption($defaultOption)
@@ -194,11 +200,11 @@ class Select extends Field
         return $this;
     }
 
-    public function resolveDefaultOption($option)
+    public function resolveDefaultOption($option): self
     {
         $this->options(function ($field) use ($option) {
             $store = isset($field->resource->store)
-                ? isset($field->resource->store)
+                ? $field->resource->store
                 : $field->resource->getAttributes();
 
             return is_callable($option)

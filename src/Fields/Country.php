@@ -4,9 +4,9 @@ namespace Uteq\Move\Fields;
 
 class Country extends Select
 {
-    public function __construct(string $name, string $attribute = null, callable $callableValue = null)
+    public function __construct(string $name, string $attribute = null, callable $valueCallback = null)
     {
-        parent::__construct($name, $attribute, $callableValue);
+        parent::__construct($name, $attribute, $valueCallback);
 
         $this->options([
             'AF' => __('Afghanistan'),

@@ -59,6 +59,7 @@ trait HasDependencies
 
     public function areDependenciesSatisfied($data)
     {
+        /** @psalm-suppress UnusedClosureParam */
         $rules = [
             'callback' => fn ($value, $result) => $value($result),
             'value' => fn ($value, $result) => $result == $value,

@@ -11,7 +11,7 @@ class ExportToExcelAction extends ExportToExcel
     public function map($row): array
     {
         $fields = collect($this->resource->visibleFields('index', $row))
-            ->mapWithKeys(fn ($field) => [$field->name => $field->resolveForDisplay($row)->value])
+            ->mapWithKeys(fn ($field) => [$field->name => $field->applyResourceData($row)->value])
             ->toArray();
 
         return $fields;

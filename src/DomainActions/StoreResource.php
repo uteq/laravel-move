@@ -47,6 +47,7 @@ class StoreResource
     {
         collect($data)
             ->filter(fn ($attribute) => $attribute instanceof MediaCollection)
+            /** @psalm-suppress UnusedClosureParam */
             ->each(function ($attribute, $key) use (&$model) {
                 unset($model[$key]);
             });
