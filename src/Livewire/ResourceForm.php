@@ -13,6 +13,7 @@ use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Step;
 use Uteq\Move\Support\Livewire\Concerns\HasStore;
 use Uteq\Move\Support\Livewire\FormComponent;
+use function Livewire\str;
 
 /**
  * Class ResourceForm
@@ -25,6 +26,8 @@ class ResourceForm extends FormComponent
     use HasStore;
     use HasFiles;
     use WithFileUploads;
+
+    public $showModal = null;
 
     public $showingAddResource = [];
     public $baseRoute = 'move';
@@ -163,10 +166,16 @@ class ResourceForm extends FormComponent
             ->firstWhere('name', $step ?: $this->activeStep);
     }
 
-    public function panels(): Collection
+    public function getPanelsProperty(): Collection
     {
         return $this->resource()
-            ->panels($this, $this->model, isset($model->id) ? 'update' : 'create');
+            ->panels($this, $this->model, isset($model->id) ? 'update' : 'create')
+            ->each(fn ($panel) => $panel->id ??= str()->random(20));
+    }
+
+    public function panels()
+    {
+        return collect($this->panels);
     }
 
     public function steps()
@@ -221,12 +230,9 @@ class ResourceForm extends FormComponent
 
     public function action($store, $method, ...$args)
     {
-        $matchingFields = $this->fields
-            ->filter(fn ($field) => $field->store === $store);
-
-        foreach ($matchingFields as $field) {
-            $field->{$method}($this, $field, $args);
-        }
+        $this->fields
+            ->filter(fn ($field) => $field->store === $store)
+            ->each(fn ($field) => $field->{$method}($this, $field, ...$args));
 
         return $this;
     }
@@ -237,6 +243,13 @@ class ResourceForm extends FormComponent
         $attributePath = Str::after($attribute, '.');
 
         Arr::set($this->{$attribute}, $attributePath, $value);
+    }
+
+    public function panelAction(string $panelId, string $method, ...$args)
+    {
+        $this->panels()
+            ->filter(fn ($panel) => get_class($panel) === decrypt($panelId))
+            ->each(fn ($panel) => $panel->{$method}($this, $panel, ...$args));
     }
 
     /**
@@ -251,7 +264,7 @@ class ResourceForm extends FormComponent
     public function updateFieldValue($field, $value): self
     {
         $this->store[$field->attribute] = is_callable($value)
-            ? $value($this->store[$field->attribute])
+            ? $value($this->store[$field->attribute], $this)
             : $value;
 
         return $this;

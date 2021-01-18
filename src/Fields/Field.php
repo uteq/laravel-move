@@ -5,6 +5,7 @@ namespace Uteq\Move\Fields;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
@@ -30,6 +31,7 @@ abstract class Field extends FieldElement
     public string $name;
     public ?string $attribute;
     public ?string $type;
+    public string $placeholder;
     public bool $clickable = false;
 
     /**
@@ -512,13 +514,17 @@ abstract class Field extends FieldElement
         return $this;
     }
 
-    public function store()
+    public function store($key = null, $default = null)
     {
-        if (! isset($this->resource->store)) {
-            return null;
+        $store = $this->resource->store ?: $this->resource->getAttributes();
+
+        if (empty($store)) {
+            return $default;
         }
 
-        return $this->resource->store[$this->attribute] ?? null;
+        return $key
+            ? Arr::get($store[$this->attribute] ?? $default, $key, $default)
+            : $store[$this->attribute] ?? $default;
     }
 
     public function before(Closure $before)
@@ -526,5 +532,19 @@ abstract class Field extends FieldElement
         $this->before = $before;
 
         return $this;
+    }
+
+    public function placeholder($placeholder)
+    {
+        $this->placeholder = $placeholder;
+
+        return $this;
+    }
+
+    public function getPlaceholder($resource)
+    {
+        return $this->placeholder ?? __('Add a :label', [
+            'label' => lcfirst($resource->singularLabel()) . ' ' . lcfirst($this->name),
+        ]);
     }
 }

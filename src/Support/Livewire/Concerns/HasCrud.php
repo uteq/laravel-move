@@ -12,17 +12,17 @@ trait HasCrud
         'create' => 'create',
     ];
 
-    private function modelById(int $id)
+    private function modelById($id)
     {
         return $this->resource()->newModel()->find($id);
     }
 
-    public function show(int $id)
+    public function show($id)
     {
         $this->redirect($this->showRoute($id));
     }
 
-    public function showRoute(int $id)
+    public function showRoute($id)
     {
         $this->crudBaseRoute ??= move()::getPrefix();
 
@@ -32,12 +32,12 @@ trait HasCrud
         ]);
     }
 
-    public function edit(int $id)
+    public function edit($id)
     {
         $this->redirect($this->editRoute($id));
     }
 
-    public function editRoute(int $id)
+    public function editRoute($id)
     {
         $this->crudBaseRoute ??= move()::getPrefix();
 
@@ -75,7 +75,7 @@ trait HasCrud
         return $this->confirmingDestroy = false;
     }
 
-    public function destroy(int $id)
+    public function destroy($id)
     {
         $model = $this->resolveModel($id);
 

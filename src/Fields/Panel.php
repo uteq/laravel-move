@@ -19,6 +19,7 @@ class Panel implements PanelInterface, ElementInterface
     use Metable;
     use ShowsConditionally;
 
+    public string $id;
     public ?string $name = null;
     public array $fields;
     public array $panels;
@@ -50,6 +51,15 @@ class Panel implements PanelInterface, ElementInterface
             $this->nameOnCreate = $name;
             $this->nameOnUpdate = $name;
         }
+
+        if (method_exists($this, 'init')) {
+            $this->init();
+        }
+    }
+
+    public static function id()
+    {
+        return encrypt(static::class);
     }
 
     public function nameOnCreate(string $nameOnCreate)

@@ -93,7 +93,7 @@
                 @foreach ($row['fields'] as $field)
                     <x-move-td>
                         @if ($this->resource()::title($row['model']) === $field->attribute)
-                            <button wire:click="edit({{ $row['model']->id }})"
+                            <button wire:click="edit('{{ $row['model']->id }}')"
                                     class="text-primary-500 cursor-pointer"
                                     wire:loading.attr="disabled"
                                     wire:loading.class="text-gray-500"
@@ -109,6 +109,7 @@
                     <x-move-table.item-actions
                         id="{{ $row['model']->id }}"
                         description="{{ $this->resource()->label() }}"
+                        title="{{ $this->resource()->title($row['model']) }}"
                     />
                 </x-move-td>
             </tr>

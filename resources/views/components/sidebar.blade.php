@@ -1,4 +1,3 @@
-<!-- Off-canvas menu for mobile -->
 <div class="md:hidden" x-show="mobileMenuOpen" style="display: none">
     <div class="fixed inset-0 flex z-40">
 
@@ -19,7 +18,7 @@
                 </button>
             </div>
 
-            <x-move-sidebar-menu :custom="$slot ?? null"/>
+            <x-move-sidebar-menu :custom="$slot ?? null" :keep-not-custom="$keepNotCustom ?? null" />
         </div>
     </div>
 </div>
@@ -30,6 +29,6 @@
 >
     <div class="flex flex-col w-64">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
-        <x-move-sidebar-menu :custom="$slot ?? null"/>
+        <x-move-sidebar-menu :custom="$slot ?? null" :keep-not-custom="$keepNotCustom ?? null"/>
     </div>
 </div>

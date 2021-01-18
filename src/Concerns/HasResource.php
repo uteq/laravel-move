@@ -12,7 +12,7 @@ trait HasResource
 
     public $resource;
     public $model = null;
-    public ?int $modelId = null;
+    public $modelId = null;
 
     public function initializeHasResource()
     {
@@ -43,7 +43,7 @@ trait HasResource
         return $this->resource();
     }
 
-    public function resolveModel(int $id)
+    public function resolveModel($id)
     {
         return $this->resource()->newModel()->newQuery()->find($id);
     }

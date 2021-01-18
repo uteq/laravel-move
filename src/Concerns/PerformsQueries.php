@@ -17,7 +17,7 @@ trait PerformsQueries
         array $orderings = [],
         $withTrashed = ''
     ) {
-        $query = static::initializeQuery($request, $query, $search, $withTrashed);
+        $query = static::initializeQuery($query, $search, $withTrashed);
         $query = static::applyFilters($requestQuery, $query, $filters);
         $query = static::applyOrderings($query, $orderings);
         $query = $query->tap(function ($query) use ($request) {
@@ -28,23 +28,26 @@ trait PerformsQueries
     }
 
     /**
-     * Initialize the given index query.
+     * Builds an initial index query
      */
-    protected static function initializeQuery($request, Builder $query, string $search, string $withTrashed)
-    {
-        if (empty(trim($search))) {
-            return static::applySoftDeleteConstraint($query, $withTrashed);
-        }
+    protected static function initializeQuery(
+        Builder $query,
+        string $search,
+        string $withTrashed
+    ) {
+        $softDeleteConstraintQuery = static::applySoftDeleteConstraint($query, $withTrashed);
 
-        return static::applySearch(static::applySoftDeleteConstraint($query, $withTrashed), $search);
+        return empty(trim($search))
+            ? $softDeleteConstraintQuery
+            : static::applySearch($softDeleteConstraintQuery, $search);
     }
 
     /**
-     * Scope the given query for the soft delete state.
+     * Adds a conditional with or without trashed constraint to the query
      *
-     * @param  mixed  $query
-     * @param  string  $withTrashed
-     * @return mixed
+     * @param $query
+     * @param $withTrashed
+     * @return Builder|mixed
      */
     protected static function applySoftDeleteConstraint($query, $withTrashed)
     {
