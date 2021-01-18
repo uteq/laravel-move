@@ -19,7 +19,10 @@ class HasMany extends Select
     {
         $this->resourceName = $this->findResourceName($name, $resource);
 
-        parent::__construct($name, $attribute, fn ($data) => $data instanceof Collection
+        parent::__construct(
+            $name,
+            $attribute,
+            fn ($data) => $data instanceof Collection
             ? $data->mapWithKeys(fn ($item) => [$item->id => $item->name])
             : $data
         );

@@ -29,7 +29,6 @@ trait QueryBuilder
         Builder $query,
         string $search,
         string $trashedStatus
-
     ) {
         $softDeleteConstraintQuery = static::applySoftTrashedConstraint($query, $trashedStatus);
 
