@@ -5,7 +5,6 @@ namespace Uteq\Move\Actions;
 use Illuminate\Support\Collection;
 use Uteq\Move\Concerns\Makeable;
 use Uteq\Move\Concerns\Metable;
-use Illuminate\Database\Eloquent\Model;
 
 class Action
 {

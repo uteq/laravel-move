@@ -5,6 +5,7 @@ namespace Uteq\Move\Livewire;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use function Livewire\str;
 use Livewire\WithFileUploads;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
@@ -13,7 +14,6 @@ use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Step;
 use Uteq\Move\Support\Livewire\Concerns\HasStore;
 use Uteq\Move\Support\Livewire\FormComponent;
-use function Livewire\str;
 
 /**
  * Class ResourceForm

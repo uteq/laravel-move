@@ -9,5 +9,4 @@ trait GloballySearchable
     public static int $globalSearchResults = 5;
 
     public static string $globalSearchLink = 'detail';
-
 }

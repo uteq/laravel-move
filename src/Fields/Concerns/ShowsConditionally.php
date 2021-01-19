@@ -2,8 +2,8 @@
 
 namespace Uteq\Move\Fields\Concerns;
 
-use Illuminate\Http\Request;
 use Closure;
+use Illuminate\Http\Request;
 
 trait ShowsConditionally
 {
