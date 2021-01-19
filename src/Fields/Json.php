@@ -6,7 +6,7 @@ class Json extends Field
 {
     public string $component = 'json';
 
-    public function isPlaceholder(bool $value = true)
+    public function isPlaceholder(bool $value = true): self
     {
         $this->hide($value);
 

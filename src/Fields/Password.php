@@ -28,7 +28,7 @@ class Password extends Field
         });
     }
 
-    public function cleanModel(Model $model)
+    public function cleanModel(Model $model): Model
     {
         if (isset($model->{$this->attribute})) {
             $model->{$this->attribute} = null;
