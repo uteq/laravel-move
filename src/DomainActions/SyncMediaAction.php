@@ -9,8 +9,8 @@ class SyncMediaAction
 {
     use WithSyncableMedia;
 
-    public function __invoke(Model $model, MediaCollection $paths, $collection)
+    public function __invoke(Model $model, MediaCollection $paths, $collection, $disk = 'local')
     {
-        $this->syncMedia($model, $paths, $collection);
+        $this->syncMedia($model, $paths, $collection, $disk);
     }
 }
