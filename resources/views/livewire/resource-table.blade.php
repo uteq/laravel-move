@@ -5,7 +5,7 @@
                          search
     ></x-move-table.header>
 
-    <x-move-table class="mt-4 table-hover">
+    <x-move-table class="mt-4 table-hover" wire:loading.class="opacity-50">
         <x-slot name="filters">
 
             @if ($this->has_filters)
@@ -41,7 +41,7 @@
         <x-slot name="head">
             <tr>
                 @if ($sortable)
-                <x-move-th></x-move-th>
+                    <x-move-th></x-move-th>
                 @endif
                 <x-move-th></x-move-th>
                 @foreach ($header as $field)
@@ -76,24 +76,28 @@
 
         <tbody wire:target="edit" wire:loading.remove @if ($sortable) wire:sortable="updateTaskOrder" @endif>
         @forelse ($rows as $i => $row)
-            <tr class="hover:bg-gray-50 bg-white shadow" wire:key="'table-row' . {{ $loop->index }}" wire:sortable.item="{{ $row['model']->id }}">
+            <tr class="hover:bg-gray-50 bg-white shadow" wire:key="table-row-{{ $this->page ?? 0 }}-{{ $row['model']->id }}" wire:sortable.item="{{ $row['model']->id }}">
                 @if ($sortable)
-                <x-move-td wire:sortable.handle>
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <g>
-                            <path fill="none" d="M0 0h24v24H0z"></path>
-                            <path d="M12 22l-4-4h8l-4 4zm0-20l4 4H8l4-4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM2 12l4-4v8l-4-4zm20 0l-4 4V8l4 4z"></path>
-                        </g>
-                    </svg>
-                </x-move-td>
+                    <x-move-td wire:sortable.handle>
+                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <g>
+                                <path fill="none" d="M0 0h24v24H0z"></path>
+                                <path d="M12 22l-4-4h8l-4 4zm0-20l4 4H8l4-4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zM2 12l4-4v8l-4-4zm20 0l-4 4V8l4 4z"></path>
+                            </g>
+                        </svg>
+                    </x-move-td>
                 @endif
                 <x-move-td>
-                    <x-move-field.checkbox model="selected.{{ $row['model']->id }}"/>
+                    <x-move-field.checkbox
+                        model="selected.{{ $row['model']->id }}"
+                        value="{{ $row['model']->id }}"
+                        wire:key="selected-checkbox-{{ $row['model']->id }}"
+                    />
                 </x-move-td>
                 @foreach ($row['fields'] as $field)
-                    <x-move-td>
+                    <x-move-td class="{{ Move::getWrapTableContent() && $field->wrapContent ? 'whitespace-wrap' : 'whitespace-nowrap' }}">
                         @if ($this->resource()::title($row['model']) === $field->attribute)
-                            <button wire:click="edit('{{ $row['model']->id }}')"
+                            <button wire:click="edit({{ $row['model']->id }})"
                                     class="text-primary-500 cursor-pointer"
                                     wire:loading.attr="disabled"
                                     wire:loading.class="text-gray-500"
@@ -105,11 +109,10 @@
                         @endif
                     </x-move-td>
                 @endforeach
-                <x-move-td>
+                <x-move-td class="whitespace-nowrap">
                     <x-move-table.item-actions
                         id="{{ $row['model']->id }}"
                         description="{{ $this->resource()->label() }}"
-                        title="{{ $this->resource()->title($row['model']) }}"
                     />
                 </x-move-td>
             </tr>

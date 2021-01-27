@@ -1,5 +1,4 @@
 <div class="flex items-top justify-between flex-wrap sm:flex-no-wrap ml-2">
-
     <x-move-dropdown orientation="left" wire:key="table-filter.checkbox">
         <x-slot name="trigger">
             <button class="flex items-center cursor-pointer active:border relative mt-2">
@@ -29,7 +28,7 @@
         </div>
     </x-move-dropdown>
 
-    <div class="flex items-center flex-wrap">
+    <div class="flex items-center flex-wrap items-stretch">
         @if ($this->has_selected && count($this->actions() ?? []))
             <select class="form-control form-select mr-2 py-1" wire:model="action">
                 <option disabled="disabled" selected="selected" value="-">Actie selecteren</option>

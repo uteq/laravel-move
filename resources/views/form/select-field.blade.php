@@ -14,13 +14,13 @@
                              :values="$field->store() ? array_keys(is_array($field->store()) ? $field->store() : [$field->store() => true]) : null"
         >
             @foreach ($field->getOptions() as $key => $value)
-                <option value="{{ $key }}" @if ($key === $field->value) selected @endif >{{ $value }}</option>
+                <option value="{{ $key }}" @if ((string)$key === (string)$field->value) selected @endif >{{ $value }}</option>
             @endforeach
         </x-move-field.select>
 
-        <div x-show="form" style="display: none">
-            Hiiiiii
-        </div>
+{{--        <div x-show="form" style="display: none">--}}
+{{--            Hiiiiii--}}
+{{--        </div>--}}
     </div>
 </x-move-form.row>
 

@@ -5,11 +5,11 @@ namespace Uteq\Move\Livewire;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use function Livewire\str;
 use Livewire\WithFileUploads;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
 use Uteq\Move\Concerns\HasResource;
+use Uteq\Move\Concerns\WithActionableFields;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Step;
 use Uteq\Move\Support\Livewire\Concerns\HasStore;
@@ -26,6 +26,7 @@ class ResourceForm extends FormComponent
     use HasStore;
     use HasFiles;
     use WithFileUploads;
+    use WithActionableFields;
 
     protected static $viewType = 'edit';
 
@@ -39,6 +40,8 @@ class ResourceForm extends FormComponent
     public array $stepsData = [];
     public array $completedSteps = [];
     public array $availableSteps = [];
+
+    public $queryString = ['activeStep'];
 
     protected $property = 'model';
     protected $label;
@@ -80,14 +83,14 @@ class ResourceForm extends FormComponent
 
         $this->model->store = $this->store;
 
-        if ($step = $this->steps()->first()) {
-            $this->activeStep = $step->name;
+        if ((! $this->activeStep || ! $this->model->id) && $step = $this->steps()->first()) {
+            $this->activeStep = $step->attribute;
             $this->availableSteps[] = $this->activeStep;
         }
 
         if ($this->model->id) {
             $this->availableSteps = $this->steps()
-                ->map(fn ($step) => $step->name)
+                ->map(fn ($step) => $step->attribute)
                 ->toArray();
         }
 
@@ -172,7 +175,7 @@ class ResourceForm extends FormComponent
     {
         return $this->resource()
             ->panels($this, $this->model, isset($model->id) ? 'update' : 'create')
-            ->each(fn ($panel) => $panel->id ??= str()->random(20));
+            ->each(fn ($panel) => $panel->id ??= Str::random(20));
     }
 
     public function panels()
@@ -228,15 +231,6 @@ class ResourceForm extends FormComponent
         $count = $steps->filter(fn ($step) => in_array($step->name, $this->availableSteps))->count();
 
         return $count == $steps->count();
-    }
-
-    public function action($store, $method, ...$args)
-    {
-        $this->fields
-            ->filter(fn ($field) => $field->store === $store)
-            ->each(fn ($field) => $field->{$method}($this, $field, ...$args));
-
-        return $this;
     }
 
     public function set($attribute, $value)

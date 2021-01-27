@@ -34,6 +34,7 @@ class ResourceTable extends TableComponent
     protected string $limit;
     public array $actionFields = [];
     public array $store = [];
+    public array $meta = [];
 
     protected $queryString = ['search', 'filter', 'order'];
 

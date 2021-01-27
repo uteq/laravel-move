@@ -5,8 +5,8 @@ namespace Uteq\Move\Fields;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
 use Uteq\Move\Actions\UnsetField;
@@ -33,6 +33,7 @@ abstract class Field extends FieldElement
     public ?string $type;
     public ?string $placeholder = null;
     public bool $clickable = false;
+    public ?bool $wrapContent = null;
 
     /** @var mixed */
     public $value;
@@ -121,10 +122,6 @@ abstract class Field extends FieldElement
 
     /**
      * Field constructor.
-     *
-     * @param string $name
-     * @param string|null $attribute
-     * @param callable|null $valueCallback
      */
     public function __construct(string $name, string $attribute = null, callable $valueCallback = null)
     {
@@ -321,13 +318,13 @@ abstract class Field extends FieldElement
         return $this;
     }
 
-    public function resourceUrl($resource): string
+    public function resourceUrl($resource)
     {
         $resource = Move::getByClass(get_class($resource));
 
         return route(move()::getPrefix() . '.edit', [
             'resource' => str_replace('.', '/', $resource),
-            'model' => $this->value,
+            'model' => $this->resource,
         ]);
     }
 
@@ -469,7 +466,8 @@ abstract class Field extends FieldElement
             ->toArray();
     }
 
-    public function removeFromModel(\Closure $conditions = null): self
+
+    public function removeFromModel(\Closure $conditions = null)
     {
         $this->beforeStore[] = function ($value, $field, $model, $data) use ($conditions) {
             if ($conditions
@@ -478,11 +476,9 @@ abstract class Field extends FieldElement
                 return $value;
             }
 
-            if (! isset($model[$this->attribute])) {
-                return;
-            }
+            unset($model->{$field});
 
-            unset($model[$this->attribute]);
+            return UnsetField::class;
         };
 
         return $this;

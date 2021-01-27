@@ -13,11 +13,14 @@ trait HasSelected
         $this->computeHasSelected();
     }
 
+    public function hasSelected()
+    {
+        return count($this->selected) > 0;
+    }
+
     public function computeHasSelected()
     {
-        $this->has_selected = collect($this->selected)
-            ->filter(fn ($selected) => $selected === true)
-            ->count();
+        $this->has_selected = count($this->selected) > 0;
     }
 
     public function updatedSelectType($value, $key)
@@ -43,7 +46,7 @@ trait HasSelected
                 : $this->query()->get();
 
             foreach ($collection as $item) {
-                $this->selected[$item->getKey()] = true;
+                $this->selected[$item->getKey()] = $item->getKey();
             }
         }
 
@@ -59,13 +62,15 @@ trait HasSelected
 
     public function updatedSelected($value, $key)
     {
+        $this->meta['selected'] = true;
+
         $this->computeHasSelected();
     }
 
     public function selectedCollection()
     {
         return ! $this->hasSelectType('all')
-            ? $this->collection()->filter(fn ($item) => $this->selected($item->id))
+            ? $this->collection()->filter(fn ($item) => $this->selected($item->getKey()))
             : $this->query()->get();
     }
 

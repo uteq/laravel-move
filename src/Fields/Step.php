@@ -8,11 +8,20 @@ class Step extends Panel
 
     public string $next;
 
+    public string $attribute;
+
     public bool $hideTitle = true;
 
     public bool $isActive = false;
 
     public bool $disabled = true;
+
+    public function __construct(string $name, string $attribute, array $fields)
+    {
+        $this->attribute = $attribute;
+
+        parent::__construct($name, $fields);
+    }
 
     public function disabled()
     {
@@ -27,17 +36,17 @@ class Step extends Panel
             return false;
         }
 
-        return $this->name === $this->resourceForm->activeStep();
+        return $this->attribute === $this->resourceForm->activeStep();
     }
 
     public function isComplete()
     {
-        return in_array($this->name, $this->resourceForm->completedSteps);
+        return in_array($this->attribute, $this->resourceForm->completedSteps);
     }
 
     public function isAvailable()
     {
-        return in_array($this->name, $this->resourceForm->availableSteps);
+        return in_array($this->attribute, $this->resourceForm->availableSteps);
     }
 
     public function showTitle($show = true)

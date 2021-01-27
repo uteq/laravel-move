@@ -18,7 +18,12 @@
                 </button>
             </div>
 
-            <x-move-sidebar-menu :custom="$slot ?? null" :keep-not-custom="$keepNotCustom ?? null" />
+            <x-move-sidebar-menu
+                :custom="$slot ?? null"
+                :keep-not-custom="$keepNotCustom ?? null"
+                :with-padding="$withPadding"
+                :logo="$logo"
+            />
         </div>
     </div>
 </div>
@@ -29,6 +34,11 @@
 >
     <div class="flex flex-col w-64">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
-        <x-move-sidebar-menu :custom="$slot ?? null" :keep-not-custom="$keepNotCustom ?? null"/>
+        <x-move-sidebar-menu
+            :custom="$slot ?? null"
+            :keep-not-custom="$keepNotCustom ?? null"
+            :with-padding="$withPadding"
+            :logo="$logo"
+        />
     </div>
 </div>

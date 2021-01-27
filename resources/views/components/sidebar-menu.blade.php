@@ -1,12 +1,17 @@
 <div
     class="flex flex-col flex-grow border-r border-gray-600 pt-5 pb-4 overflow-y-auto bg-gradient-to-b from-primary-700 to-primary-500">
-    <a class="flex items-center flex-shrink-0 px-4" href="/">
-        <h1 class="text-2xl text-white font-black">
-            {{ config('app.name') }}</a>
-        </h1>
-    </a>
+
+    @if ($logo ?? null)
+        {!! $logo !!}
+    @else
+        <a class="flex items-center flex-shrink-0 px-4" href="/">
+            <h1 class="text-2xl text-white font-black">
+                {{ config('app.name') }}
+            </h1>
+        </a>
+    @endif
     <div class="mt-5 flex-grow flex flex-col">
-        <nav class="flex-1 px-2">
+        <nav class="flex-1 {{ ($withPadding ?? false) ? 'px-2' : null }}">
             @if (isset($custom) && $custom !== null && (string)$custom !== "")
                 {!! $custom !!}
             @endif

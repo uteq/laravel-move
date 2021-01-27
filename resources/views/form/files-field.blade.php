@@ -1,7 +1,7 @@
 <x-move-form.row width="w-full" custom label="{{ $field->name }}" model="{{ $field->store }}" :required="$field->isRequired()" help-text="{{ $field->getHelpText() }}">
 
     <label class="w-full">
-        <div class="flex text-center items-center px-4 py-2 bg-white text-blue rounded-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-teal-800 hover:text-white">
+        <div class="flex text-center items-center px-4 py-2 bg-white text-blue rounded-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-teal-800 hover:text-white hover:bg-primary-500">
             <!-- heroicon-o-cloud-download -->
             <svg class="w6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
@@ -43,7 +43,6 @@
                 <div wire:key="file{{ $field->attribute }}{{ $loop->index }}{{ $i }}" class="border rounded ">
                     <div class="flex">
 
-                        <div>
                         @if ($file->guessExtension() === 'pdf')
 
                             <div class="card-body">
@@ -71,11 +70,11 @@
                         @else
                             <x-move-modal id="showingFile{{ $i }}" show="{{ $i }}" show-type="===" wire:model="showFile">
                                 <x-slot name="button">
-                                    <div x-on:click="show = {{ $i }}" class="cursor-pointer flex" data-lightbox="roadtrip">
+                                    <div x-on:click="show = {{ $i }}" class="cursor-pointer" data-lightbox="roadtrip">
+                                        <div class="ml-4 text-sm text-center py-2">{{ $file->getClientOriginalName() }}</div>
                                         <img src="{{ $file->withVersion($this->rotatedFiles)->getUrl() }}"
-                                             class="w-1/3 h-auto object-contain object-left"
+                                             class="object-contain h-48 w-full"
                                         />
-                                        <div class="ml-4 text-sm">{{ $file->getClientOriginalName() }}</div>
                                     </div>
                                 </x-slot>
 
@@ -84,7 +83,6 @@
                                 />
                             </x-move-modal>
                         @endif
-                        </div>
 
                         <div class="ml-3 bg-gray-100 p-2 text-sm">
 

@@ -23,7 +23,7 @@ class PaginationFilter extends Filter
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param mixed $value
      */
-    public function apply($query, $value): Builder
+    public function apply($query, $value, $request): Builder
     {
         return $query;
     }

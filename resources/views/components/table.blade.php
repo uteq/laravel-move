@@ -2,7 +2,7 @@
 
     @if ($filters ?? false)
         <div class="px-2 py-2 border-b border-gray-200 sm:pl-1 sm:py-2">
-            <x-move-table.filters>
+            <x-move-table.filters :table="$this">
                 {{ $filters }}
             </x-move-table.filters>
         </div>

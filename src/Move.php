@@ -15,6 +15,7 @@ class Move
     public ?array $resources = null;
     public ?bool $loadResourceRoutes = null;
     public ?bool $useTestStore = false;
+    public ?bool $wrapTableContent = false;
     public string $themeColor = 'green';
 
     public function prefix(string $prefix)
@@ -27,6 +28,18 @@ class Move
     public function getPrefix()
     {
         return $this->prefix;
+    }
+
+    public function wrapTableContent($wrapTableContent = true)
+    {
+        $this->wrapTableContent = $wrapTableContent;
+
+        return $this;
+    }
+
+    public function getWrapTableContent($wrapTableContent = true)
+    {
+        return $this->wrapTableContent;
     }
 
     public function useTestStore(bool $useTestStore = true)

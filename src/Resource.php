@@ -150,6 +150,12 @@ abstract class Resource
             class_uses_recursive(static::newModel())
         );
     }
+
+    public function id()
+    {
+        return optional($this->resource)->getPrimaryKey();
+    }
+
     public function model(): Model
     {
         return $this->resource;

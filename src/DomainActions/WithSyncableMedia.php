@@ -9,7 +9,7 @@ use Uteq\Move\DataTransferObjects\MediaCollection;
 
 trait WithSyncableMedia
 {
-    public function syncMedia(Model $model, MediaCollection $paths, $collection)
+    public function syncMedia(Model $model, MediaCollection $paths, $collection, $diskName = 'local')
     {
         if (! $model instanceof HasMedia) {
             throw new \Exception(sprintf(
@@ -36,7 +36,7 @@ trait WithSyncableMedia
             $model->addMediaFromString(file_get_contents($path->path))
                 ->usingName(pathinfo($path->name, PATHINFO_FILENAME))
                 ->usingFileName($path->name)
-                ->toMediaCollection($collection);
+                ->toMediaCollection($collection, $diskName);
         }
     }
 }

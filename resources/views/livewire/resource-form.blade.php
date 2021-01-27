@@ -4,12 +4,12 @@
     wire:key="resource-form-{{ $this->model->id ?? rand(0, 99) }}"
     :sidebar-enabled="count($this->steps()) && $this->allStepsAvailable()"
 >
+    @if ($this->steps()->count())
     <x-slot name="head">
-        @if ($this->steps()->count())
             <div class="md:flex text-center">
                 @foreach ($this->steps() as $key => $panel)
                     <div class="flex-grow flex items-center border {{ $panel->active() ? 'shadow' : null }} first:rounded-md last:rounded-md bg-white px-1 py-2 first:rounded-r-none last:rounded-l-none {{ $panel->disabled() ? 'bg-gray-300' : 'cursor-pointer hover:shadow-lg focus:ring-2' }}"
-                         wire:click="setActiveStep('{{ $panel->name }}')"
+                         wire:click="setActiveStep('{{ $panel->attribute }}')"
                          wire:key="{{ $loop->index }}"
                     >
                     @if ($panel->isComplete())
@@ -24,8 +24,8 @@
                     </div>
                 @endforeach
             </div>
-        @endif
     </x-slot>
+    @endif
 
     <x-slot name="form">
         <div>
@@ -46,7 +46,7 @@
             @endif
 
             <div wire:loading wire:taget="setActiveStep" class="w-full">
-                <h2 class="text-2xl font-semibold text-gray-900 mt-5">{{ $this->activeStep }}</h2>
+                <h2 class="text-2xl font-semibold text-gray-900 mt-5">{{ optional($this->step($this->activeStep))->name }}</h2>
                 <x-move-card class="w-full">
                     {{ __('Loading...') }}
                 </x-move-card>
