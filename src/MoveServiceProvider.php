@@ -104,7 +104,7 @@ class MoveServiceProvider extends ServiceProvider
         Route::bind('model', function ($value) {
             $resource = Move::activeResource();
 
-            if (!$resource) {
+            if (! $resource) {
                 return null;
             }
 
