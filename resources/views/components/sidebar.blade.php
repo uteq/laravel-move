@@ -21,8 +21,8 @@
             <x-move-sidebar-menu
                 :custom="$slot ?? null"
                 :keep-not-custom="$keepNotCustom ?? null"
-                :with-padding="$withPadding"
-                :logo="$logo"
+                :with-padding="$withPadding ?? null"
+                :logo="$logo ?? null"
                 :menuVerticalCenter="$menuVerticalCenter ?? false"
             />
         </div>
@@ -38,8 +38,8 @@
         <x-move-sidebar-menu
             :custom="$slot ?? null"
             :keep-not-custom="$keepNotCustom ?? null"
-            :with-padding="$withPadding"
-            :logo="$logo"
+            :with-padding="$withPadding ?? null"
+            :logo="$logo ?? null"
             :menuVerticalCenter="$menuVerticalCenter ?? false"
         />
     </div>
