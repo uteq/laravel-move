@@ -70,6 +70,7 @@ class MoveServiceProvider extends ServiceProvider
             $this->registerComponent('section-title');
             $this->registerComponent('sidebar');
             $this->registerComponent('sidebar-menu');
+            $this->registerComponent('sortable');
             $this->registerComponent('status');
             $this->registerComponent('switchable-team');
             $this->registerComponent('step');
@@ -136,9 +137,9 @@ class MoveServiceProvider extends ServiceProvider
                 ));
             }
 
-            $alias = Str::startsWith($alias, move()::getPrefix())
+            $alias = Str::startsWith($alias, move()::getPrefix($class))
                 ? $alias
-                : move()::getPrefix() . '.' . $alias;
+                : move()::getPrefix($class) . '.' . $alias;
 
             $this->app->singleton($alias, function () use ($class) {
                 /** @psalm-suppress UndefinedPropertyFetch */

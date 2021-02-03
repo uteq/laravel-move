@@ -37,6 +37,8 @@ trait WithSyncableMedia
                 ->usingName(pathinfo($path->name, PATHINFO_FILENAME))
                 ->usingFileName($path->name)
                 ->toMediaCollection($collection, $diskName);
+
+            $model->save();
         }
     }
 }

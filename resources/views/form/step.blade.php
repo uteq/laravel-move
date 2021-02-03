@@ -2,6 +2,7 @@
 <x-move-step :title="$panel->name" :panel="$panel" :hide-title="$panel->hideTitle">
 
     @foreach ($panel->fields as $key => $field)
+        <div wire:key="step-field-{{ $field->attribute }}">
         @if ($field->before)
             @php $before = $field->before @endphp
             <div class="pt-2 px-4 last:pb-4 bg-white w-full  grid grid-cols-6 gap-6">
@@ -16,12 +17,15 @@
             </div>
         @endif
         {{ $field->render($model->id ? 'edit' : 'create') }}
+        </div>
     @endforeach
 
     @foreach ($panel->panels() as $subPanel)
         @if ($subPanel->empty()) @continue @endif
 
-        {{ $subPanel->render($model) }}
+        <div wire:key="step-panel-{{ \Illuminate\Support\Str::slug($subPanel->name) }}">
+            {{ $subPanel->render($model) }}
+        </div>
     @endforeach
 
     @if (($panel->next ?? null) && ! $this->model->id)

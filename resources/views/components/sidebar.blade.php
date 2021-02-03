@@ -23,6 +23,7 @@
                 :keep-not-custom="$keepNotCustom ?? null"
                 :with-padding="$withPadding"
                 :logo="$logo"
+                :menuVerticalCenter="$menuVerticalCenter ?? false"
             />
         </div>
     </div>
@@ -39,6 +40,7 @@
             :keep-not-custom="$keepNotCustom ?? null"
             :with-padding="$withPadding"
             :logo="$logo"
+            :menuVerticalCenter="$menuVerticalCenter ?? false"
         />
     </div>
 </div>

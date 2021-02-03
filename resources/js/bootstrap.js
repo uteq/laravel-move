@@ -1,5 +1,5 @@
 // Flatpickr Calendar
-import * as flatpickr from "flatpickr";
+const flatpickr = require("flatpickr").default;
 const Dutch = require('flatpickr/dist/l10n/nl.js').default.nl;
 flatpickr.localize(Dutch);
 window.flatpickr = flatpickr;

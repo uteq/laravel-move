@@ -3,12 +3,14 @@
     class="mt-5"
     wire:key="resource-form-{{ $this->model->id ?? rand(0, 99) }}"
     :sidebar-enabled="count($this->steps()) && $this->allStepsAvailable()"
+    wire:loading.class="opacity-50"
+    wire:target="save"
 >
-    @if ($this->steps()->count())
-    <x-slot name="head">
+    @if ($this->steps()->count() && ! $this->hideStepsMenu)
+        <x-slot name="head">
             <div class="md:flex text-center">
                 @foreach ($this->steps() as $key => $panel)
-                    <div class="flex-grow flex items-center border {{ $panel->active() ? 'shadow' : null }} first:rounded-md last:rounded-md bg-white px-1 py-2 first:rounded-r-none last:rounded-l-none {{ $panel->disabled() ? 'bg-gray-300' : 'cursor-pointer hover:shadow-lg focus:ring-2' }}"
+                    <div class="flex-grow flex items-center active:shadow-none {{ $loop->first ? 'rounded rounded-r-none' : null }} {{ $loop->last ? 'border rounded rounded-l-none' : 'border-t border-b border-l' }} {{ $panel->active() ? 'shadow' : null }} bg-white px-1 py-2 first:rounded-r-none last:rounded-l-none {{ $panel->disabled() ? 'bg-gray-300' : 'cursor-pointer hover:shadow-lg focus:ring-2' }}"
                          wire:click="setActiveStep('{{ $panel->attribute }}')"
                          wire:key="{{ $loop->index }}"
                     >
@@ -24,7 +26,7 @@
                     </div>
                 @endforeach
             </div>
-    </x-slot>
+        </x-slot>
     @endif
 
     <x-slot name="form">
@@ -75,6 +77,7 @@
                 </div>
             </x-move-action-message>
 
+
             <x-move-a href="{{ $this->cancelRoute() }}" class="justify-self-left flex-grow pl-0">
                 {{ __('Cancel') }}
             </x-move-a>
@@ -88,4 +91,19 @@
             </x-move-button>
         </x-slot>
     @endif
+
 </x-move-form-section>
+
+@push('modals')
+
+    @if (session('status'))
+        <div class="absolute top-0 right-0 bg-green-500 text-white py-2 text-center text-xs px-4"
+             x-data="{ show: true }"
+             x-show="show"
+             x-init="setTimeout(() => show = false, 3000)"
+        >
+            {{ session('status') }}
+        </div>
+    @endif
+
+@endpush

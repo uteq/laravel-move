@@ -1,4 +1,4 @@
-@props(['submit', 'sidebarEnabled' => false])
+@props(['submit', 'sidebarEnabled' => false, 'actions' => null])
 
 <div {{ $attributes->merge(['class' => '']) }}>
     <div class="mt-5 md:mt-0 md:col-span-2">

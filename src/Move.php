@@ -17,6 +17,7 @@ class Move
     public ?bool $useTestStore = false;
     public ?bool $wrapTableContent = false;
     public string $themeColor = 'green';
+    protected $prefixes = [];
 
     public function prefix(string $prefix)
     {
@@ -25,9 +26,27 @@ class Move
         return $this;
     }
 
-    public function getPrefix()
+    public function getPrefix($class = null)
     {
-        return $this->prefix;
+        return $class
+            ? $this->prefixes[$this->getClassNamespace($class)] ?? $this->prefix
+            : $this->prefix;
+    }
+
+    public function getClassNamespace($class): ?string
+    {
+        foreach ($this->getPrefixes() as $namespace => $prefix) {
+            if (Str::startsWith($class, $namespace)) {
+                return $namespace;
+            }
+        }
+
+        return $class;
+    }
+
+    public function getPrefixes()
+    {
+        return $this->prefixes;
     }
 
     public function wrapTableContent($wrapTableContent = true)
@@ -88,9 +107,13 @@ class Move
         return str_replace('.', '/', $resourceName);
     }
 
-    public function resourceNamespace(string $namespace, string $prefix = '')
+    public function resourceNamespace(string $namespace, string $prefix = '', $movePrefix = null)
     {
         $this->customResourceNamespaces[$prefix] = $namespace;
+
+        if ($movePrefix) {
+            $this->prefixes[$namespace] = $movePrefix;
+        }
 
         return $this;
     }

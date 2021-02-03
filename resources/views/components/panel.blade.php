@@ -1,8 +1,10 @@
 @props(['title' => null, 'description' => null, 'panel' => null])
 
-@if ($title || $description)
-    @if ($title) <h2 class="text-2xl font-semibold text-gray-900 mt-5">{{ $title }}</h2> @endif
-    @if ($description) <p>{{ $description }}</p> @endif
+@if ($title || $description || $panel->description)
+    @if ($title) <h2 class="{{ ($panel->class ?? null) ?: 'text-2xl font-semibold text-gray-900 mt-5' }}">{{ $title }}</h2> @endif
+    @if ($description || ($panel && $panel->description))
+        <p class="mb-5 text-lg">{{ $description ?: $panel->description ?? null }}</p>
+    @endif
 @endif
 
 <div {{ $attributes->merge(['class' => 'shadow overflow-hidden sm:rounded-md']) }}>

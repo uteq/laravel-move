@@ -56,6 +56,8 @@ trait HasStore
             'fields' => $this->resolveAndMapFields($this->model, $store),
         ];
 
+        session()->flash('status', __('Saved :resource', ['resource' => $this->label()]));
+
         /** @psalm-suppress InvalidArgument */
         return $this->{$this->property}->id
             ? app()->call([$this, $this->actionsMethods['update']], $data)
@@ -176,11 +178,16 @@ trait HasStore
 
         $routeName = $this->routeNameFromEndpoint($endpoint);
 
+        $params = array_replace([
+            'resource' => $this->resource,
+            'model' => $this->model,
+        ], $this->routeParams());
+
         return Route::has($routeName)
-            ? route($routeName, $this->routeParams())
+            ? route($routeName, $params)
             : (
                 Route::has($endpoint)
-                    ? route($endpoint, $this->routeParams())
+                    ? route($endpoint, $params)
                     : $endpoint
             );
     }

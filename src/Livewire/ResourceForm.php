@@ -37,6 +37,8 @@ class ResourceForm extends FormComponent
     public $showForm = false;
     public $activeStep;
     public array $meta = [];
+
+    public bool $hideStepsMenu = false;
     public array $stepsData = [];
     public array $completedSteps = [];
     public array $availableSteps = [];
@@ -147,7 +149,7 @@ class ResourceForm extends FormComponent
 
     public function setActiveStep($stepName = null)
     {
-        $step = $this->steps()->firstWhere('name', $stepName ?: $this->activeStep);
+        $step = $this->steps()->firstWhere('attribute', $stepName ?: $this->activeStep);
 
         if ($step->disabled()) {
             return $this;
@@ -168,7 +170,7 @@ class ResourceForm extends FormComponent
     public function step($step = null)
     {
         return $this->steps()
-            ->firstWhere('name', $step ?: $this->activeStep);
+            ->firstWhere('attribute', $step ?: $this->activeStep);
     }
 
     public function getPanelsProperty(): Collection

@@ -18,6 +18,7 @@ use Uteq\Move\DomainActions\StoreResource;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Field;
 use Uteq\Move\Fields\Panel;
+use Uteq\Move\Fields\Step;
 
 abstract class Resource
 {
@@ -373,6 +374,12 @@ abstract class Resource
     public function getFields()
     {
         return $this->fieldsFromRecursive($this->fields());
+    }
+
+    public function steps()
+    {
+        return collect($this->fields())
+            ->filter(fn ($field) => $field instanceof Step);
     }
 
     public function panels($resourceForm, $resource, string $displayType)

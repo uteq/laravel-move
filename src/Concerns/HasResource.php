@@ -22,8 +22,28 @@ trait HasResource
             $this->fields = collect($this->getFieldsProperty());
         });
 
-        $this->model ??= (Move::resolveResource(request()->route()->parameter('resource') ?: $this->resource)->model());
+        $this->model ??= $this->resolveResourceModel();
+
+        if (! $this->model) {
+            dd(static::class);
+        }
+
         $this->modelId = optional($this->model)->id;
+    }
+
+    public function resolveResourceModel()
+    {
+        if ($this->model !== null) {
+            return $this->model;
+        }
+
+        $resource = Move::resolveResource(request()->route()->parameter('resource') ?? null ?: $this->resource);
+
+        if (! $resource) {
+            return null;
+        }
+
+        return $resource->model();
     }
 
     public function mountHasResource()

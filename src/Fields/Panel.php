@@ -41,6 +41,8 @@ class Panel implements PanelInterface, ElementInterface
 
     public string $component = 'form.panel';
     public string $folder = 'move::';
+    public $class = null;
+    public $description = null;
 
     public function __construct(?string $name = null, array $fields = [])
     {
@@ -188,5 +190,19 @@ class Panel implements PanelInterface, ElementInterface
     public function panels()
     {
         return $this->panels;
+    }
+
+    public function class($class)
+    {
+        $this->class = $class;
+
+        return $this;
+    }
+
+    public function description($description)
+    {
+        $this->description = $description;
+
+        return $this;
     }
 }
