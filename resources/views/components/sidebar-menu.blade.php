@@ -16,7 +16,7 @@
                 {!! $custom !!}
             @endif
 
-            @if ($keepNotCustom ?? null)
+            @if ($keepNotCustom ?? true)
                 @if (!\Uteq\Move\Facades\Move::hasSidebarGroups())
                     @foreach(\Uteq\Move\Facades\Move::resources()->authorized()->values() as $resource)
                         <x-move-sidebar.link alt-active="{{ $resource->route() }}*"
@@ -28,7 +28,7 @@
                     @endforeach
                 @else
                     @foreach(\Uteq\Move\Facades\Move::resources()->authorized()->grouped() as $key => $resourceGroup)
-                        <x-move-sidebar.link icon="css-import" :active="\Uteq\Move\Facades\Move::activeResourceGroup() === $key" href="#">
+                        <x-move-sidebar.link :active="\Uteq\Move\Facades\Move::activeResourceGroup() === $key" href="#">
                             {{$key}}
                             <x-slot name="collapse">
                                 @foreach($resourceGroup as $resource)

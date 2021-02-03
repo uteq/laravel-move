@@ -9,7 +9,7 @@ class SyncMediaAction
 {
     use WithSyncableMedia;
 
-    public function __invoke(Model $model, MediaCollection $paths, $collection, $disk = 'local')
+    public function __invoke(Model $model, MediaCollection $paths, $collection, $disk = 'public')
     {
         $this->syncMedia($model, $paths, $collection, $disk);
     }

@@ -24,7 +24,7 @@
        x-on:click="open = !open"
     >
         @if ($icon)
-            {{ $icon }}
+            {!! $icon !!}
 {{--            <x-dynamic-component component="{{ $icon }}" class="mr-3 h-6 w-6 text-gray-200"/>--}}
         @endif
 

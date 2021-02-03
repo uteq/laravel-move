@@ -31,13 +31,17 @@
                             ]
                         }
                     });
-                    quill.on('selection-change', function () {
-                        @this.set('{{ $field->store }}', quill.root.innerHTML)
+
+                    quill.on('text-change', (delta, oldDelta, source) => {
+                        // Get HTML content
+                        $wire.set('{{ $field->store }}', unescape(encodeURIComponent(quill.root.innerHTML)));
                     });
                 "
                 style="min-height: 200px; min-width: 100%;"
                 class="w-full border rounded-b"
-            ></div>
+            >
+                <div class="ql-editor">{!! (\Illuminate\Support\Arr::get($this->store, \Illuminate\Support\Str::after($field->store, '.'))) !!}</div>
+            </div>
         </div>
         <style>
             .ql-editor{
