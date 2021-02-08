@@ -10,6 +10,8 @@ class Files extends Field
 
     public bool $isMultiple = true;
 
+    public bool $showRotate = true;
+
     public function __construct(
         string $name,
         string $attribute,
@@ -39,5 +41,19 @@ class Files extends Field
         $this->resource->refresh();
 
         return $this->resource->getMedia($this->attribute);
+    }
+
+    public function showRotate($showRotate = true)
+    {
+        $this->showRotate = true;
+
+        return $this;
+    }
+
+    public function hideRotate($showRotate = false)
+    {
+        $this->showRotate = false;
+
+        return $this;
     }
 }

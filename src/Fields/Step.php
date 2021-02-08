@@ -16,6 +16,13 @@ class Step extends Panel
 
     public bool $disabled = true;
 
+    public bool $showNextOnEdit = false;
+    public ?string $nextText = null;
+
+    public bool $hideCancel = false;
+
+    public ?string $cancelRoute = null;
+
     public function __construct(string $name, string $attribute, array $fields)
     {
         $this->attribute = $attribute;
@@ -56,9 +63,25 @@ class Step extends Panel
         return $this;
     }
 
-    public function next(string $next)
+    public function next(string $next, ?string $text = null, $showOnEdit = false)
     {
         $this->next = $next;
+        $this->showNextOnEdit = $showOnEdit;
+        $this->nextText = $text;
+
+        return $this;
+    }
+
+    public function cancelRoute($cancelRoute)
+    {
+        $this->cancelRoute = $cancelRoute;
+
+        return $this;
+    }
+
+    public function hideCancel($hideCancel = true)
+    {
+        $this->hideCancel = $hideCancel;
 
         return $this;
     }

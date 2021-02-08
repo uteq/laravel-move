@@ -1,6 +1,24 @@
-@props(['id', 'maxWidth', 'button' => null, 'show' => true, 'showType' => '=='])
+@props(['id', 'maxWidth', 'button' => null, 'value' => null, 'show' => true, 'showType' => '=='])
 
 @php
+$model = $attributes->wire('model');
+
+$parts = explode('.', $model);
+$model = (count($parts) > 1)
+    ? $parts[0]
+    : $model;
+
+if (!$value && count($parts) > 1) {
+    unset($parts[0]);
+
+    $value = implode('.', $parts);
+}
+
+if ($value) {
+    $showType = '===';
+    $show = "'". (string) $value ."'";
+}
+
 $id = $id ?? md5($attributes->wire('model'));
 
 switch ($maxWidth ?? '2xl') {
@@ -31,10 +49,16 @@ switch ($maxWidth ?? '2xl') {
 }
 @endphp
 
-<div id="{{ $id }}" x-data="{ show: @entangle($attributes->wire('model')) }" class="z-10">
+<div id="{{ $id }}" x-data="{ show: @entangle($model) }" class="z-10">
 
     @if ($button)
-        {!! $button !!}
+        @if ($value)
+            <div x-on:click="show = {{ $show }}">
+                {!! $button !!}
+            </div>
+        @else
+            {!! $button !!}
+        @endif
     @endif
 
     <div x-show="show {{ $showType }} {{ $show }}"

@@ -18,6 +18,17 @@ class Move
     public ?bool $wrapTableContent = false;
     public string $themeColor = 'green';
     protected $prefixes = [];
+    public $registeredTable;
+
+    public function registerTable($table)
+    {
+        $this->registeredTable = $table;
+    }
+
+    public function getRegisteredTable()
+    {
+        return $this->registeredTable;
+    }
 
     public function prefix(string $prefix)
     {

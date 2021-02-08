@@ -1,7 +1,11 @@
 <x-move-dropdown align="left" width="48" orientation="{{ ($orientation ?? 'right') ? 'right' : 'left' }}">
     <x-slot name="trigger">
         <button {{ $attributes->merge(['class' => 'flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out']) }}>
-            <img class="h-8 w-8 rounded-full object-cover" src="{{ optional(Auth::user())->profile_photo_url }}" alt="{{ optional(Auth::user())->name }}" />
+            @if (optional(Auth::user())->profile_photo_url)
+                <img class="h-8 w-8 rounded-full object-cover" src="{{ optional(Auth::user())->profile_photo_url }}" alt="{{ optional(Auth::user())->name }}" />
+            @elseif (optional(Auth::user())->name)
+                {{ optional(Auth::user())->name }}
+            @endif
         </button>
     </x-slot>
 

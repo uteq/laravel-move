@@ -314,13 +314,13 @@ abstract class Resource
         return $handler($model);
     }
 
-    public function resolveFields(Model $model = null, $type = null, $keepPlaceholder = false)
+    public function resolveFields(Model $model = null, $type = null, $keepPlaceholder = false, array $fields = null)
     {
         $model = $model ?: $this->resource;
 
         $type = $type ?: (isset($model->id) ? 'edit' : 'create');
 
-        $visibleFields = collect($this->getFields())
+        $visibleFields = collect($fields ?: $this->getFields())
             ->filter(function (ElementInterface $field) use ($type, $model, $keepPlaceholder) {
                 // Whenever the field is a placeholder, it should always be added whenever resolving the fields
                 //  This way it can be added to the model data.
@@ -412,14 +412,16 @@ abstract class Resource
             $panel->applyResourceData($this->resource, $resourceForm, $this);
             $panel->resolveFields($resource);
 
+            $store = array_replace($resource->toArray(), $resource->store ?? []);
+
             $panel->fields = collect($elements)
                 ->filter(fn ($field) => $field instanceof Field)
-                ->filter(fn (Field $field) => $field->isVisible($resource->store, $displayType))
+                ->filter(fn (Field $field) => $field->isVisible($store, $displayType))
                 ->toArray();
 
             $panel->panels = collect($elements)
                 ->filter(fn ($field) => $field instanceof PanelInterface)
-                ->filter(fn (Panel $panel) => $panel->isVisible($resource->store, $displayType))
+                ->filter(fn (Panel $panel) => $panel->isVisible($store, $displayType))
                 ->toArray();
 
             if (count($panel->panels)) {

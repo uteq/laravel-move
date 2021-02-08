@@ -10,9 +10,9 @@
         <div class="mt-2 bg-white">
             <div
                 x-data
-                x-ref="quillEditor"
+                x-ref="quillEditor{{ $field->unique }}"
                 x-init="
-                    quill = new Quill($refs.quillEditor, {
+                    quill{{ $field->unique }} = new Quill($refs.quillEditor{{ $field->unique }}, {
                         theme: 'snow',
                         bounds: document.body,
                         modules: {
@@ -32,9 +32,9 @@
                         }
                     });
 
-                    quill.on('text-change', (delta, oldDelta, source) => {
+                    quill{{ $field->unique }}.on('text-change', (delta, oldDelta, source) => {
                         // Get HTML content
-                        $wire.set('{{ $field->store }}', unescape(encodeURIComponent(quill.root.innerHTML)));
+                        $wire.set('{{ $field->store }}', unescape(encodeURIComponent(quill{{ $field->unique }}.root.innerHTML)));
                     });
                 "
                 style="min-height: 200px; min-width: 100%;"

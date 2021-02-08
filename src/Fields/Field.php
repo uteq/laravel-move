@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Fields;
 
+use App\Admin\Move\Article;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -322,8 +323,15 @@ abstract class Field extends FieldElement
     {
         $resource = Move::getByClass(get_class($resource));
 
+        $resource = str_replace('.', '/', $resource);
+
+        // Fixes a possible double prefix
+        $resource = Str::startsWith($resource, move()::getPrefix() . '/')
+            ? str_replace(move()::getPrefix() . '/', '', $resource)
+            : $resource;
+
         return route(move()::getPrefix() . '.edit', [
-            'resource' => str_replace('.', '/', $resource),
+            'resource' => $resource,
             'model' => $this->resource,
         ]);
     }
@@ -373,13 +381,18 @@ abstract class Field extends FieldElement
             return is_callable($handler) ? $handler($this, $data) : $handler;
         }
 
-        if (! $this->isVisible($this->resource->store, $this->type)) {
+        if (! $this->isVisible($this->resourceStore(), $this->type)) {
             return null;
         }
 
         return view($this->folder . $displayType .'.' . $this->component, array_replace_recursive([
             'field' => $this,
         ], $data));
+    }
+
+    public function resourceStore()
+    {
+        return array_replace($this->resource->toArray(), $this->resource->store ?? []);
     }
 
     public function isVisible($resource, ?string $displayType = null): bool
@@ -543,5 +556,25 @@ abstract class Field extends FieldElement
         return $this->placeholder ?? __('Add a :label', [
             'label' => lcfirst($resource->singularLabel()) . ' ' . lcfirst($this->name),
         ]);
+    }
+
+    public function forgetComponentMeta($component, $key)
+    {
+        Arr::forget($component->meta, static::class . '.' . $key);
+    }
+
+    public function hasComponentMeta($component, $key)
+    {
+        return Arr::has($component->meta, static::class . '.' . $key);
+    }
+
+    public function setComponentMeta($component, $key, $value)
+    {
+        Arr::set($component->meta, static::class . '.' . $key, $value);
+    }
+
+    public function getComponentMeta($component, $key, $default = null)
+    {
+        return Arr::get($component->meta, static::class . '.' . $key, $default);
     }
 }

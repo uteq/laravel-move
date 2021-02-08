@@ -7,6 +7,7 @@ use Uteq\Move\Resource;
 
 /**
  * Class Move
+ * @method static void registerTable($table)
  * @method static void resource(string $alias, $class)
  * @method static void resourceNamespace(string $namespace, string $prefix)
  * @method static Resource resolveResource(string $resource)

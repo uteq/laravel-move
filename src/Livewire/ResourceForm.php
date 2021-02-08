@@ -10,6 +10,7 @@ use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\WithActionableFields;
+use Uteq\Move\Concerns\WithSteps;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Step;
 use Uteq\Move\Support\Livewire\Concerns\HasStore;
@@ -27,6 +28,7 @@ class ResourceForm extends FormComponent
     use HasFiles;
     use WithFileUploads;
     use WithActionableFields;
+    use WithSteps;
 
     protected static $viewType = 'edit';
 
@@ -35,13 +37,9 @@ class ResourceForm extends FormComponent
     public $showingAddResource = [];
     public $baseRoute = 'move';
     public $showForm = false;
-    public $activeStep;
     public array $meta = [];
 
     public bool $hideStepsMenu = false;
-    public array $stepsData = [];
-    public array $completedSteps = [];
-    public array $availableSteps = [];
 
     public $queryString = ['activeStep'];
 
@@ -51,6 +49,7 @@ class ResourceForm extends FormComponent
     protected $listeners = [
         'showAddResource' => 'showAddResource',
         'saved' => 'handleAfterSaveActions',
+        'changedActiveStep' => 'changedActiveStep',
     ];
 
     /**
@@ -60,6 +59,10 @@ class ResourceForm extends FormComponent
 
     public function mount()
     {
+        if (method_exists($this, 'setup')) {
+            app()->call([$this, 'setup']);
+        }
+
         $this->handleBeforeMount();
 
         $this->baseRoute = move()::getPrefix();
@@ -99,6 +102,10 @@ class ResourceForm extends FormComponent
         $this->resource()->authorizeTo('update');
 
         $this->handleAfterMount();
+
+        if (method_exists($this, 'init')) {
+            app()->call([$this, 'init']);
+        }
     }
 
     public function handleAfterSaveActions()
@@ -142,35 +149,11 @@ class ResourceForm extends FormComponent
         );
     }
 
-    public function updatedStore()
+    public function updatedStore($key, $value)
     {
         $this->model->store = $this->store;
-    }
 
-    public function setActiveStep($stepName = null)
-    {
-        $step = $this->steps()->firstWhere('attribute', $stepName ?: $this->activeStep);
-
-        if ($step->disabled()) {
-            return $this;
-        }
-
-        $this->validateStep(null, false);
-
-        $this->activeStep = $stepName;
-
-        return $this;
-    }
-
-    public function activeStep()
-    {
-        return $this->activeStep;
-    }
-
-    public function step($step = null)
-    {
-        return $this->steps()
-            ->firstWhere('attribute', $step ?: $this->activeStep);
+        $this->emit(static::class . '.updatedStore', $this->store);
     }
 
     public function getPanelsProperty(): Collection
@@ -183,56 +166,6 @@ class ResourceForm extends FormComponent
     public function panels()
     {
         return collect($this->panels);
-    }
-
-    public function steps()
-    {
-        return $this->panels()
-            ->filter(fn ($panel) => $panel instanceof Step)
-            ->reject(fn ($panel) => $panel->empty());
-    }
-
-    public function notSteps()
-    {
-        return $this->panels()
-            ->reject(fn ($panel) => $panel instanceof Step)
-            ->reject(fn ($panel) => $panel->empty());
-    }
-
-    public function validateStep($step = null, $setNext = true)
-    {
-        $step = $this->step($step);
-        $fields = $step->allFields();
-
-        $resolvedFields = $this->resolveAndMapFields($this->model, $this->store, $fields);
-
-        $rules = collect($fields)
-            ->mapWithKeys(fn ($field) => [
-                $field->attribute => $field->rules,
-            ])
-            ->toArray();
-
-        $data = $this->customValidate($resolvedFields, $rules);
-
-        // TODO Save in specific storage when creating a supplier product
-
-        if (! $this->model->id) {
-            $this->completedSteps[] = $step->name;
-        }
-
-        if ($setNext && isset($step->next)) {
-            $this->availableSteps[] = $step->next;
-            $this->activeStep = $step->next;
-        }
-    }
-
-    public function allStepsAvailable()
-    {
-        $steps = $this->steps();
-
-        $count = $steps->filter(fn ($step) => in_array($step->name, $this->availableSteps))->count();
-
-        return $count == $steps->count();
     }
 
     public function set($attribute, $value)

@@ -192,7 +192,7 @@ class Panel implements PanelInterface, ElementInterface
         return $this->panels;
     }
 
-    public function class($class)
+    public function titleClass($class)
     {
         $this->class = $class;
 

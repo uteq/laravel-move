@@ -32,10 +32,11 @@
                             {{$key}}
                             <x-slot name="collapse">
                                 @foreach($resourceGroup as $resource)
-                                    <x-move-sidebar.link alt-active="{{ $resource->route() }}*"
-                                                         href="/{{ $resource->route() }}"
-                                                         :icon="$resource->icon()"
-                                                         sub="!$resource->icon()"
+                                    <x-move-sidebar.link
+                                        alt-active="{{ $resource->route() }}*"
+                                        href="/{{ $resource->route() }}"
+                                        :icon="$resource->icon()"
+                                        sub="!$resource->icon()"
                                     >
                                         {{ $resource->label() }}
                                     </x-move-sidebar.link>

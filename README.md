@@ -208,6 +208,25 @@ The resource default name will than be:
 resources.your-resource
 ```
 
+### Using a json field to store data
+If you work a lot with data structures that cannot be clearly  defined in a mysql database structure. You will probably opt for something like a json field.
+
+First add your json field to your table.
+```php
+$table->json('meta')->nullable();
+```
+
+Than make sure you cast it properly in you model
+```php
+protected $casts ['meta' => 'json'];
+```
+
+At last, add a field to your resource
+
+```php
+Text::make('My meta value', 'meta.my_value'),
+```
+
 ## Resources
 
 ### Supported Field types

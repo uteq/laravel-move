@@ -18,8 +18,7 @@ class ResourceTable extends TableComponent
     use WithPagination;
     use HasResource;
     use HasSelected;
-
-    protected static $viewType = 'index';
+//    use WithActionableFields;
 
     public $action = '-';
     public $showingAction = false;
@@ -52,6 +51,12 @@ class ResourceTable extends TableComponent
         $this->sortable = $this->resource()::$sortable;
 
         $this->resource()->authorizeTo('viewAny');
+
+        Move::registerTable($this);
+
+        if (method_exists($this, 'init')) {
+            app()->call([$this, 'init']);
+        }
     }
 
     public function updateTaskOrder($order)

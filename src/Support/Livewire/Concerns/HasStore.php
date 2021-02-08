@@ -12,6 +12,8 @@ trait HasStore
 {
     public $inModal = false;
 
+    public $shouldRedirect = true;
+
     protected $redirectEndpoints = [
         'create' => 'index',
         'update' => 'index',
@@ -64,9 +66,16 @@ trait HasStore
             : app()->call([$this, $this->actionsMethods['create']], $data);
     }
 
-    public function update(array $fields)
+    public function updateWithoutRedirect(array $fields, array $rules = null)
     {
-        $this->customValidate($fields, $this->rules($this->{$this->property}));
+        $this->disableRedirect();
+        $this->update($fields, $rules);
+        $this->enableRedirect();
+    }
+
+    public function update(array $fields, array $rules = null)
+    {
+        $this->customValidate($fields, $rules ?: $this->rules($this->{$this->property}));
 
         // This ensures that the fields data is formatted as the user wants it
         //  this will for example prevent a empty value to be seen as 0
@@ -81,9 +90,9 @@ trait HasStore
         return $this->maybeRedirectFromAction('update');
     }
 
-    public function create(array $fields)
+    public function create(array $fields, array $rules = null)
     {
-        $this->customValidate($fields, $this->rules($this->{$this->property}));
+        $this->customValidate($fields, $rules ?: $this->rules($this->{$this->property}));
 
         // This ensures that the fields data is formatted as the user wants it
         //  this will for example prevent a empty value to be seen as 0
@@ -114,8 +123,10 @@ trait HasStore
 
     public function customValidate(array $fields, array $rules, array $messages = [], $customAttributes = [])
     {
+        $this->resetErrorBag();
+
         try {
-            return Validator::make($fields, $rules)->validate();
+            $valid = Validator::make($fields, $rules)->validate();
         } catch (ValidationException $e) {
             $messages = $e->validator->getMessageBag();
             $target = new ObjectPrybar($e->validator);
@@ -128,6 +139,8 @@ trait HasStore
 
             throw $e;
         }
+
+        return $valid;
     }
 
     protected function getRules()
@@ -143,6 +156,10 @@ trait HasStore
 
     public function maybeRedirectFromAction($action)
     {
+        if (! $this->shouldRedirect) {
+            return false;
+        }
+
         $endpoint = $this->endpoint($action);
 
         if (! $endpoint) {
@@ -205,5 +222,15 @@ trait HasStore
     public function routeNameFromEndpoint($endpoint)
     {
         return $this->baseRoute . '.' . $endpoint;
+    }
+
+    public function disableRedirect()
+    {
+        $this->shouldRedirect = false;
+    }
+
+    public function enableRedirect()
+    {
+        $this->shouldRedirect = true;
     }
 }

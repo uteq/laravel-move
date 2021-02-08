@@ -23,11 +23,6 @@ trait HasResource
         });
 
         $this->model ??= $this->resolveResourceModel();
-
-        if (! $this->model) {
-            dd(static::class);
-        }
-
         $this->modelId = optional($this->model)->id;
     }
 
@@ -73,11 +68,11 @@ trait HasResource
         return $this->resource()->newModel()->newQuery()->find($id);
     }
 
-    public function resolveFields(Model $model = null, $keepPlaceholder = false)
+    public function resolveFields(Model $model = null, $keepPlaceholder = false, array $fields = null)
     {
         $type = ! $model ? 'create' : ($model->id ? 'update' : 'create');
 
-        return $this->resource()->resolveFields($model, $type, $keepPlaceholder);
+        return $this->resource()->resolveFields($model, $type, $keepPlaceholder, $fields);
     }
 
     public function resolveAndMapFields(Model $model, array $store, array $fields = null)
@@ -86,7 +81,12 @@ trait HasResource
 
         $fields ??= $this->resolveFields($model, true);
 
-        return collect($fields)
+        return $this->mapFields($fields, $store);
+    }
+
+    public function mapFields(array $resolvedFields, $store)
+    {
+        return collect($resolvedFields)
             ->filter(fn ($field) => isset($store[$field->attribute]))
             ->mapWithKeys(fn ($field) => [$field->attribute => $store[$field->attribute]])
             ->toArray();
