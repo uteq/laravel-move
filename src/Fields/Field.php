@@ -2,7 +2,6 @@
 
 namespace Uteq\Move\Fields;
 
-use App\Admin\Move\Article;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;

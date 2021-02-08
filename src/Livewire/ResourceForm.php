@@ -12,7 +12,6 @@ use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\WithActionableFields;
 use Uteq\Move\Concerns\WithSteps;
 use Uteq\Move\Facades\Move;
-use Uteq\Move\Fields\Step;
 use Uteq\Move\Support\Livewire\Concerns\HasStore;
 use Uteq\Move\Support\Livewire\FormComponent;
 
