@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Support\Livewire\Concerns;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
@@ -71,6 +72,8 @@ trait HasStore
         $this->disableRedirect();
         $this->update($fields, $rules);
         $this->enableRedirect();
+
+        return $this;
     }
 
     public function update(array $fields, array $rules = null)
@@ -125,6 +128,15 @@ trait HasStore
     {
         $this->resetErrorBag();
 
+        // Ensures that when a multi dimensional array is used, it still validates.
+        $fields = collect($fields)
+            ->mapWithKeys(fn ($value, $field) => [str_replace('.', '---', $field) => $value])
+            ->toArray();
+
+        $rules = collect($rules)
+            ->mapWithKeys(fn ($value, $field) => [str_replace('.', '---', $field) => $value])
+            ->toArray();
+
         try {
             $valid = Validator::make($fields, $rules)->validate();
         } catch (ValidationException $e) {
@@ -140,7 +152,11 @@ trait HasStore
             throw $e;
         }
 
-        return $valid;
+        return collect($valid)
+            ->mapWithKeys(fn ($value, $key) => [
+                str_replace('---', '.', $key) => $value
+            ])
+            ->toArray();
     }
 
     protected function getRules()
@@ -149,7 +165,6 @@ trait HasStore
         foreach ($this->rules() as $key => $rule) {
             $preparedRules[$this->property . '.' . $key] = $rule;
         }
-
 
         return $preparedRules;
     }
@@ -227,10 +242,27 @@ trait HasStore
     public function disableRedirect()
     {
         $this->shouldRedirect = false;
+
+        return $this;
     }
 
     public function enableRedirect()
     {
         $this->shouldRedirect = true;
+
+        return $this;
+    }
+
+    public function flattenStore($keepArrays = false)
+    {
+        $this->store = Arr::dot(
+            collect($this->store)
+                ->when(! $keepArrays, fn ($store) => $store->filter(fn ($value) => ! is_array($value)))
+                ->toArray()
+        );
+
+        $this->model->store = $this->store;
+
+        return $this;
     }
 }

@@ -4,6 +4,7 @@ namespace Uteq\Move\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Uteq\Move\Facades\Move;
 
 trait HasResource
@@ -113,6 +114,24 @@ trait HasResource
         return $this->fields
             ->filter(fn ($field) => $field->isVisible($model, 'update'))
             ->flatMap(fn ($field) => $field->getUpdateRules(request()))
+            ->toArray();
+    }
+
+    public function resolveAndMapFieldToFields($key): array
+    {
+        $fields = $this->fields()
+            ->filter(fn ($field) => $field->attribute === $key)
+            ->toArray();
+
+        $store = Arr::dot($this->store);
+
+        return $this->mapFields($this->resolveFields(null, null, $fields), $store);
+    }
+
+    public function getFieldRule($key): array
+    {
+        return collect($this->rules($this->{$this->property}))
+            ->filter(fn ($rules, $field) => $field === $key)
             ->toArray();
     }
 

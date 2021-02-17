@@ -61,12 +61,17 @@ abstract class ExportToExcel extends Action implements FromCollection, WithCusto
         }
 
         return [
-            'handle' => function ($livewire) use ($response) {
-                $name = strtolower($livewire->resource()->label() . '-' . now()->isoFormat('DD-MMMM-YYYY')) . '.' . ($this->type ? strtolower($this->type) : 'xlsx');
+            'handle' => function ($livewireComponent) use ($response) {
+                $name = $this->generatedFilename($livewireComponent) . '.' . ($this->type ? strtolower($this->type) : 'xlsx');
 
                 return response()->download($response->getFile()->getPathname(), $name);
             },
         ];
+    }
+
+    public function generatedFilename($livewireComponent)
+    {
+        return strtolower($livewireComponent->resource()->label() . '-' . now()->isoFormat('DD-MMMM-YYYY'));
     }
 
     public function collection()

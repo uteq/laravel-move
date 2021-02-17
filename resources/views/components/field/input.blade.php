@@ -10,7 +10,7 @@
     @if ($attributes->wire('model')->value())
         {{ $attributes->wire('model') }}
     @else
-        wire:model="{{ $model }}"
+        wire:model.lazy="{{ $model }}"
     @endif
 
     autocomplete="{{ $modelId }}"

@@ -19,9 +19,10 @@
             @if ($keepNotCustom ?? true)
                 @if (!\Uteq\Move\Facades\Move::hasSidebarGroups())
                     @foreach(\Uteq\Move\Facades\Move::resources()->authorized()->values() as $resource)
-                        <x-move-sidebar.link alt-active="{{ $resource->route() }}*"
-                                             href="/{{ $resource->route() }}"
-                                             :icon="$resource->icon()"
+                        <x-move-sidebar.link
+                            alt-active="{{ $resource->route() }}*"
+                            href="/{{ $resource->route() }}"
+                            :icon="$resource->icon()"
                         >
                             {{ $resource->label() }}
                         </x-move-sidebar.link>
