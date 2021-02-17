@@ -20,7 +20,7 @@ class ResourceTable extends TableComponent
     use HasSelected;
 //    use WithActionableFields;
 
-    public static $viewType = 'index';
+    protected static $viewType = 'index';
 
     public $action = '-';
     public $showingAction = false;
