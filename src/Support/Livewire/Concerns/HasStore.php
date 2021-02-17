@@ -154,7 +154,7 @@ trait HasStore
 
         return collect($valid)
             ->mapWithKeys(fn ($value, $key) => [
-                str_replace('---', '.', $key) => $value
+                str_replace('---', '.', $key) => $value,
             ])
             ->toArray();
     }
