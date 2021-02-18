@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\ObjectPrybar;
 
@@ -128,13 +129,20 @@ trait HasStore
     {
         $this->resetErrorBag();
 
-        // Ensures that when a multi dimensional array is used, it still validates.
+        // Ensures that when a multi dimensional array is used, and flattened, it still validates.
         $fields = collect($fields)
             ->mapWithKeys(fn ($value, $field) => [str_replace('.', '---', $field) => $value])
             ->toArray();
 
         $rules = collect($rules)
-            ->mapWithKeys(fn ($value, $field) => [str_replace('.', '---', $field) => $value])
+            ->mapWithKeys(function ($value, $field) use ($fields) {
+                // If the field exists as array, no need to change the rule
+                if (isset($fields[Str::before(Str::after($field, 'store.'), '.')])) {
+                    return [$field => $value];
+                }
+
+                return [str_replace('.', '---', $field) => $value];
+            })
             ->toArray();
 
         try {
