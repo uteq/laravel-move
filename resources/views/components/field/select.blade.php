@@ -1,4 +1,4 @@
-@props(['model', 'options' => [], 'placeholder' => null, 'settings' => [], 'values' => null, 'multiple' => false])
+@props(['model', 'options' => [], 'placeholder' => null, 'settings' => ['placeholder' => __('Select your option')], 'values' => null, 'multiple' => false])
 
 @php $index = \Str::slug(str_replace('.', '-', $model)); @endphp
 
@@ -27,29 +27,8 @@
 
 <script>
 
-    let select2Loader{{str_replace("-","_", $index)}} = () => {
-        let element = '.select2-{{ $index }}';
-        let val = @php echo json_encode($values && count($values) ? $values : null) @endphp ?? {};
-        let settings = {!! json_encode($settings) !!} ?? {};
-
-        loadSelect2(element, val, settings, {
-            isMultiple: @php echo json_encode($multiple ?? false) @endphp,
-        });
-    };
-
-    document.addEventListener("livewire:load", () => {
-        select2Loader{{str_replace("-","_", $index)}}();
-    });
-
-    if (typeof window.$ !== 'undefined') {
-        select2Loader{{str_replace("-","_", $index)}}();
-    }
-
-</script>
-
-@once('scripts')
-    <script>
-        let loadSelect2 = function(element, val, settings, options) {
+    if (typeof window.loadSelect2 === 'undefined') {
+        window.loadSelect2 = function(element, val, settings, options, onChangeCallback) {
 
             function parse(obj) {
                 for (const index in obj) {
@@ -72,7 +51,6 @@
             let $element = window.$(element);
 
             settings = parse(Object.assign({
-                placeholder: '{{ $placeholder ?: __('Select your option')}}',
                 allowClear: true,
             }, settings));
 
@@ -86,11 +64,30 @@
                 $element.select2(settings);
             }
 
-    $element.on('change', function (e) {
-        let elementName = $(this).attr('id');
-        var data = $(this).select2("val");
-        @this.set(elementName, data);
-    });
+            $element.on('change', onChangeCallback);
         };
-    </script>
-@endonce
+    }
+
+    let select2Loader{{str_replace("-","_", $index)}} = () => {
+        let element = '.select2-{{ $index }}';
+        let val = @php echo json_encode($values && count($values) ? $values : null) @endphp ?? {};
+        let settings = {!! json_encode($settings) !!} ?? {};
+
+        loadSelect2(element, val, settings, {
+            isMultiple: @php echo json_encode($multiple ?? false) @endphp,
+        }, function (e) {
+            let elementName = $(this).attr('id');
+            var data = $(this).select2("val");
+            @this.set(elementName, data);
+        });
+    };
+
+    document.addEventListener("livewire:load", () => {
+        select2Loader{{str_replace("-","_", $index)}}();
+    });
+
+    if (typeof window.$ !== 'undefined') {
+        select2Loader{{str_replace("-","_", $index)}}();
+    }
+
+</script>
