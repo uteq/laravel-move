@@ -77,9 +77,9 @@ abstract class Resource
 
     public static function newModel(): ?Model
     {
-        return isset(static::$model)
-            ? new ($model = static::$model)
-            : null;
+        $model = isset(static::$model) ? static::$model : null;
+
+        return $model ? new $model : null;
     }
 
     public static function singularLabel(): string

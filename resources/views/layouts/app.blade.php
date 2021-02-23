@@ -35,11 +35,13 @@
 
             <main class="flex-1 relative overflow-y-auto focus:outline-none" tabindex="0">
                 <div class="pt-2 pb-6 md:py-6">
+                    @if ($header ?? null)
                     <div class="px-4 sm:px-6 md:px-8">
                         <h1 class="text-2xl font-semibold text-gray-900">
                             {{ $header }}
                         </h1>
                     </div>
+                    @endif
                     <div class="mx-auto px-4 sm:px-6 md:px-8">
                         {{ $slot }}
                     </div>
