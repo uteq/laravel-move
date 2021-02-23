@@ -245,7 +245,6 @@ class Select extends Field
                 ->toArray();
 
             return $value;
-
         }, 'multiple');
     }
 
