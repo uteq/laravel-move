@@ -31,24 +31,30 @@ class ResourceForm extends FormComponent
 
     protected static $viewType = 'edit';
 
+    public $name = null;
     public $showModal = null;
-
     public $showingAddResource = [];
     public $baseRoute = 'move';
     public $showForm = false;
     public array $meta = [];
 
     public bool $hideStepsMenu = false;
+    public bool $hideActions = false;
 
     public $queryString = ['activeStep'];
+
+    public ?string $buttonSaveText = null;
+    public ?string $buttonCancelText = null;
 
     protected $property = 'model';
     protected $label;
 
     protected $listeners = [
+        'changedActiveStep' => 'changedActiveStep',
+        'fields.$refresh' => 'refreshFields',
+        'closeModal' => 'closeModal',
         'showAddResource' => 'showAddResource',
         'saved' => 'handleAfterSaveActions',
-        'changedActiveStep' => 'changedActiveStep',
     ];
 
     /**
@@ -98,7 +104,9 @@ class ResourceForm extends FormComponent
                 ->toArray();
         }
 
-        $this->resource()->authorizeTo('update');
+        $this->model->id
+            ? $this->resource()->authorizeTo('update', $this->model)
+            : $this->resource()->authorizeTo('create');
 
         $this->handleAfterMount();
 
@@ -107,10 +115,54 @@ class ResourceForm extends FormComponent
         }
     }
 
+    public function addListener($key, $method)
+    {
+        if (isset($this->listeners[$key])) {
+            throw new \Exception(sprintf(
+                '%s: The given listener `%s` already exists',
+                __METHOD__,
+                $key,
+            ));
+        }
+
+        $this->listeners = array_replace([$key => $method], $this->listeners ?? []);
+    }
+
+    public function addQueryString($key)
+    {
+        if (isset($this->queryString[$key])) {
+            throw new \Exception(sprintf(
+                '%s: The given queryString `%s` already exists',
+                __METHOD__,
+                $key,
+            ));
+        }
+
+        array_push($this->queryString, $key);
+    }
+
+    public function refreshFields()
+    {
+        $this->model->refresh();
+
+        $this->store = array_replace_recursive(
+            $this->store,
+            $this->fields()
+                ->mapWithKeys(fn ($field) => [$field->attribute => $field->value])
+                ->toArray()
+        );
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = null;
+    }
+
     public function handleAfterSaveActions()
     {
         if ($this->inModal) {
             $this->emit('closeModal');
+            $this->emit('afterSave' . Str::slug(static::class));
 
             return;
         }
@@ -120,6 +172,9 @@ class ResourceForm extends FormComponent
                 $this->showingAddResource[$key] = false;
             }
         }
+
+        $this->emit('afterSave' . Str::slug(static::class));
+        $this->render();
     }
 
     public function showAddResource($id)

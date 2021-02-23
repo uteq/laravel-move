@@ -63,9 +63,19 @@ trait HasStore
         session()->flash('status', __('Saved :resource', ['resource' => $this->label()]));
 
         /** @psalm-suppress InvalidArgument */
-        return $this->{$this->property}->id
+        $action = $this->{$this->property}->id
             ? app()->call([$this, $this->actionsMethods['update']], $data)
             : app()->call([$this, $this->actionsMethods['create']], $data);
+
+        $this->emit('saved');
+
+        if (method_exists($this, 'afterStore')) {
+            $result = $this->afterStore($action);
+
+            return $result ? $result : $action;
+        }
+
+        return $action;
     }
 
     public function updateWithoutRedirect(array $fields, array $rules = null)

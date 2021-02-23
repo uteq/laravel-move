@@ -37,6 +37,7 @@ class MoveServiceProvider extends ServiceProvider
         $this->callAfterResolving(BladeCompiler::class, function () {
             $this->registerComponent('field.checkbox');
             $this->registerComponent('field.date');
+            $this->registerComponent('field.errors');
             $this->registerComponent('field.input');
             $this->registerComponent('field.number');
             $this->registerComponent('field.password');
@@ -226,16 +227,16 @@ class MoveServiceProvider extends ServiceProvider
 
     public function configureLivewire()
     {
-        $this->app->afterResolving(BladeCompiler::class, function () {
-            if (! class_exists(Livewire::class)) {
-                return;
-            }
+//        $this->app->afterResolving(BladeCompiler::class, function () {
+//            if (! class_exists(Livewire::class)) {
+//                return;
+//            }
 
             Livewire::component('livewire.resource-table', ResourceTable::class);
             Livewire::component('livewire.resource-show', ResourceShow::class);
             Livewire::component('livewire.resource-form', ResourceForm::class);
 
             Livewire::component('header-search', HeaderSearch::class);
-        });
+//        });
     }
 }

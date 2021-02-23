@@ -267,16 +267,10 @@ abstract class Resource
         $beforeStoreFields = collect($resource->getFields())
             ->filter(fn ($item) => isset($item->beforeStore));
 
-        foreach ($data as $field => $value) {
-            $beforeStoreField = $beforeStoreFields
-                ->filter(fn (Field $item) => $item->attribute === $field)
-                ->first();
+        foreach ($beforeStoreFields as $beforeStoreField) {
+            $value = $data[$beforeStoreField->attribute] ?? null;
 
-            if (! $beforeStoreField) {
-                continue;
-            }
-
-            $data = $beforeStoreField->handleBeforeStore($value, $field, $model, $data);
+            $data = $beforeStoreField->handleBeforeStore($value, $beforeStoreField->attribute, $model, $data);
         }
 
         return $data;

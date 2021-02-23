@@ -1,9 +1,9 @@
-@props(['submit', 'sidebarEnabled' => false, 'actions' => null])
+@props(['submit', 'id' => time(), 'sidebarEnabled' => false, 'actions' => null])
 
 <div {{ $attributes->merge(['class' => '']) }}>
     <div class="mt-5 md:mt-0 md:col-span-2">
 
-        <form wire:submit.prevent="{{ $submit }}">
+        <form id="{{ $id ?? time() }}" wire:submit.prevent="{{ $submit }}">
 
             {!! $head ?? null !!}
 

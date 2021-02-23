@@ -1,29 +1,55 @@
-@props(['model', 'options' => [], 'placeholder' => null, 'settings' => [], 'values' => null])
+@props(['model', 'options' => [], 'placeholder' => null, 'settings' => [], 'values' => null, 'multiple' => false])
 
 @php $index = \Str::slug(str_replace('.', '-', $model)); @endphp
 
-<div wire:ignore class="w-full">
-    <select name="{{ $model }}"
-            id="{{ $model }}"
-            {{ $attributes->merge(['class' => 'select2-'. $index .' form-select rounded border-none shadow w-full']) }}
+<div class="w-full" wire:ignore>
+    <select
+        name="{{ $model }}"
+        id="{{ $model }}"
+        {{ $attributes->merge(['class' => 'select2-'. $index .' form-select rounded border-none shadow w-full']) }}
+        @if ($multiple) multiple="multiple" @endif
+        style="width: 100%"
     >
-        @if (($settings['multiple'] ?? false) !== true)<option></option>@endif
         @forelse($options as $key => $label)
-            <option value="{{ $key }}">{{ $label }}</option>
+            <option
+                value="{{ $key }}"
+                @if ($values && is_array($values))
+                    @if (isset(array_flip($values)[$label])) selected="selected" @endif
+                @elseif((string)$key === (string)$values)
+                    selected="selected"
+                @endif
+            >{{ $label }}</option>
         @empty
             {{ $slot }}
         @endforelse
     </select>
+</div>
 
+<script>
+
+    let select2Loader{{str_replace("-","_", $index)}} = () => {
+        let element = '.select2-{{ $index }}';
+        let val = @php echo json_encode($values && count($values) ? $values : null) @endphp ?? {};
+        let settings = {!! json_encode($settings) !!} ?? {};
+
+        loadSelect2(element, val, settings, {
+            isMultiple: @php echo json_encode($multiple ?? false) @endphp,
+        });
+    };
+
+    document.addEventListener("livewire:load", () => {
+        select2Loader{{str_replace("-","_", $index)}}();
+    });
+
+    if (typeof window.$ !== 'undefined') {
+        select2Loader{{str_replace("-","_", $index)}}();
+    }
+
+</script>
+
+@once('scripts')
     <script>
-        let loadSelect2{{str_replace("-","_", $index)}} = function() {
-
-            let $element = window.$('.select2-{{ $index }}');
-            let val = @php echo json_encode($values && count($values) ? $values : null) @endphp;
-            let settings = Object.assign({}, {
-                placeholder: '{{ $placeholder ?: __('Select your option')}}',
-                allowClear: true,
-            }, {!! json_encode($settings) !!});
+        let loadSelect2 = function(element, val, settings, options) {
 
             function parse(obj) {
                 for (const index in obj) {
@@ -43,29 +69,28 @@
                 return obj;
             }
 
-            settings = parse(settings);
+            let $element = window.$(element);
 
-            // For value to work somehow it needs to initiated twice.
-            //  Not very well for performance, but for now it'll have to do
-            if (val) {
-                $element.select2(settings).val(val);
-                $element.select2(settings).val(val);
+            settings = parse(Object.assign({
+                placeholder: '{{ $placeholder ?: __('Select your option')}}',
+                allowClear: true,
+            }, settings));
+
+            options = Object.assign({
+                isMultiple: false,
+            }, options);
+
+            if (val && ! options['isMultiple']) {
+                $element.select2(settings).val(val).trigger('change');
             } else {
                 $element.select2(settings);
             }
 
-            $element.on('change', function (e) {
-                let elementName = $(this).attr('id');
-                var data = $(this).select2("val");
-            @this.set(elementName, data);
-            });
+    $element.on('change', function (e) {
+        let elementName = $(this).attr('id');
+        var data = $(this).select2("val");
+        @this.set(elementName, data);
+    });
         };
-
-        document.addEventListener("livewire:load", loadSelect2{{str_replace("-","_", $index)}});
-
-        if (typeof window.$ !== 'undefined') {
-            loadSelect2{{str_replace("-","_", $index)}}();
-        }
     </script>
-
-</div>
+@endonce

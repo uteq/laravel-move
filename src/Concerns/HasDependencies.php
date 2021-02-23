@@ -61,7 +61,7 @@ trait HasDependencies
     {
         /** @psalm-suppress UnusedClosureParam */
         $rules = [
-            'callback' => fn ($value, $result) => $value($result),
+            'callback' => fn ($value, $result) => $value($result, $this),
             'value' => fn ($value, $result) => $result == $value,
             'not' => fn ($value, $result) => $result != $value,
             'not_null' => fn ($value, $result) => $result !== null,

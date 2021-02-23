@@ -19,6 +19,8 @@ class Select extends Field
 
     public array $settings = [];
 
+    public bool $multiple = false;
+
     public $query = null;
 
     public $customQuery = null;
@@ -27,9 +29,11 @@ class Select extends Field
 
     protected static $resourceCache = [];
 
+    public $version = 1;
+
     public function settings(array $settings)
     {
-        $this->settings = $settings;
+        $this->settings = array_replace($this->settings, $settings);
 
         return $this;
     }
@@ -213,5 +217,65 @@ class Select extends Field
         });
 
         return $this;
+    }
+
+    public function multiple($multiple = true)
+    {
+        $this->multiple = $multiple;
+
+        if ($this->multiple) {
+            $this->mapTags();
+        } else {
+            unset($this->beforeStore['multiple']);
+        }
+
+        return $this;
+    }
+
+    /**
+     * This makes sure that when using the 'multiple' implementation the tags will be mapped to the correct value.
+     */
+    protected function mapTags()
+    {
+        $this->beforeStore(function ($value, $field, \Domain\Documents\Models\Document $model) {
+            $model = (clone $model)->refresh();
+
+            $value = collect($value)
+                ->map(fn ($value) => $model->{$field}[$value] ?? $value)
+                ->toArray();
+
+            return $value;
+
+        }, 'multiple');
+    }
+
+    public function values()
+    {
+        $fieldStore = $this->fieldStore();
+
+        return $this->store() ?
+            ($this->multiple ? $fieldStore : array_keys($fieldStore))
+            : null;
+    }
+
+    public function fieldStore()
+    {
+        return is_array($this->store()) ? $this->store() : [$this->store() => true];
+    }
+
+    public function version($version)
+    {
+        $this->version = $version;
+
+        return $this;
+    }
+
+    public function getVersion()
+    {
+        $version = $this->version;
+
+        return is_callable($version)
+            ? $version($this)
+            : $version;
     }
 }

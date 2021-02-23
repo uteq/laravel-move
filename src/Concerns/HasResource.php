@@ -24,7 +24,7 @@ trait HasResource
         });
 
         $this->model ??= $this->resolveResourceModel();
-        $this->modelId = optional($this->model)->id;
+        $this->modelId = optional($this->model)->{$this->model->getKey()};
     }
 
     public function resolveResourceModel()

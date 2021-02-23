@@ -38,6 +38,6 @@ trait WithAuthorization
             return true;
         }
 
-        return Gate::check($ability, $model ?: array_merge($arguments, [$this->resource, $this->name()]));
+        return Gate::check($ability, array_merge($arguments, [$model ?: $this->resource, $this->name()]));
     }
 }

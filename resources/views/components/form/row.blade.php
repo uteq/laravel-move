@@ -2,7 +2,7 @@
 
 @php $labelValue = $label @endphp
 
-<div class="px-4 pt-4 pb-2 last:pb-4 bg-white sm:p-6 w-full  grid grid-cols-6 gap-6 border-b last:border-b-0 border-gray-100">
+<div class="px-4 pt-4 pb-2 last:pb-4 bg-white sm:p-6 w-full  grid grid-cols-6 gap-6 border-b last:border-b-0 border-gray-100" wire:key="move-form-row-{{ $model }}">
     <div class="col-span-6 sm:col-span-4">
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
             <x-move-form.label for="{{ $model }}"

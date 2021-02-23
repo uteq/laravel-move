@@ -1,10 +1,11 @@
 <x-move-form-section
     submit="save"
     class="mt-5"
-    wire:key="resource-form-{{ $this->model->id ?? rand(0, 99) }}"
     :sidebar-enabled="count($this->steps()) && $this->allStepsAvailable()"
+    wire:key="resource-form-{{ $this->model->id ?? rand(0, 99) }}"
     wire:loading.class="opacity-50"
     wire:target="save"
+    id="{{ $this->name ?: $this->id ?: \Illuminate\Support\Str::slug(get_class($this)) }}"
 >
     @if ($this->steps()->count() && ! $this->hideStepsMenu)
         <x-slot name="head">
@@ -67,6 +68,7 @@
             </x-slot>
         @endif
 
+        @if (! $this->hideActions)
         <x-slot name="actions">
             <x-move-action-message class="mr-3 text-primary-600" on="saved">
                 <div class="flex">
@@ -79,17 +81,24 @@
 
 
             <x-move-a href="{{ $this->cancelRoute() }}" class="justify-self-left flex-grow pl-0">
-                {{ __('Cancel') }}
+                @if ($this->buttonCancelText ?? null)
+                    {{ $this->buttonCancelText }}
+                @else
+                    {{ __('Cancel') }}
+                @endif
             </x-move-a>
 
             <x-move-button>
-                @if ($model->id)
+                @if ($this->buttonSaveText)
+                    {{ $this->buttonSaveText }}
+                @elseif ($model->id)
                     @lang('Edit :resource', ['resource' => $this->label()])
                 @else
                     @lang('Create :resource', ['resource' => $this->label()])
                 @endif
             </x-move-button>
         </x-slot>
+        @endif
     @endif
 
 </x-move-form-section>

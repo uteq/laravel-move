@@ -420,16 +420,18 @@ abstract class Field extends FieldElement
         return $this->view(...func_get_args());
     }
 
-    public function beforeStore(Closure $beforeStore): self
+    public function beforeStore(Closure $beforeStore, $key = null): self
     {
-        $this->beforeStore[] = $beforeStore;
+        $key ? $this->beforeStore[$key] = $beforeStore
+            : $this->beforeStore[] = $beforeStore;
 
         return $this;
     }
 
-    public function afterStore(Closure $afterStore): self
+    public function afterStore(Closure $afterStore, $key = null): self
     {
-        $this->afterStore[] = $afterStore;
+        $key ? $this->afterStore[$key] = $afterStore
+             : $this->afterStore[] = $afterStore;
 
         return $this;
     }
