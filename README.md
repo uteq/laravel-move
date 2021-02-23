@@ -42,17 +42,24 @@ And this is a basic example with a user:
 <img src="https://uteq.nl/images/move/move-example.png" />
 
 ## Todo
-- Translations
 - Package dependencies
 - Tests
 
 ## Support us
 To best support is by improving this package. There is still a lot work to be done.
 For example:
+- Documentation
+-- Setup
+-- Fields (Also: Panel and Step)
+-- Search
+-- Actions
+-- Permissions
+-- Customizations
+-- Reuseable (Move re-usable in many ways)
 - Test coverage
-- Fields extension
+- Fields extension (adding all sorts of fields)
 - Stubs and Class generators
-- Translations: a lot is still in Dutch and not translatable
+- Cards (like Laravel Nova cards)
 
 ## Installation
 
@@ -80,7 +87,7 @@ php artisan migrate
 
 #### Configure Jetstream
 For more Jetstream related setup, please check:
-https://jetstream.laravel.com/1.x/installation.html#installing-jetstream
+https://jetstream.laravel.com/2.x/installation.html#installing-jetstream
 
 You can publish the config file with:
 ```bash
@@ -123,29 +130,36 @@ class User extends Resource
     {
         return [
             Id::make(),
-            Text::make('Naam', 'name'),
 
-            Text::make('Email', 'email')
+            Text::make('Naam', 'name')
+                ->rules(['required', 'string', 'max:255'])
+                ->required(),
+
+            Text::make('E-mailadres', 'email')
                 ->hideWhenUpdating()
                 ->requiredOnCreateOnly()
                 ->creationRules(['required', 'string', 'email', 'max:255', 'unique:users']),
 
-            Password::make('Password', 'password')
-                ->creationRules($this->passwordRules())
-                ->required(function($request, $model) {
-                    return ! ( $model->id ?? false );
-                }),
+            Status::make('E-mail bevestigd?', 'email_verified_at', fn ($value) => $value !== null)
+                ->hideFromForm(),
 
-            Password::make('Confirm password', 'password_confirmation')
-                ->hideFromIndex()
-                ->hideFromDetail()
-                ->required(function($request, $model) {
-                    return ! ( $model->id ?? false );
-                }),
+            Panel::make('Wachtwoord wijzigen', [
+                Password::make('Wachtwoord', 'password', null)
+                    ->creationRules($this->passwordRules())
+                    ->requiredOnCreateOnly(),
 
-            Status::make('Email verified?', 'email_verified_at', function ($value) {
-                return $value !== null;
-            })->hideFromForm(),
+                Password::make('Wachtwoord bevestigen', 'password_confirmation')
+                    ->hideFromIndex()
+                    ->hideFromDetail()
+                    ->onlyForValidation(fn ($value, $field, $model) => $model->id)
+                    ->requiredOnCreateOnly(),
+            ])
+            ->nameOnCreate('Wachtwoord')
+            ->nameOnUpdate('Wachtwoord wijzigen'),
+
+            Panel::make('Rol kiezen', [
+                Role::make('Rol', 'role'),
+            ]),
         ];
     }
 
@@ -158,12 +172,6 @@ class User extends Resource
     {
         return [];
     }
-
-    public function icon()
-    {
-        return 'heroicon-o-users';
-    }
-
 }
 ```
 
@@ -241,13 +249,13 @@ These are the currently supported fields in Move:
 - Status
 - Text
 - Textarea
-
-
+- Editor
 
 ## Sidebar
 Move automatically registers resources to the sidebar. 
 By default there are two ways to show your sidebar resources.
 Grouped and flat. The default is grouped  and is published with the \App\Providers\MoveServiceProvider.
+
 ```php
 Move::useSidebarGroups(true);
 ```
@@ -275,6 +283,38 @@ Whenever you would prefer to order your sidebar by the given namespace just use
 the grouped sidebar approach.
 If not you can always overwrite the components/sidebar-menu.blade.php file or create a PR. 
 
+### Overwrite the sidebar menu logo
+```blade
+<x-move-sidebar>
+    <x-slot name="logo">
+        <a class="text-center" href="/">
+            <h1 class="text-2xl text-white font-black">{{ config('app.name') }}</h1>
+        </a>
+    </x-slot>
+</x-move-sidebar>
+```
+
+### Overwriting the sidebar menu items
+You can completely overwrite the sidebar items. And the logo. 
+```blade
+<x-move-sidebar :keep-not-custom="false" :with-padding="false">
+    <!-- You can also add you own html + css here, move just has a link component -->
+    <x-move-sidebar.link href="{{ route('dashboard') }}" alt-active="admin/dashboard/*">
+        Dashboard
+    </x-move-sidebar.link>
+</x-move-sidebar>
+```
+
+You can also keep the automatically generated sidebar items and
+add you own before the automatic created. This is the default behavior.
+```blade
+<x-move-sidebar>    
+    <x-move-sidebar.link href="{{ route('dashboard') }}" alt-active="admin/dashboard/*">
+        Dashboard
+    </x-move-sidebar.link>
+</x-move-sidebar>
+```
+
 ## In depth
 
 ### Resolving a resource
@@ -288,12 +328,29 @@ Move::resolveResource('resources.your-resource');
 ```
 
 ### Overwriting the default $actionHandlers
-Action handlers are classes that make it possible to store and delete your resources.
+Action handlers are classes that make it possible to store and delete your resources the way you prefer. By default Move will have its own default logic.
 Move provides two default action handlers `Uteq\Move\DomainActions\StoreResource` and `Uteq\Move\DomainActions\DeleteResource`.
 You are able to overwrite these handlers from your Resource and by default.
 
+#### Creating your own Action handler
+```php
+class StoreHandler
+{
+    public function __invoke(Model $model, array $input = [])
+    {
+        //... Basic validation
+        
+        $model->fill($input)->save();
+        
+        return $model;
+    }
+}
+```
+
+You can also extend the default StoreResource, but this is not mandatory.
+
 #### Overwriting the default $actionHandlers system wide
-Overwrite the action handlers from a ServiceProvider
+Overwrite the action handlers from a ServiceProvider.
 ```php
 use Uteq\Move\Resource;
 
@@ -321,7 +378,7 @@ class CustomResource extends Resource
     ];
 }
 ```  
-This will overwrite the system wide action handlers.
+This will overwrite the resource specific action handlers.
 
 ### Hooks
 #### Before save
