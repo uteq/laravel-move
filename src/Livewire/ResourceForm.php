@@ -212,6 +212,8 @@ class ResourceForm extends FormComponent
 
     public function getPanelsProperty(): Collection
     {
+        $this->model->store = $this->store;
+
         return $this->resource()
             ->panels($this, $this->model, isset($model->id) ? 'update' : 'create')
             ->each(fn ($panel) => $panel->id ??= Str::random(20));
