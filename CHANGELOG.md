@@ -9,7 +9,6 @@ All notable changes to `laravel-move` will be documented in this file
 ## 0.2.1 - 2021-02-23
 
 - fixed backwards compatibility for php7.4
-
 ## 0.2.0 - 2021-02-23
 
 - making move headless

@@ -83,7 +83,9 @@ switch ($maxWidth ?? '2xl') {
                 {!! $button !!}
             </div>
         @else
-            {!! $button !!}
+            <div x-on:click="show = true">
+                {!! $button !!}
+            </div>
         @endif
     @endif
 
