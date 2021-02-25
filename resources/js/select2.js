@@ -1,7 +1,5 @@
 require('select2');
 
-$('.select2').select2();
-
 export default function(element, val, settings, options, onChangeCallback) {
 
     function parse(obj) {

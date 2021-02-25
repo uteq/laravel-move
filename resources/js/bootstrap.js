@@ -22,5 +22,7 @@ window.$ = $;
 import select2 from './select2';
 window.loadSelect2 = select2;
 
+$('.select2').select2();
+
 import Quill from 'quill';
 window.Quill = Quill;
