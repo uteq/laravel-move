@@ -42,6 +42,7 @@ class MoveServiceProvider extends ServiceProvider
             $this->registerComponent('field.number');
             $this->registerComponent('field.password');
             $this->registerComponent('field.select');
+            $this->registerComponent('field.search');
 
             $this->registerComponent('form.input-error');
             $this->registerComponent('form.label');
