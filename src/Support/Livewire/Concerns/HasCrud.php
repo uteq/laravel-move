@@ -14,13 +14,27 @@ trait HasCrud
         'create' => 'create',
     ];
 
+    protected static $crudUsesSoftDelete = null;
+
     private function modelById($id)
     {
         $resourceModel = $this->resource()->model();
-        if(true === in_array(SoftDeletes::class, class_uses($resourceModel), true)) {
+        if($this->crudUsesSoftDelete($resourceModel)) {
             $resourceModel = $resourceModel->withTrashed();
         }
         return $resourceModel->find($id);
+    }
+
+    private function crudUsesSoftDelete($resourceModel)
+    {
+        if(null !== static::$crudUsesSoftDelete) {
+            return static::$crudUsesSoftDelete;
+        }
+
+        return static::$crudUsesSoftDelete = in_array(
+            SoftDeletes::class,
+            class_uses_recursive($resourceModel)
+        );
     }
 
     public function show($id)
