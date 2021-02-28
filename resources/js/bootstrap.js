@@ -24,8 +24,5 @@ window.loadSelect2 = select2;
 
 $('.select2').select2();
 
-import moveSearch from './move-search';
-window.moveSearch = moveSearch;
-
 import Quill from 'quill';
 window.Quill = Quill;

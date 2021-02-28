@@ -4,6 +4,7 @@ namespace Uteq\Move\Support\Livewire;
 
 use Livewire\Component;
 use Uteq\Move\Support\Livewire\Concerns\StoresPreviousUrl;
+use Uteq\Move\Concerns\WithMount;
 
 abstract class FormComponent extends Component
 {

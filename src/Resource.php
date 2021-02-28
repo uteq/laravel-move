@@ -219,20 +219,20 @@ abstract class Resource
         ];
     }
 
-    public function handler($key)
+    public function handler($key, array $args = [])
     {
         return isset($this->actionHandlers[$key])
-            ? new $this->actionHandlers[$key]
+            ? new $this->actionHandlers[$key](...$args)
             : (
                 isset(static::$defaultActionHandlers[$key])
-                    ? new static::$defaultActionHandlers[$key]
+                    ? new static::$defaultActionHandlers[$key](...$args)
                     : null
             );
     }
 
-    public function handleAction(string $key, Model $model, array $fields, string $from)
+    public function handleAction(string $key, Model $model, array $fields, string $from, array $args = [])
     {
-        $handler = $this->handler($key);
+        $handler = $this->handler($key, $args);
 
         $dtoMethod = 'from' . ucfirst(strtolower($from));
 

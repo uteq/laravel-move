@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Uteq\Move\Facades\Move;
 
+/**
+ * Trait HasResource
+ * @package Uteq\Move\Concerns
+ * @property array fields
+ */
 trait HasResource
 {
     use HasMountActions;
@@ -20,11 +25,11 @@ trait HasResource
         $this->initializeHasMountActions();
 
         $this->beforeMount(function () {
+            $this->model ??= $this->resolveResourceModel();
+            $this->modelId = optional($this->model)->{$this->model->getKey()};
+
             $this->fields = collect($this->getFieldsProperty());
         });
-
-        $this->model ??= $this->resolveResourceModel();
-        $this->modelId = optional($this->model)->{$this->model->getKey()};
     }
 
     public function resolveResourceModel()
@@ -135,13 +140,14 @@ trait HasResource
             ->toArray();
     }
 
-    public function handleResourceAction($type, $fields)
+    public function handleResourceAction($type, $fields, $args = [])
     {
         $this->resource()->handleAction(
             $type,
             $this->{$this->property},
             $fields,
             'livewire',
+            $args
         );
 
         $this->{$this->property}->refresh();

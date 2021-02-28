@@ -9,6 +9,15 @@ use Uteq\Move\DataTransferObjects\MediaCollection;
 
 trait WithSyncableMedia
 {
+    protected $mediaPrefix = null;
+
+    public function mediaPrefix($mediaPrefix)
+    {
+        $this->mediaPrefix = $mediaPrefix;
+
+        return $this;
+    }
+
     public function syncMedia(Model $model, MediaCollection $paths, $collection, $diskName = 'public')
     {
         if (! $model instanceof HasMedia) {
@@ -24,6 +33,8 @@ trait WithSyncableMedia
             $model->deleteMedia($path->id);
         }
 
+        $result = [];
+
         foreach ($paths->withoutDelete() as $path) {
             if ($path->id && Media::query()->find($path->id)) {
                 continue;
@@ -33,12 +44,14 @@ trait WithSyncableMedia
                 continue;
             }
 
-            $model->addMediaFromString(file_get_contents($path->path))
+            $result[] = $model->addMediaFromString(file_get_contents($path->path))
                 ->usingName(pathinfo($path->name, PATHINFO_FILENAME))
                 ->usingFileName($path->name)
                 ->toMediaCollection($collection, $diskName);
 
             $model->save();
         }
+
+        return $result;
     }
 }

@@ -12,6 +12,7 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/move.js', 'dist')
+
     .postCss('stubs/resources/css/app.css', 'stubs/public/css', [
         require('postcss-import'),
         require('tailwindcss'),

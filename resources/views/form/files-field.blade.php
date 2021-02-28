@@ -14,7 +14,7 @@
                name="{{ $field->store }}[]"
                class="hidden"
                wire:model="files.{{ $field->attribute }}"
-               accept="image/*, .pdf, application/pdf, application/heic"
+               accept="{{ $field->getAccept() }}"
                capture="camera"
                {{ $field->isMultiple ? 'multiple' : null }}
         />

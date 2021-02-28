@@ -294,7 +294,7 @@ HTML;
     public function scripts()
     {
         return <<<HTML
-<script src="{$this->jsAssets()}"></script>
+<script src="{$this->jsAssets()}" defer></script>
 HTML;
     }
 

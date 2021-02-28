@@ -12,7 +12,7 @@
 ])
 
 <div
-    x-data="moveSearch({
+    x-data="moveSearch{{ $name }}({
         component: @this,
         data: {{ json_encode($options) }},
         emptyOptionsMessage: '{{ $emptyOptionsMessage }}',
@@ -99,21 +99,21 @@
                         @mouseleave="focusedOptionIndex = null"
                         role="option"
                         :aria-selected="focusedOptionIndex === index"
-                        :class="{ 'text-white bg-indigo-600': index === focusedOptionIndex, 'text-gray-900': index !== focusedOptionIndex }"
+                        :class="{ 'text-white bg-indigo-600 group': index === focusedOptionIndex, 'text-gray-900': index !== focusedOptionIndex }"
                         class="flex items-stretch relative py-2 pl-3 text-gray-900 cursor-default select-none pr-9"
                     >
                         {{ $slot }}
 
-                        <span x-text="Object.values(options)[index]"
+                        <span x-html="Object.values(options)[index]"
                               :class="{ 'font-semibold': index === focusedOptionIndex, 'font-normal': index !== focusedOptionIndex }"
                               class="block font-normal truncate"
                         ></span>
 
                         <span
-                                x-show="key === value"
-                                :class="{ 'text-white': index === focusedOptionIndex, 'text-indigo-600': index !== focusedOptionIndex }"
-                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600"
-                            >
+                            x-show="key === value"
+                            :class="{ 'text-white': index === focusedOptionIndex, 'text-indigo-600': index !== focusedOptionIndex }"
+                            class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600"
+                        >
                             <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd"
                                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -131,4 +131,124 @@
             ></div>
         </ul>
     </div>
+
+    <script wire:ignore>
+        function moveSearch{{ $name }}(config) {
+            return {
+                data: config.data,
+
+                emptyOptionsMessage: config.emptyOptionsMessage,
+
+                focusedOptionIndex: config.focusedOptionIndex,
+
+                name: config.name,
+
+                open: config.open,
+
+                placeholder: config.placeholder,
+
+                search: config.search,
+
+                value: config.value,
+
+                searchType: config.searchType,
+
+                options: null,
+
+                closeListbox: function () {
+                    this.open = false
+
+                    this.focusedOptionIndex = null
+
+                    this.search = ''
+                },
+
+                focusNextOption: function () {
+                    if (this.focusedOptionIndex === null) return this.focusedOptionIndex = Object.keys(this.options).length - 1
+
+                    if (this.focusedOptionIndex + 1 >= Object.keys(this.options).length) return
+
+                    this.focusedOptionIndex++
+
+                    this.$refs.listbox.children[this.focusedOptionIndex].scrollIntoView({
+                        block: "center",
+                    })
+                },
+
+                focusPreviousOption: function () {
+                    if (this.focusedOptionIndex === null) return this.focusedOptionIndex = 0
+
+                    if (this.focusedOptionIndex <= 0) return
+
+                    this.focusedOptionIndex--
+
+                    this.$refs.listbox.children[this.focusedOptionIndex].scrollIntoView({
+                        block: "center",
+                    })
+                },
+
+                init: function () {
+                    this.options = this.data
+
+                    if (config.searchType == 'js') {
+                        if (!(this.value in this.options)) this.value = null
+
+                        this.$watch('search', ((value) => {
+                            console.log('watch search');
+
+                            if (!this.open || !value) return this.options = this.data
+
+                            this.options = Object.keys(this.data)
+                                .filter((key) => this.data[key].toLowerCase().includes(value.toLowerCase()))
+                                .reduce((options, key) => {
+                                    options[key] = this.data[key]
+                                    return options
+                                }, {})
+                        }))
+                    } else {
+                        this.$watch('data', ((value) => {
+                            this.options = Object.keys(value)
+                                .reduce((options, key) => {
+                                    options[key] = this.data[key]
+                                    return options
+                                }, {});
+                        }));
+
+                        // Makes sure that the options are actually a representation of this.data
+                        this.$watch('options', ((value) => {
+                            this.options = this.data;
+                        }));
+                    }
+                },
+
+                selectOption: function () {
+                    if (!this.open) return this.toggleListboxVisibility()
+
+                    this.value = Object.keys(this.options)[this.focusedOptionIndex];
+
+                    config.component.set(this.name, this.value);
+
+                    this.closeListbox()
+                },
+
+                toggleListboxVisibility: function () {
+                    if (this.open) return this.closeListbox()
+
+                    this.focusedOptionIndex = Object.keys(this.options).indexOf(this.value)
+
+                    if (this.focusedOptionIndex < 0) this.focusedOptionIndex = 0
+
+                    this.open = true
+
+                    this.$nextTick(() => {
+                        this.$refs.search.focus()
+
+                        this.$refs.listbox.children[this.focusedOptionIndex].scrollIntoView({
+                            block: "nearest"
+                        })
+                    })
+                },
+            }
+        }
+    </script>
 </div>

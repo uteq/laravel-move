@@ -1,4 +1,4 @@
-@props(['disabled' => false, 'model', 'config' => []])
+@props(['disabled' => false, 'model' => $attributes->wire('model')->value(), 'config' => []])
 
 <div class="relative w-full flex flatpickr" wire:ignore wire:key="{{ $model }}">
     <input {{ $disabled ? 'disabled' : '' }}

@@ -12,6 +12,13 @@ class Files extends Field
 
     public bool $showRotate = true;
 
+    public array $accept = [
+        'image/*',
+        '.pdf',
+        'application/pdf',
+        'application/heic',
+    ];
+
     public function __construct(
         string $name,
         string $attribute,
@@ -27,6 +34,18 @@ class Files extends Field
                 new RequiredIf(fn () => $this->isRequired()),
             ],
         ]);
+    }
+
+    public function getAccept()
+    {
+        return implode(', ', $this->accept);
+    }
+
+    public function accept(array $accept)
+    {
+        $this->accept = $accept;
+
+        return $this;
     }
 
     public function isSingular(bool $value = true)

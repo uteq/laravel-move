@@ -37,6 +37,7 @@ class MoveServiceProvider extends ServiceProvider
         $this->callAfterResolving(BladeCompiler::class, function () {
             $this->registerComponent('field.checkbox');
             $this->registerComponent('field.date');
+            $this->registerComponent('field.editor');
             $this->registerComponent('field.errors');
             $this->registerComponent('field.input');
             $this->registerComponent('field.number');
