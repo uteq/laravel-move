@@ -2,6 +2,8 @@
 
 namespace Uteq\Move\Support\Livewire\Concerns;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 trait HasCrud
 {
     public $confirmingDestroy = null;
@@ -14,7 +16,11 @@ trait HasCrud
 
     private function modelById($id)
     {
-        return $this->resource()->newModel()->find($id);
+        $resourceModel = $this->resource()->model();
+        if(true === in_array(SoftDeletes::class, class_uses($resourceModel), true)) {
+            $resourceModel = $resourceModel->withTrashed();
+        }
+        return $resourceModel->find($id);
     }
 
     public function show($id)
