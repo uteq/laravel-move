@@ -24,11 +24,17 @@ trait HasCrud
 
     public function showRoute($id)
     {
+        $model = $this->modelById($id);
+
+        if (! $model) {
+            return null;
+        }
+
         $this->crudBaseRoute ??= move()::getPrefix();
 
         return route($this->crudBaseRoute . '.show', [
             'resource' => $this->resource,
-            'model' => $this->modelById($id),
+            'model' => $model,
         ]);
     }
 
@@ -39,6 +45,12 @@ trait HasCrud
 
     public function editRoute($id)
     {
+        $model = $this->modelById($id);
+
+        if (! $model) {
+            return null;
+        }
+
         $this->crudBaseRoute ??= move()::getPrefix();
 
         return route($this->crudBaseRoute . '.edit', [
