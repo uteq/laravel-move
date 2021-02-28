@@ -2,6 +2,8 @@
 
 namespace Uteq\Move\Support\Livewire\Concerns;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 trait HasCrud
 {
     public $confirmingDestroy = null;
@@ -12,9 +14,27 @@ trait HasCrud
         'create' => 'create',
     ];
 
+    protected static $crudUsesSoftDelete = null;
+
     private function modelById($id)
     {
-        return $this->resource()->newModel()->find($id);
+        $resourceModel = $this->resource()->model();
+        if($this->crudUsesSoftDelete($resourceModel)) {
+            $resourceModel = $resourceModel->withTrashed();
+        }
+        return $resourceModel->find($id);
+    }
+
+    private function crudUsesSoftDelete($resourceModel)
+    {
+        if(null !== static::$crudUsesSoftDelete) {
+            return static::$crudUsesSoftDelete;
+        }
+
+        return static::$crudUsesSoftDelete = in_array(
+            SoftDeletes::class,
+            class_uses_recursive($resourceModel)
+        );
     }
 
     public function show($id)
