@@ -19,15 +19,16 @@ trait HasCrud
     private function modelById($id)
     {
         $resourceModel = $this->resource()->model();
-        if($this->crudUsesSoftDelete($resourceModel)) {
+        if ($this->crudUsesSoftDelete($resourceModel)) {
             $resourceModel = $resourceModel->withTrashed();
         }
+
         return $resourceModel->find($id);
     }
 
     private function crudUsesSoftDelete($resourceModel)
     {
-        if(null !== static::$crudUsesSoftDelete) {
+        if (null !== static::$crudUsesSoftDelete) {
             return static::$crudUsesSoftDelete;
         }
 
