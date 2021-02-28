@@ -434,6 +434,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 ## Credits
 
 - [Nathan Jansen](https://github.com/nathanjansen)
+- [Leo Flapper](https://github.com/leoflapper)
 - [All Contributors](../../contributors)
 
 ## License
