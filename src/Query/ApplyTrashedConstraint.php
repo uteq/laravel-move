@@ -14,9 +14,15 @@ class ApplyTrashedConstraint
      */
     public function __invoke(Builder $query, $trashedStatus): Builder
     {
-        return [
-            TrashedStatus::WITH => $query->withTrashed(),
-            TrashedStatus::ONLY => $query->onlyTrashed(),
-        ][$trashedStatus] ?? $query;
+        switch ($trashedStatus) {
+            case TrashedStatus::WITH:
+                return $query->withTrashed();
+
+            case TrashedStatus::ONLY:
+                return $query->onlyTrashed();
+
+            default:
+                return $query;
+        }
     }
 }
