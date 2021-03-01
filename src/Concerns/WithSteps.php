@@ -112,7 +112,7 @@ trait WithSteps
     {
         $steps = $this->steps();
 
-        $count = $steps->filter(fn ($step) => in_array($step->name, $this->availableSteps))->count();
+        $count = $steps->filter(fn ($step) => in_array($step->attribute, $this->availableSteps))->count();
 
         return $count == $steps->count();
     }
