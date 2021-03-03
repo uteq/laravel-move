@@ -23,6 +23,7 @@ export default function(element, val, settings, options, onChangeCallback) {
     let $element = window.$(element);
 
     settings = parse(Object.assign({
+        placeholder: "",
         allowClear: true,
     }, settings));
 

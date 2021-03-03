@@ -28,6 +28,7 @@
 <script>
 
     if (typeof window.loadSelect2 === 'undefined') {
+
         window.loadSelect2 = function(element, val, settings, options, onChangeCallback) {
 
             function parse(obj) {
@@ -51,6 +52,7 @@
             let $element = window.$(element);
 
             settings = parse(Object.assign({
+                placeholder: "",
                 allowClear: true,
             }, settings));
 
@@ -71,7 +73,7 @@
     let select2Loader{{str_replace("-","_", $index)}} = () => {
         let element = '.select2-{{ $index }}';
         let val = @php echo json_encode($values && count($values) ? $values : null) @endphp ?? {};
-        let settings = {!! json_encode($settings) !!} ?? {};
+        let settings = {!! json_encode(array_replace(['placeholder' => $placeholder], $settings)) !!} ?? {};
 
         loadSelect2(element, val, settings, {
             isMultiple: @php echo json_encode($multiple ?? false) @endphp,

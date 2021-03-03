@@ -194,7 +194,6 @@
                         if (!(this.value in this.options)) this.value = null
 
                         this.$watch('search', ((value) => {
-                            console.log('watch search');
 
                             if (!this.open || !value) return this.options = this.data
 
