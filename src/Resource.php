@@ -167,7 +167,7 @@ abstract class Resource
         return $model->{static::$title};
     }
 
-    public function getForIndex($requestQuery): array
+    public function getForIndex($requestQuery, Request $request = null): array
     {
         if (! isset(static::$model)) {
             throw new \Exception(sprintf(
@@ -183,12 +183,14 @@ abstract class Resource
             'resource' => $this,
             'header' => $this->visibleFields('index'),
             'collection' => $this->buildIndexQuery(
-                request(),
+                $request ?: request(),
                 $filter,
                 static::$model::query(),
                 $filter['search'] ?? '',
                 $this->filters() ?? [],
                 $requestQuery['order'] ?? [],
+                '',
+                $this
             ),
         ];
     }
@@ -215,6 +217,8 @@ abstract class Resource
                 $filter['search'] ?? '',
                 $this->filters() ?? [],
                 $requestQuery['order'] ?? [],
+                '',
+                $this,
             ),
         ];
     }

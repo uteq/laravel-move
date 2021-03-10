@@ -5,6 +5,7 @@ namespace Uteq\Move\Concerns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Uteq\Move\Query\ApplyTrashedConstraint;
+use Uteq\Move\Resource;
 
 trait QueryBuilder
 {
@@ -15,12 +16,13 @@ trait QueryBuilder
         ?string $search = '',
         array $filters = [],
         array $orderBy = [],
-        $trashedStatus = ''
+        $trashedStatus = '',
+        ?Resource $resource = null
     ) {
         $query = static::defaultQuery($query, $search, $trashedStatus);
         $query = static::applyFilters($requestQuery, $query, $filters);
         $query = static::applyOrderBy($query, $orderBy);
-        $query = $query->tap(fn ($query) => static::indexQuery($request, $query->with(static::$with)));
+        $query = $query->tap(fn ($query) => static::indexQuery($request, $query->with(static::$with), $resource));
 
         return $query;
     }
