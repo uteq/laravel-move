@@ -23,20 +23,34 @@ trait HasResource
             $this->fields = collect($this->getFieldsProperty());
         });
 
-        $this->model ??= $this->resolveResourceModel();
-        $this->modelId = optional($this->model)->{$this->model->getKey()};
+//        $this->resolveResourceModel();
     }
 
     public function resolveResourceModel()
+    {
+        $this->model = $this->modelId
+            ? $this->resolveModel($this->modelId)
+            : $this->resolvedResourceModel();
+
+        return $this->model;
+    }
+
+    public function resolvedResourceModel()
     {
         if ($this->model !== null) {
             return $this->model;
         }
 
-        $resource = Move::resolveResource(request()->route()->parameter('resource') ?? null ?: $this->resource);
+        $resource = Move::resolveResource(request()->route()->parameter('resource') ?? $this->resource);
 
-        if (! $resource) {
+        if (!$resource) {
             return null;
+        }
+
+        $model = $resource->model();
+
+        if ($model) {
+            $this->modelId = $model->{$model->getKey()};
         }
 
         return $resource->model();
