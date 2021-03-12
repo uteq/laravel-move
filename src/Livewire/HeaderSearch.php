@@ -55,7 +55,11 @@ class HeaderSearch extends Component
                     request(),
                     ['search'],
                     $resourceModel::query(),
-                    $this->search
+                    $this->search,
+                    [],
+                    [],
+                    '',
+                    $resource
                 )
                 ->limit($resource::$globalSearchResults);
 

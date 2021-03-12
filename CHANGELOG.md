@@ -2,9 +2,18 @@
 
 All notable changes to `laravel-move` will be documented in this file
 
+## 0.2.4 - 2021-03-01
 
-## 0.2.3 - 2021-02-25
+Fixes:
+- Fix for error when no step available
+- Adds the sidebar back for whenever the steps are complete
+- Fix for fatal error when retrieving model with Soft Delete
+- Feature content as optional
+- Fix for returning soft deleted records
 
+## 0.2.3 - 2021-02-26
+
+- Updated modal button is now always by default clickable
 - fixed an error in the console regarding select2
 
 ## 0.2.2 - 2021-02-24

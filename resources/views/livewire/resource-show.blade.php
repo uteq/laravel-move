@@ -5,6 +5,7 @@
         </div>
     </x-slot>
 
+    @if (! $hideActions)
     <div class="sm:absolute top-8 right:6 sm:right-8 md:right-10">
         @if ($this->resource()->can('update'))
         <a wire:click="edit('{{ $model->id }}')" class="inline-flex cursor-pointer">
@@ -48,7 +49,10 @@
         </a>
         @endif
     </div>
+    @endif
 
+    <div class="{{ $class }}">
+    @if (! $hideCard)
     <x-move-card class="mt-4">
         @foreach ($fields as $field)
             <x-move-row name="{{ $field->name() }}">
@@ -56,4 +60,12 @@
             </x-move-row>
         @endforeach
     </x-move-card>
+    @else
+        @foreach ($fields as $field)
+            <x-move-row name="{{ $field->name() }}">
+                {{ $field->render('show') }}
+            </x-move-row>
+        @endforeach
+    @endif
+    </div>
 </div>

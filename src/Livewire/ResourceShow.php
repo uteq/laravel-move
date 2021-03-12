@@ -20,11 +20,15 @@ class ResourceShow extends Component
 
     public $confirmingDestroy = null;
 
+    public $hideActions = false;
+    public $hideCard = false;
+    public $class = null;
+
     protected $crudBaseRoute = 'move';
 
-    public function mount()
+    public function mount($resource)
     {
-        $this->resource = request()->route()->parameter('resource');
+        $this->resolveResourceModel();
 
         $this->resource()->authorizeTo('view');
     }

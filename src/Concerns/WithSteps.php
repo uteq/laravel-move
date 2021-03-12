@@ -82,7 +82,7 @@ trait WithSteps
         $data = $this->customValidate($this->mapFields($resolvedFields, $this->store), $rules);
 
         if (! $this->model->id) {
-            $this->completedSteps[] = $step->name;
+            $this->completedSteps[] = optional($step)->name;
         }
 
         $step = $this->step($step);
@@ -112,7 +112,7 @@ trait WithSteps
     {
         $steps = $this->steps();
 
-        $count = $steps->filter(fn ($step) => in_array($step->name, $this->availableSteps))->count();
+        $count = $steps->filter(fn ($step) => in_array($step->attribute, $this->availableSteps))->count();
 
         return $count == $steps->count();
     }

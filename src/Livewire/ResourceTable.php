@@ -36,6 +36,7 @@ class ResourceTable extends TableComponent
     public array $actionFields = [];
     public array $store = [];
     public array $meta = [];
+    public array $route = [];
 
     protected $queryString = ['search', 'filter', 'order'];
 
@@ -51,6 +52,10 @@ class ResourceTable extends TableComponent
         $this->computeHasSelected();
         $this->requestQuery = request()->query();
         $this->sortable = $this->resource()::$sortable;
+        $this->route = [
+            'resource' => request()->route()->parameter('resource'),
+            'model' => request()->route()->parameter('model'),
+        ];
 
         $this->resource()->authorizeTo('viewAny');
 
@@ -150,8 +155,11 @@ class ResourceTable extends TableComponent
 
     public function render(ResourceIndexRequest $request)
     {
+        $request->route()->setParameter('resource', $this->route['resource']);
+        $request->route()->setParameter('model', optional($this->route['model'])['id']);
+
         /** @psalm-suppress UndefinedInterfaceMethod */
-        return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery), [
+        return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery, $request), [
             'collection' => $this->collection(),
             'rows' => $this->rows(),
             'actionResult' => $this->actionResult,

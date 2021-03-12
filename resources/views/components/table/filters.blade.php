@@ -1,7 +1,7 @@
 <div class="flex items-top justify-between flex-wrap sm:flex-no-wrap ml-2">
     <x-move-dropdown orientation="left" wire:key="table-filter.checkbox">
         <x-slot name="trigger">
-            <button class="flex items-center cursor-pointer active:border relative mt-2">
+            <button class="flex items-center cursor-pointer active:border relative mt-2" type="button">
                 <span class="form-checkbox border rounded-md @if ($this->has_selected) bg-primary-600 @endif h-5 w-5 text-primary-600 cursor-pointer">
                     @if ($this->has_selected)
                         <!-- heroicon-s-check -->
@@ -76,7 +76,7 @@
 
         <x-move-dropdown orientation="right" wire:key="table-filter.filters">
             <x-slot name="trigger">
-                <button class="flex items-center cursor-pointer active:border relative items-center cursor-pointer @if ($this->has_filters) bg-primary-600  hover:bg-primary-500 @else bg-gray-100 @endif py-1 pr-2 pl-1 rounded-md mr-2">
+                <button type="button" class="flex items-center cursor-pointer active:border relative items-center cursor-pointer @if ($this->has_filters) bg-primary-600  hover:bg-primary-500 @else bg-gray-100 @endif py-1 pr-2 pl-1 rounded-md mr-2">
                     <svg class="@if ($this->has_filters) text-white @else text-gray-600 @endif  h-6 w-6 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                     </svg>
@@ -93,7 +93,7 @@
         @if ($this->has_selected)
             <x-move-dropdown orientation="right" wire:key="table-filter.delete">
                 <x-slot name="trigger">
-                    <button class="flex items-center cursor-pointer active:border relative items-center cursor-pointer bg-gray-100 py-1 pr-2 pl-1 rounded-md">
+                    <button type="button" class="flex items-center cursor-pointer active:border relative items-center cursor-pointer bg-gray-100 py-1 pr-2 pl-1 rounded-md">
                         <svg class="text-gray-500 h-6 w-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.1 by @fontawesome  - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg>
                         <div class="ml-2">{{ count($this->selected) }}</div>
                     </button>
