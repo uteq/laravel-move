@@ -17,7 +17,7 @@ trait QueryBuilder
         array $filters = [],
         array $orderBy = [],
         $trashedStatus = '',
-        ?Resource $resource = null
+        $resource = null
     ) {
         $query = static::defaultQuery($query, $search, $trashedStatus);
         $query = static::applyFilters($requestQuery, $query, $filters);
