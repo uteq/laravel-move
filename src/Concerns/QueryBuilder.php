@@ -5,7 +5,6 @@ namespace Uteq\Move\Concerns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Uteq\Move\Query\ApplyTrashedConstraint;
-use Uteq\Move\Resource;
 
 trait QueryBuilder
 {
