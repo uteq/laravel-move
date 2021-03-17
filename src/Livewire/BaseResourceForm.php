@@ -143,7 +143,7 @@ abstract class BaseResourceForm extends FormComponent
     {
         return $this->resource()->singularLabel() . ' ' . (
             $this->model ? 'edit' : 'create'
-            );
+        );
     }
 
     public function updatedStore($key, $value)
