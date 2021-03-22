@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Gate;
 
 trait WithAuthorization
 {
+    public static ?string $gate = null;
+
     public static function policy()
     {
         return Gate::getPolicyFor(static::newModel());
@@ -38,6 +40,6 @@ trait WithAuthorization
             return true;
         }
 
-        return Gate::check($ability, array_merge($arguments, [$model ?: $this->resource, $this->name()]));
+        return Gate::check($ability, array_merge($arguments, [$model ?: $this->resource, static::$gate ?: $this->name()]));
     }
 }
