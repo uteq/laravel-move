@@ -2,12 +2,29 @@
 
 namespace Uteq\Move\DataTransferObjects;
 
-use Illuminate\Support\Collection;
+use Uteq\Move\Support\DataTransferObjectCollection;
 
-class MediaCollection extends Collection implements MediaCollectable
+class MediaCollection extends DataTransferObjectCollection implements MediaCollectable
 {
-    public static function create(array $data)
+    public function current(): MediaData
     {
+        return parent::current();
+    }
+
+    public static function create($data)
+    {
+        if ($data instanceof MediaCollection) {
+            return $data;
+        }
+
+        if (! is_array($data)) {
+            throw new \Exception(sprintf(
+                '%s: Unkown type `%s`',
+                __METHOD__,
+                gettype($data)
+            ));
+        }
+
         return new self(collect($data)->map(fn ($item) => new MediaData($item))->toArray());
     }
 
