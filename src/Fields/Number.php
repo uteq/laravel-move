@@ -12,9 +12,24 @@ class Number extends Field
 
     public int $decimals = 0;
 
+    public \Closure $displayFormat;
+    public \Closure $storeFormat;
+
     public function init()
     {
         $this->numberFormat($this->decimals, ',', '');
+
+        $this->displayFormat = function ($value, $decimals, $decimalSeparator, $thousandSeparator) {
+            return $value
+                ? number_format((float)$value, $decimals, $decimalSeparator, $thousandSeparator)
+                : null;
+        };
+
+        $this->storeFormat = function ($value, $decimals) {
+            return $value
+                ? number_format((float)str_replace(',', '.', $value), $decimals, '.', '')
+                : null;
+        };
     }
 
     public function decimals(int $decimals)
@@ -36,30 +51,24 @@ class Number extends Field
 
     public function numberFormat(int $decimals = 0, string $decimalSeparator = '.', string $thousandSeparator = ','): self
     {
-        $this->resourceDataCallback = $this->displayFormat($decimals, $decimalSeparator, $thousandSeparator);
+        $this->resourceDataCallback = fn ($value) => ($this->displayFormat)($value, $decimals, $decimalSeparator, $thousandSeparator);
 
-        $this->beforeStore($this->storeFormat($decimals));
+        $this->beforeStore(fn ($value) => ($this->storeFormat)($value, $decimals));
 
         return $this;
     }
 
-    protected function displayFormat($decimals, $decimalSeparator, $thousandSeparator)
+    public function displayFormat(Closure $displayFormat): self
     {
-        return function ($value, $resource, $attribute) use ($decimals, $decimalSeparator, $thousandSeparator) {
-            return $value
-                ? number_format((float)$value, $decimals, $decimalSeparator, $thousandSeparator)
-                : null;
-        };
+        $this->displayFormat = $displayFormat;
+
+        return $this;
     }
 
-    protected function storeFormat($decimals)
+    public function storeFormat($storeFormat)
     {
-        return function ($value, $field, $model, $data) use ($decimals) {
-            $value = str_replace(',', '.', $value);
+        $this->storeFormat = $storeFormat;
 
-            return $value
-                ? number_format((float)$value, $decimals, '.', '')
-                : null;
-        };
+        return $this;
     }
 }

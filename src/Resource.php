@@ -50,6 +50,8 @@ abstract class Resource
         'cancel' => 'index',
     ];
 
+    public static array $disabledTableActions = [];
+
     /**
      * Overwrite this to use your own action handlers
      * This can be useful for event sourcing.
@@ -71,7 +73,7 @@ abstract class Resource
         $this->resource = $resource;
 
         if (method_exists($this, 'initialize')) {
-            app()->call($this, 'initialize');
+            app()->call([$this, 'initialize']);
         }
     }
 
@@ -483,6 +485,16 @@ abstract class Resource
      * @return array
      */
     public function testStore()
+    {
+        return [];
+    }
+
+    public function actionEnabled($type): bool
+    {
+        return ! in_array($type, static::$disabledTableActions);
+    }
+
+    public function headerSlots($resourceTable): array
     {
         return [];
     }

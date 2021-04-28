@@ -1,7 +1,9 @@
 @props(['title', 'add-url', 'add-action', 'add-is-route' => false, 'add-text', 'search' => false])
 
 <div class="-ml-4 -mt-2 flex items-end justify-between flex-wrap sm:flex-no-wrap">
-    <div class="ml-4 mt-2 {{ $search ? '' : 'mb-12' }}">
+    <div class="ml-4 mt-2 {{ $search ? '' : 'mb-12' }} flex gap-2 items-center">
+        {!! $beforeSearch ?? null !!}
+
         @if ($search)
         <div class="relative mt-3 w-full text-gray-400 focus-within:text-gray-600">
             <div class="absolute inset-y-0 left-2 flex items-center pointer-events-none">
@@ -27,12 +29,18 @@
             />
         </div>
         @endif
+
+        {!! $afterSearch ?? null !!}
     </div>
-    <div class="ml-4 sm:ml-0">
+    <div class="ml-4 sm:ml-0 flex gap-2 items-center">
+        {!! $beforeAdd ?? null !!}
+
         @if ($addIsRoute)
             <x-move-a button href="{{ $addAction }}" class="font-black">{{ $addText }}</x-move-a>
         @else
             <x-move-button wire:click="{{ $addAction }}" class="font-black">{{ $addText }}</x-move-button>
         @endif
+
+        {!! $afterAdd ?? null !!}
     </div>
 </div>

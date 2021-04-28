@@ -1,6 +1,8 @@
+@props(['table', 'id', 'description'])
+
 <div class="text-right text-sm leading-5 font-medium" wire:key="table-actions.{{ $id }}">
-    @if ($this->resource()->can('view'))
-    <a href="{{ $this->showRoute($id) }}" class="inline-flex cursor-pointer">
+    @if ($table->resource()->can('view') && $table->resource()->actionEnabled('view'))
+    <a href="{{ $table->showRoute($id) }}" class="inline-flex cursor-pointer">
         <!--heroicon-o-eye -->
         <svg class="text-gray-400 hover:text-gray-600 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -9,8 +11,8 @@
     </a>
     @endif
 
-    @if ($this->resource()->can('update'))
-    <a href="{{ $this->editRoute($id) }}" class="inline-flex cursor-pointer" wire:loading.attr="disabled">
+    @if ($table->resource()->can('update') && $table->resource()->actionEnabled('update'))
+    <a href="{{ $table->editRoute($id) }}" class="inline-flex cursor-pointer" wire:loading.attr="disabled">
         <!-- heroicon-s-pencil -->
         <svg class="text-gray-400 hover:text-gray-600 h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
@@ -18,7 +20,7 @@
     </a>
     @endif
 
-    @if ($this->resource()->can('delete'))
+    @if ($table->resource()->can('delete') && $table->resource()->actionEnabled('delete'))
     <a class="inline-flex cursor-pointer" wire:key="a-confirming.destroy.{{ $id }}">
 
         <!-- Logout Other Devices Confirmation Modal -->
@@ -48,7 +50,7 @@
                     class="ml-2"
                     wire:click="destroy('{{ $id }}')"
                     wire:loading.attr="disabled"
-                >@lang('Delete :resource', ['resource' => $this->resource()->singularLabel()])</x-move-button>
+                >@lang('Delete :resource', ['resource' => $table->resource()->singularLabel()])</x-move-button>
             </x-slot>
         </x-move-dialog-modal>
     </a>

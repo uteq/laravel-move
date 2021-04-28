@@ -119,6 +119,7 @@ abstract class Field extends FieldElement
     protected $index = null;
     protected $show = null;
     protected $form = null;
+    public bool $disabled = false;
 
     /**
      * Field constructor.
@@ -577,5 +578,19 @@ abstract class Field extends FieldElement
     public function getComponentMeta($component, $key, $default = null)
     {
         return Arr::get($component->meta, static::class . '.' . $key, $default);
+    }
+
+    public function disabled(bool $disabled = true)
+    {
+        $this->disabled = $disabled;
+
+        return $this;
+    }
+
+    public function enabled(bool $enabled = true)
+    {
+        $this->disabled = ! $enabled;
+
+        return $this;
     }
 }

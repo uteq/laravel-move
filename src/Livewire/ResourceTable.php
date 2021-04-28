@@ -163,6 +163,8 @@ class ResourceTable extends TableComponent
             'collection' => $this->collection(),
             'rows' => $this->rows(),
             'actionResult' => $this->actionResult,
+            'headerSlots' => $this->resource()->headerSlots($this),
+            'table' => $this,
         ]))->layout($this->resource()::$layout ?? Move::layout(), [
             'header' => $this->resource()->label(),
         ]);

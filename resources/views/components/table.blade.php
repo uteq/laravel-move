@@ -1,8 +1,10 @@
+@props(['table'])
+
 <div {{ $attributes->merge(['class' => 'bg-white sm:rounded-lg sm:shadow']) }}>
 
     @if ($filters ?? false)
         <div class="px-2 py-2 border-b border-gray-200 sm:pl-1 sm:py-2">
-            <x-move-table.filters :table="$this">
+            <x-move-table.filters :table="$table">
                 {{ $filters }}
             </x-move-table.filters>
         </div>

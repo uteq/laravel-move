@@ -7,6 +7,9 @@
                 <div wire:key="{{ $field->name }}-{{ $key }}" class="flex-1">
                     <x-move-field.input wire:model="{{ $field->store }}.{{ $key }}" class="w-full" />
                 </div>
+                <div class="text-xs text-right text-primary-500 hover:underline"
+                     wire:click="action('{{ $field->store }}', 'removeRow', '{{ $key }}')"
+                >[x]</div>
             </div>
         @endforeach
 
