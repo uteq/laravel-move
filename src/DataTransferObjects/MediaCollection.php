@@ -2,15 +2,10 @@
 
 namespace Uteq\Move\DataTransferObjects;
 
-use Spatie\DataTransferObject\DataTransferObjectCollection;
+use Illuminate\Support\Collection;
 
-class MediaCollection extends DataTransferObjectCollection implements MediaCollectable
+class MediaCollection extends Collection implements MediaCollectable
 {
-    public function current(): MediaData
-    {
-        return parent::current();
-    }
-
     public static function create(array $data)
     {
         return new self(collect($data)->map(fn ($item) => new MediaData($item))->toArray());
