@@ -181,7 +181,7 @@ trait HasResource
 
     public function query(): Builder
     {
-        return $this->resource()->{'getFor' . ucfirst(static::$viewType)}($this->requestQuery)['collection'];
+        return $this->resource()->{'getFor' . ucfirst(static::$viewType)}($this->requestQuery())['collection'];
     }
 
     public function collection()

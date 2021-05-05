@@ -43,6 +43,8 @@ abstract class Resource
 
     public static ?string $layout = null;
 
+    public static bool $keepRequestQuery = false;
+
     /** All endpoints that will be satisfied */
     public static array $redirectEndpoints = [
         'create' => 'index',

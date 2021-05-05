@@ -15,13 +15,20 @@ use Uteq\Move\Support\Livewire\TableComponent;
 
 class ResourceTable extends TableComponent
 {
-    use WithPagination;
+    use WithPagination {
+        setPage as paginationSetPage;
+        resolvePage as paginationResolvePage;
+    }
     use HasResource;
     use HasSelected;
 //    use WithActionableFields;
 
     protected static $viewType = 'index';
+    protected bool $keepRequestQuery = false;
+    protected ?string $table;
+    protected string $limit;
 
+    public $search;
     public $action = '-';
     public $showingAction = false;
     public $showingActionResult = false;
@@ -30,9 +37,6 @@ class ResourceTable extends TableComponent
     public $sortable = false;
     public $error = null;
     public $hasError = false;
-    public $requestQuery;
-    protected ?string $table;
-    protected string $limit;
     public array $actionFields = [];
     public array $store = [];
     public array $meta = [];
@@ -47,10 +51,11 @@ class ResourceTable extends TableComponent
         $this->crudBaseRoute ??= move()::getPrefix();
 
         $this->resource = $resource;
-        $this->filter['limit'] = $this->filter('limit', $this->resource()->defaultPerPage());
+
+        $this->initHasFilter();
         $this->hydrate();
+        $this->initializeWithPagination();
         $this->computeHasSelected();
-        $this->requestQuery = request()->query();
         $this->sortable = $this->resource()::$sortable;
         $this->route = [
             'resource' => request()->route()->parameter('resource'),
@@ -63,6 +68,23 @@ class ResourceTable extends TableComponent
 
         if (method_exists($this, 'init')) {
             app()->call([$this, 'init']);
+        }
+    }
+
+    public function resolvePage()
+    {
+        return $this->resource && $this->keepRequestQuery
+            ? session(static::class .'.' . $this->resource . '.page')
+            : $this->paginationResolvePage();
+    }
+
+    public function setPage($page)
+    {
+
+        $this->paginationSetPage($page);
+
+        if ($this->resource && $this->keepRequestQuery) {
+            session()->put(static::class .'.' . $this->resource . '.page', $page);
         }
     }
 
@@ -79,6 +101,7 @@ class ResourceTable extends TableComponent
     public function hydrate()
     {
         $this->table = get_class($this->resource()->resource);
+        $this->keepRequestQuery = $this->resource()::$keepRequestQuery;
     }
 
     public function showDelete()
@@ -159,7 +182,7 @@ class ResourceTable extends TableComponent
         $request->route()->setParameter('model', optional($this->route['model'])['id']);
 
         /** @psalm-suppress UndefinedInterfaceMethod */
-        return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery, $request), [
+        return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery(), $request), [
             'collection' => $this->collection(),
             'rows' => $this->rows(),
             'actionResult' => $this->actionResult,
