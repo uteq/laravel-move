@@ -43,6 +43,8 @@
                     </div>
                 @else
                     @foreach ($this->panels() as $key => $panel)
+                        @if (! $panel->isShownOn($model->id ? 'update' : 'create')) @continue @endif
+
                         <div wire:key="move-main-panel-{{ $key }}">
                             {{ $panel->render($model) }}
                         </div>
