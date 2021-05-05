@@ -67,6 +67,12 @@
             }
 
             $element.on('change', onChangeCallback);
+            $element.on('open', function() {
+                self.$search.attr('tabindex', 0);
+                setTimeout(function () { self.$search.focus(); }, 10);
+
+                console.log(self);
+            })
         };
     }
 
@@ -86,6 +92,10 @@
 
     document.addEventListener("livewire:load", () => {
         select2Loader{{str_replace("-","_", $index)}}();
+
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+        });
     });
 
     if (typeof window.$ !== 'undefined') {
