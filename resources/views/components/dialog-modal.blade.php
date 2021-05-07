@@ -1,13 +1,13 @@
 @props(['title', 'content', 'id' => null, 'maxWidth' => null, 'button' => null, 'show' => true, 'withoutFooter' => false])
 
 <x-move-modal :id="$id" :maxWidth="$maxWidth" {{ $attributes }} :show="$show"  :button="$button">
-    <div class="px-6 py-4">
+    <div class="px-6 py-4 text-left">
         <div class="text-lg">
             {{ $title }}
         </div>
 
         <div class="mt-4 break-words whitespace-wrap">
-            {{ $content }}
+            {!! $content !!}
         </div>
     </div>
 

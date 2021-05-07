@@ -450,6 +450,11 @@ abstract class Resource
         return Move::resourceRoute(get_class($this));
     }
 
+    public function fullRoute($action)
+    {
+
+    }
+
     public function icon()
     {
         return null;
@@ -499,5 +504,10 @@ abstract class Resource
     public function headerSlots($resourceTable): array
     {
         return [];
+    }
+
+    public function redirects(): array
+    {
+        return static::$redirectEndpoints;
     }
 }

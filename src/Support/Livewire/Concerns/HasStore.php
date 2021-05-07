@@ -46,9 +46,16 @@ trait HasStore
         return [];
     }
 
+    public function hasStoreRefreshModel()
+    {
+        if ($this->{$this->property}->id) {
+            $this->{$this->property}->refresh();
+        }
+    }
+
     public function save()
     {
-        $this->{$this->property}->refresh();
+        $this->hasStoreRefreshModel();
 
         $store = $this->store;
 
@@ -209,13 +216,19 @@ trait HasStore
 
     private function endpoints()
     {
-        return array_replace_recursive($this->redirectEndpoints, $this->redirects());
+        return array_replace_recursive(
+            $this->redirectEndpoints,
+            $this->redirects(),
+            method_exists($this->resource(), 'redirects')
+                ? $this->resource()->redirects()
+                : []
+        );
     }
 
     public function endpointRoute($endpoint)
     {
         if ($endpoint instanceof \Closure) {
-            return $this->endpointRoute($endpoint());
+            return $this->endpointRoute($endpoint($this));
         }
 
         if (! is_string($endpoint)) {

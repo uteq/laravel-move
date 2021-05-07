@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\WithPagination;
 use Symfony\Component\HttpFoundation\Response;
+use Uteq\Move\Concerns\HasParent;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\HasSelected;
 use Uteq\Move\Exceptions\ResourcesException;
@@ -21,6 +22,7 @@ class ResourceTable extends TableComponent
     }
     use HasResource;
     use HasSelected;
+    use HasParent;
 //    use WithActionableFields;
 
     protected static $viewType = 'index';
@@ -53,6 +55,7 @@ class ResourceTable extends TableComponent
         $this->resource = $resource;
 
         $this->initHasFilter();
+        $this->initHasParent();
         $this->hydrate();
         $this->initializeWithPagination();
         $this->computeHasSelected();
@@ -74,17 +77,16 @@ class ResourceTable extends TableComponent
     public function resolvePage()
     {
         return $this->resource && $this->keepRequestQuery
-            ? session(static::class .'.' . $this->resource . '.page')
+            ? session(static::class . '.' . $this->resource . '.page')
             : $this->paginationResolvePage();
     }
 
     public function setPage($page)
     {
-
         $this->paginationSetPage($page);
 
         if ($this->resource && $this->keepRequestQuery) {
-            session()->put(static::class .'.' . $this->resource . '.page', $page);
+            session()->put(static::class . '.' . $this->resource . '.page', $page);
         }
     }
 

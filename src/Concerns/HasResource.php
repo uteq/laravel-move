@@ -150,7 +150,9 @@ trait HasResource
             $args
         );
 
-        $this->{$this->property}->refresh();
+        if ($this->{$this->property}->id) {
+            $this->{$this->property}->refresh();
+        }
 
         $this->emit('saved', $this->{$this->property});
     }

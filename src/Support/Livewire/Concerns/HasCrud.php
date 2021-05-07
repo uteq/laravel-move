@@ -16,6 +16,11 @@ trait HasCrud
 
     protected static $crudUsesSoftDelete = null;
 
+    public function initializeHasCrud()
+    {
+        $this->crudBaseRoute ??= move()::getPrefix();
+    }
+
     private function modelById($id)
     {
         $resourceModel = $this->resource()->model();
@@ -51,8 +56,6 @@ trait HasCrud
             return null;
         }
 
-        $this->crudBaseRoute ??= move()::getPrefix();
-
         return route($this->crudBaseRoute . '.show', [
             'resource' => $this->resource,
             'model' => $model,
@@ -64,7 +67,7 @@ trait HasCrud
         $this->redirect($this->editRoute($id));
     }
 
-    public function editRoute($id)
+    public function editRoute($id, $resourceRoute = null)
     {
         $model = $this->modelById($id);
 
@@ -72,10 +75,8 @@ trait HasCrud
             return null;
         }
 
-        $this->crudBaseRoute ??= move()::getPrefix();
-
         return route($this->crudBaseRoute . '.edit', [
-            'resource' => $this->resource,
+            'resource' => $resourceRoute ?: $this->resource,
             'model' => $this->modelById($id),
         ]);
     }
@@ -114,6 +115,13 @@ trait HasCrud
 
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();
         $destroyer($model);
+
+        if ($this->parent() && isset($this->parent()->resource->id)) {
+            return $this->redirectTo = $this->editRoute(
+                $this->parent()->resource->id,
+                $this->parentRoute($this->crudBaseRoute)
+            );
+        }
 
         return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => $this->resource]);
     }
