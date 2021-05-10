@@ -229,13 +229,9 @@ abstract class Resource
 
     public function handler($key, array $args = [])
     {
-        return isset($this->actionHandlers[$key])
-            ? new $this->actionHandlers[$key](...$args)
-            : (
-                isset(static::$defaultActionHandlers[$key])
-                    ? new static::$defaultActionHandlers[$key](...$args)
-                    : null
-            );
+        return app()->make($this->actionHandlers[$key]
+            ?? (static::$defaultActionHandlers[$key] ?? null)
+        , $args);
     }
 
     public function handleAction(string $key, Model $model, array $fields, string $from, array $args = [])

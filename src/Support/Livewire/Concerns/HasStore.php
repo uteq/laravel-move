@@ -106,7 +106,9 @@ trait HasStore
 
         $fields = is_array($data) ? $data : $data->toArray();
 
-        $this->handleResourceAction('update', $fields);
+        $this->handleResourceAction('update', $fields, [
+            'resource' => $this->resource(),
+        ]);
 
         return $this->maybeRedirectFromAction('update');
     }
@@ -123,7 +125,9 @@ trait HasStore
 
         $fields = is_array($data) ? $data : $data->toArray();
 
-        $this->handleResourceAction('create', $fields);
+        $this->handleResourceAction('create', $fields, [
+            'resource' => $this->resource(),
+        ]);
 
         return $this->maybeRedirectFromAction('create');
     }
