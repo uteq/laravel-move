@@ -4,84 +4,25 @@ namespace Uteq\Move\DomainActions;
 
 use Illuminate\Database\Eloquent\Model;
 use Uteq\Move\DataTransferObjects\MediaCollection;
+use Uteq\Move\DomainActions\Concerns\WithAfterStore;
+use Uteq\Move\DomainActions\Concerns\WithFill;
+use Uteq\Move\DomainActions\Concerns\WithMedia;
 use Uteq\Move\Resource;
 
 class StoreResource
 {
+    use WithMedia, WithFill, WithAfterStore;
+
     public function __invoke(Model $model, array $data, Resource $resource)
     {
-        unset($data['store'], $model->store);
-
-        $model = $resource->fill(
-            // All media should be stripped from the model data
-            //  because this action will store the media separate in the after store.
-            ...$this->withoutMedia($model, $data),
-        );
-
+        $model = $this->fill($model, $data, $resource, $this->withoutMedia($model, $data));
         $model->save();
 
-        $this->afterStore($model, $data, $resource);
-
-        return $model;
-    }
-
-    /**
-     * Returns an array with data without media
-     *
-     * @param Model $model
-     * @param array $data
-     * @return array
-     */
-    public function withoutMedia(Model $model, array $data)
-    {
-        return [$this->modelWithoutMedia($model, $data), $this->dataWithoutMedia($data)];
-    }
-
-    /**
-     * Returns the model without the MediaCollection
-     *
-     * @param Model $model
-     * @return Model
-     */
-    public function modelWithoutMedia(Model $model, $data)
-    {
-        collect($data)
-            ->filter(fn ($attribute) => $attribute instanceof MediaCollection)
-            /** @psalm-suppress UnusedClosureParam */
-            ->each(function ($attribute, $key) use (&$model) {
-                unset($model[$key]);
-            });
-
-        return $model;
-    }
-
-    /**
-     * Returns the data without media
-     *
-     * @param array $data
-     * @return array
-     */
-    public function dataWithoutMedia(array $data)
-    {
-        return collect($data)
-            ->filter(fn ($attribute) => ! $attribute instanceof MediaCollection)
-            ->toArray();
-    }
-
-    public function afterStore(Model $model, array $data, Resource $resource)
-    {
-        $afterStoreActions = method_exists($resource, 'afterStore') ? $resource->afterStore() : [];
-
-        collect($afterStoreActions)->each->__invoke($this, $model, $data);
+        [$model, $data] = $this->afterStore($model, $data, $resource);
 
         /** @psalm-suppress InvalidArgument */
         app()->call([$this, 'syncMedia'], ['model' => $model, 'data' => $data]);
-    }
 
-    public function syncMedia(SyncMediaAction $syncer, Model $model, array $data)
-    {
-        collect($data)
-            ->filter(fn ($attribute) => $attribute instanceof MediaCollection)
-            ->each(fn ($mediaCollection, $key) => $syncer($model, $mediaCollection, $key));
+        return $model;
     }
 }

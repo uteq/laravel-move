@@ -3,4 +3,5 @@
     label="{{ $field->name }}"
     :required="$field->isRequired()"
     help-text="{{ $field->getHelpText() }}"
+    :stacked="$field->stacked"
 />

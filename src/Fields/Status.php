@@ -50,6 +50,7 @@ class Status extends Field
     protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute): void
     {
         if ($request->exists($requestAttribute)) {
+
             $value = $request[$requestAttribute];
 
             $falseValue = $this->falseValue;

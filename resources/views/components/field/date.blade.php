@@ -1,4 +1,4 @@
-@props(['disabled' => false, 'model' => $attributes->wire('model')->value(), 'config' => []])
+@props(['disabled' => false, 'placeholder' => 'Kies een datum', 'model' => $attributes->wire('model')->value(), 'config' => []])
 
 <div class="relative w-full flex flatpickr" wire:ignore wire:key="{{ $model }}">
     <input {{ $disabled ? 'disabled' : '' }}
@@ -6,7 +6,7 @@
            wire:model.lazy="{{ $model }}"
            wire:dirty.class="loading"
            autocomplete="{{ $model }}"
-           placeholder="{{ $placeholder ?? 'Kies een datum' }}"
+           placeholder="{{ $placeholder }}"
            x-data
            x-ref="input"
            x-init="window.flatpickr($refs.input, {{ json_encode($config) }})"

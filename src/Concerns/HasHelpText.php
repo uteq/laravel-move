@@ -2,6 +2,10 @@
 
 namespace Uteq\Move\Concerns;
 
+use Closure;
+use Illuminate\View\View;
+use Livewire\CreateBladeView;
+
 trait HasHelpText
 {
     /**
@@ -10,6 +14,8 @@ trait HasHelpText
      * @var string
      */
     public $helpText;
+
+    public $helpTextAttributes = [];
 
     /**
      * The width of the help text tooltip.
@@ -39,9 +45,25 @@ trait HasHelpText
     {
         $helpText = $this->helpText;
 
-        return is_callable($helpText)
-            ? $helpText()
+        $data = array_replace_recursive($this->helpTextAttributes, [
+            'store' => $this->resource['store'],
+            'field' => $this
+        ]);
+
+        $view = is_callable($helpText)
+            ? app()->call($helpText, $data)
             : $helpText;
+
+        if (is_string($view)) {
+            $view = app('view')->make(CreateBladeView::fromString($view));
+        } else {
+            return null;
+        }
+
+        throw_unless($view instanceof View,
+            new \Exception('"view" method on ['.get_class($this).'] must return instance of ['.View::class.']'));
+
+        return $view->with($data);
     }
 
     /**
@@ -64,5 +86,21 @@ trait HasHelpText
     public function getHelpWidth()
     {
         return $this->helpWidth;
+    }
+
+    public function alertWhen($color, $text, Closure $condition, $attributes = [])
+    {
+        $this->helpText = fn ($store) => $condition($store)
+            ? <<<'blade'
+                <x-move-alert color="{{ $color }}">{{ $text }}</x-move-alert>
+              blade
+            : null;
+
+        $this->helpTextAttributes = array_replace_recursive([
+            'text' => $text,
+            'color' => $color,
+        ], $attributes);
+
+        return $this;
     }
 }

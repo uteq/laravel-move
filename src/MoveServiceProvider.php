@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
 use Livewire\Livewire;
+use ReflectionClass;
 use Uteq\Move\Commands\InstallCommand;
 use Uteq\Move\Commands\ResourceCommand;
 use Uteq\Move\Controllers\MoveJavaScriptAssets;

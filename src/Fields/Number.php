@@ -18,13 +18,21 @@ class Number extends Field
     public function init()
     {
         $this->numberFormat($this->decimals, ',', '');
+        $this->initDefaultDisplayFormat();
+        $this->initDefaultStoreFormat();
+    }
 
+    public function initDefaultDisplayFormat()
+    {
         $this->displayFormat = function ($value, $decimals, $decimalSeparator, $thousandSeparator) {
             return $value
                 ? number_format((float)$value, $decimals, $decimalSeparator, $thousandSeparator)
                 : null;
         };
+    }
 
+    public function initDefaultStoreFormat()
+    {
         $this->storeFormat = function ($value, $decimals) {
             return $value
                 ? number_format((float)str_replace(',', '.', $value), $decimals, '.', '')
@@ -58,14 +66,14 @@ class Number extends Field
         return $this;
     }
 
-    public function displayFormat(Closure $displayFormat): self
+    public function displayFormat(\Closure $displayFormat)
     {
         $this->displayFormat = $displayFormat;
 
         return $this;
     }
 
-    public function storeFormat($storeFormat)
+    public function storeFormat(\Closure $storeFormat)
     {
         $this->storeFormat = $storeFormat;
 

@@ -7,12 +7,12 @@
 
             {!! $head ?? null !!}
 
-            <div class="lg:flex gap-4">
+            <div class="{{ $sidebarEnabled && (string)$sidebar !== '' ? 'lg:flex gap-4' : null }}">
                 <div class="lg:flex-grow">
                     {{ $form }}
                 </div>
 
-                @if ($sidebarEnabled)
+                @if ($sidebarEnabled && $sidebar !== '')
                     <div class="lg:flex-none lg:w-1/3">
                         {!! $sidebar ?? null !!}
 
@@ -27,7 +27,7 @@
 
             @if (! $sidebarEnabled)
                 @if (isset($actions))
-                    <div class="shadow flex items-center px-4 py-3 bg-white sm:px-6 rounded border border-gray-100 mt-5">
+                    <div class="shadow flex items-center justify-between px-4 py-3 bg-white sm:px-6 rounded border border-gray-100 mt-5">
                         {{ $actions }}
                     </div>
                 @endif

@@ -44,6 +44,7 @@
                 @else
                     @foreach ($this->panels() as $key => $panel)
                         @if (! $panel->isShownOn($model->id ? 'update' : 'create')) @continue @endif
+                        @if (! $panel->fields && ! $panel->panels) @continue @endif
 
                         <div wire:key="move-main-panel-{{ $key }}">
                             {{ $panel->render($model) }}
@@ -58,6 +59,19 @@
                     </x-move-card>
                 </div>
             </div>
+
+            @if ($this->hideActions)
+
+                <x-move-action-message class="bg-green-600 text-white static top-0 right-0 flex items-center px-2 py-1" on="saved">
+                    <div class="flex">
+                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        @lang('Saved.')
+                    </div>
+                </x-move-action-message>
+
+            @endif
         </x-slot>
 
         @if ($this->allStepsAvailable())
@@ -83,7 +97,7 @@
                 </x-move-action-message>
 
 
-                <x-move-a href="{{ $this->cancelRoute() }}" class="justify-self-left flex-grow pl-0">
+                <x-move-a href="{{ $this->cancelRoute() }}" class="justify-self-left pl-0 ml-0">
                     @if ($this->buttonCancelText ?? null)
                         {{ $this->buttonCancelText }}
                     @else
@@ -104,17 +118,18 @@
             @endif
         @endif
 
+
     </x-move-form-section>
 
     @push('modals')
 
-        @if (session('status'))
+        @if (session('status') || $this->message)
             <div class="absolute top-0 right-0 bg-green-500 text-white py-2 text-center text-xs px-4"
                  x-data="{ show: true }"
                  x-show="show"
                  x-init="setTimeout(() => show = false, 3000)"
             >
-                {{ session('status') }}
+                {{ session('status') ?? $this->message }}
             </div>
         @endif
 

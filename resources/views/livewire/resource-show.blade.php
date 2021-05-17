@@ -53,13 +53,13 @@
 
     <div class="{{ $class }}">
     @if (! $hideCard)
-    <x-move-card class="mt-4">
-        @foreach ($fields as $field)
-            <x-move-row name="{{ $field->name() }}">
-                {{ $field->render('show') }}
-            </x-move-row>
+        @foreach ($this->panels() as $key => $panel)
+            @if (! $panel->fields) @continue @endif
+
+            <div wire:key="move-main-panel-{{ $key }}">
+                {{ $panel->render($model) }}
+            </div>
         @endforeach
-    </x-move-card>
     @else
         @foreach ($fields as $field)
             <x-move-row name="{{ $field->name() }}">

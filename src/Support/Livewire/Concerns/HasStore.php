@@ -67,7 +67,13 @@ trait HasStore
             'fields' => $this->resolveAndMapFields($this->model, $store),
         ];
 
-        session()->flash('status', __('Saved :resource', ['resource' => $this->label()]));
+        if ($this->parent()) {
+            $data['fields']['_parent_id'] = $this->parent()->resource->id;
+        }
+
+        session()->flash('status', __('Saved :resource', [
+            'resource' => $this->label(),
+        ]));
 
         /** @psalm-suppress InvalidArgument */
         $action = $this->{$this->property}->id
@@ -108,6 +114,7 @@ trait HasStore
 
         $this->handleResourceAction('update', $fields, [
             'resource' => $this->resource(),
+            'parent' => $this->parentModel,
         ]);
 
         return $this->maybeRedirectFromAction('update');
@@ -127,6 +134,7 @@ trait HasStore
 
         $this->handleResourceAction('create', $fields, [
             'resource' => $this->resource(),
+            'parent' => $this->parentModel,
         ]);
 
         return $this->maybeRedirectFromAction('create');
@@ -162,7 +170,7 @@ trait HasStore
                     return [$field => $value];
                 }
 
-                return [str_replace('.', '---', $field) => $value];
+                return [$field => $value];
             })
             ->toArray();
 

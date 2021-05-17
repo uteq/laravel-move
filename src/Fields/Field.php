@@ -9,6 +9,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
+use Livewire\CreateBladeView;
 use Uteq\Move\Actions\UnsetField;
 use Uteq\Move\Concerns\HasDependencies;
 use Uteq\Move\Concerns\HasHelpText;
@@ -103,6 +104,8 @@ abstract class Field extends FieldElement
 
     public bool $isPlaceholder = false;
 
+    public ?Closure $afterUpdatedStore = null;
+
     public array $displayTypes = [
         'edit' => 'form',
         'update' => 'form',
@@ -115,6 +118,9 @@ abstract class Field extends FieldElement
     public string $folder = 'move::';
 
     public string $unique;
+
+    public string $storePrefix;
+    public string $defaultStorePrefix = 'store';
 
     protected $index = null;
     protected $show = null;
@@ -129,13 +135,27 @@ abstract class Field extends FieldElement
         $this->name = $name;
         $this->attribute = $attribute ?? Str::snake(Str::singular($name));
         $this->valueCallback = $valueCallback;
-        $this->store = $this->storePrefix() . '.' . $attribute;
+        $this->generateStoreAttribute();
         $this->unique = Str::random(20);
 
         if (method_exists($this, 'init')) {
             /** @psalm-suppress InvalidArgument */
             app()->call([$this, 'init']);
         }
+    }
+
+    public function generateStoreAttribute()
+    {
+        $this->store = $this->storePrefix() . '.' . $this->attribute;
+    }
+
+    public function default($value)
+    {
+        $this->valueCallback = $value instanceof Closure
+            ? $value
+            : fn ($currentValue, $model, $attribute) => $value;
+
+        return $this;
     }
 
     public function isPlaceholder(bool $value = true): self
@@ -145,9 +165,16 @@ abstract class Field extends FieldElement
         return $this;
     }
 
+    public function setStorePrefix(string $storePrefix)
+    {
+        $this->storePrefix = $storePrefix;
+
+        return $this;
+    }
+
     public function storePrefix(): string
     {
-        return 'store';
+        return $this->storePrefix ?? $this->defaultStorePrefix;
     }
 
     public function formAttribute($formAttribute): self
@@ -191,16 +218,16 @@ abstract class Field extends FieldElement
     ): self {
         $this->resource = $resource;
 
+        if (! $this->value) {
+            $defaultValue = $this->applyValueCallback($resource);
+        }
+
+        $resourceValue = $this->getResourceAttributeValue($resource, $this->attribute);
+
+        $value = $this->value = $resourceValue ?: $defaultValue ?? null;
+
         $this->resourceDataCallback
-            ? tap(
-                $this->value ?? $this->getResourceAttributeValue($resource, $this->attribute),
-                fn ($value) => $this->value = call_user_func(
-                    $this->resourceDataCallback,
-                    $value,
-                    $resource,
-                    $this->attribute,
-                )
-            )
+            ? ($this->resourceDataCallback)($value, $resource, $this->attribute)
             : $this->fillFromResource($resource, $this->attribute);
 
         return $this;
@@ -219,14 +246,25 @@ abstract class Field extends FieldElement
 
         $value = $this->getResourceAttributeValue($resource, $this->attribute);
 
+        $this->applyValueCallback($resource, $value);
+    }
+
+    protected function applyValueCallback($resource, $value = null)
+    {
         $this->value = $this->valueCallback
-            ? tap($value, fn ($value) => call_user_func(
+            ? ($this->valueCallback)($value, $resource, $this->attribute)
+            : $value;
+
+        if (! $this->value) {
+            $this->value = $this->valueCallback ? tap($value, fn ($value) => call_user_func(
                 $this->valueCallback,
                 $value,
                 $resource,
-                $this->attribute
-            ))
-            : $value;
+                $this->attribute,
+            )) : $value;
+        }
+
+        return $this->value;
     }
 
     /**
@@ -236,7 +274,11 @@ abstract class Field extends FieldElement
      */
     protected function getResourceAttributeValue($resource, $attribute)
     {
-        return data_get($resource, str_replace('->', '.', $attribute));
+        if ($value = data_get($resource, str_replace('->', '.', $attribute))) {
+            return $value;
+        }
+
+        return Arr::get($resource, str_replace('->', '.', $attribute));
     }
 
     /**
@@ -369,6 +411,7 @@ abstract class Field extends FieldElement
 
         $data = array_replace_recursive([
             'field' => $this,
+            'store' => $this->resource['store'] ?? null,
         ], $data);
 
         if (isset($this->{$displayType}) && null !== $this->{$displayType}) {
@@ -378,7 +421,20 @@ abstract class Field extends FieldElement
                 return $handler->with($data);
             }
 
-            return is_callable($handler) ? $handler($this, $data) : $handler;
+            $view = is_callable($handler) ? $handler($this, $data) : $handler;
+
+            if (is_string($view)) {
+                $view = app('view')->make(CreateBladeView::fromString($view));
+            }
+
+            if (! $view) {
+                return $handler($this, $data);
+            }
+
+            throw_unless($view instanceof View,
+                new \Exception('"view" method on [' . get_class($this) . '] must return instance of [' . View::class . ']'));
+
+            return $view->with($data);
         }
 
         if (! $this->isVisible($this->resourceStore(), $this->type)) {
@@ -592,5 +648,21 @@ abstract class Field extends FieldElement
         $this->disabled = ! $enabled;
 
         return $this;
+    }
+
+    public function afterUpdatedStore(Closure $closure)
+    {
+        $this->afterUpdatedStore = $closure;
+
+        return $this;
+    }
+
+    public function applyAfterUpdatedStore($store, $key, $value, $form)
+    {
+        if (! is_callable($this->afterUpdatedStore)) {
+            return $store;
+        }
+
+        return ($this->afterUpdatedStore)($store, $key, $value, $form, $this);
     }
 }

@@ -30,7 +30,7 @@
 
     @if (($panel->next ?? null) && (! $this->model->id || $panel->showNextOnEdit === true))
         <div class="flex justify-between mt-8">
-            <a href="{{ $panel->cancelRoute ?: $this->cancelRoute() }}" class="justify-self-left flex-grow pl-0 text-blue-600 hover:underline">
+            <a href="{{ $panel->cancelRoute ?: $this->cancelRoute() }}" class="justify-self-left pl-0 text-blue-600 hover:underline">
                 {{ __('Cancel') }}
             </a>
 
@@ -38,6 +38,17 @@
                  wire:key="move-step-next-button-{{ $panel->attribute }}"
                  wire:click="validateStep('{{ $panel->attribute }}')"
             >{{ $panel->nextText ?: __('Next step') }}</div>
+        </div>
+    @endif
+
+    @if ($panel->doneRoute)
+        <div class="flex justify-between items-center mt-8">
+            <a href="{{ $panel->cancelRoute ?: $this->cancelRoute() }}" class="justify-self-left pl-0 text-blue-600 hover:underline">
+                {{ __('Cancel') }}
+            </a>
+
+            <a href="{{ $panel->doneRoute }}" class="items-center px-4 py-2 bg-primary-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-700 active:bg-primary-900 focus:outline-none focus:border-primary-900 focus:shadow-outline-primary disabled:opacity-25 transition ease-in-out duration-150 cursor-pointer"
+            >{{ $panel->doneText ?: __('Done') }}</a>
         </div>
     @endif
 

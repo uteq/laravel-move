@@ -17,6 +17,6 @@
 
     {!! $attributes->merge([
         'type' => 'text',
-        'class' => 'flex-1 form-input block w-full min-w-0 rounded-none rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5 rounded ' . ( ! $disabled ?: 'bg-gray-300' ) . ' ' . ( $errors->has(\Illuminate\Support\Str::after($modelId, 'state.')) ? 'border-red-500' : 'border-gray-300' )
+        'class' => 'flex-1 form-input block w-full min-w-0 rounded-none rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5 rounded ' . ( ! $disabled ?: 'bg-gray-300' ) . ' ' . ( $errors->has(\Illuminate\Support\Str::after($modelId, 'store.')) ? 'border-red-500' : 'border-gray-300' )
     ]) !!}
 />

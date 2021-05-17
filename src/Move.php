@@ -113,9 +113,14 @@ class Move
 
     public function resourceRoute(string $alias)
     {
-        $resourceName = $this->fullResourceName($this->getByClass($alias));
+        $resourceName = $this->resourceKey($alias);
 
         return str_replace('.', '/', $resourceName);
+    }
+
+    public function resourceKey(string $alias)
+    {
+        return $this->fullResourceName($this->getByClass($alias));
     }
 
     public function resourceNamespace(string $namespace, string $prefix = '', $movePrefix = null)

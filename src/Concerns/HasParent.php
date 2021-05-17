@@ -2,6 +2,8 @@
 
 namespace Uteq\Move\Concerns;
 
+use Uteq\Move\Resource;
+
 trait HasParent
 {
     public $parentResourceClass;
@@ -17,6 +19,19 @@ trait HasParent
                 'model' => get_class($this->parentModel),
             ]);
         }
+    }
+
+    public function setParent(Resource $parent)
+    {
+        session()->put(static::class . '.' . $this->resource . '.parent', [
+            'resource' => get_class($parent),
+            'id' => $parent->resource->id,
+            'model' => get_class($parent->resource),
+        ]);
+
+        $this->parent = $parent;
+
+        return $this;
     }
 
     public function parent()

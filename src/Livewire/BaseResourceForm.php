@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
+use Uteq\Move\Concerns\HasParent;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\WithActionableFields;
 use Uteq\Move\Concerns\WithSteps;
@@ -17,13 +18,14 @@ use Uteq\Move\Support\Livewire\FormComponent;
 
 abstract class BaseResourceForm extends FormComponent
 {
-    use HasMountActions;
-    use HasResource;
-    use HasStore;
-    use HasFiles;
-    use WithFileUploads;
-    use WithActionableFields;
-    use WithSteps;
+    use HasMountActions,
+        HasResource,
+        HasStore,
+        HasFiles,
+        HasParent,
+        WithFileUploads,
+        WithActionableFields,
+        WithSteps;
 
     protected static $viewType = 'edit';
 
@@ -41,6 +43,8 @@ abstract class BaseResourceForm extends FormComponent
 
     public ?string $buttonSaveText = null;
     public ?string $buttonCancelText = null;
+
+    public $message;
 
     protected $property = 'model';
     protected $label;
@@ -146,11 +150,33 @@ abstract class BaseResourceForm extends FormComponent
         );
     }
 
-    public function updatedStore($key, $value)
+    public function updatedStore($defaultValue, $defaultKey)
     {
-        $this->model->store = $this->store;
+        $store = $this->storeAsArray();
 
-        $this->emit(static::class . '.updatedStore', $this->store);
+        foreach ($this->fields as $field) {
+            $store = $field->applyAfterUpdatedStore($store, $defaultValue, $defaultKey, $this);
+        }
+
+        $this->model->store = $store;
+
+        $this->emit(static::class . '.updatedStore', $store);
+
+        $this->store = $store;
+    }
+
+    protected function storeAsArray()
+    {
+        $store = [];
+        foreach ($this->store as $key => $value) {
+            if (str_contains($key, '.')) {
+                Arr::set($store, $key, $value);
+            } else {
+                $store = array_replace_recursive($store, [$key => $value]);
+            }
+        }
+
+        return $store;
     }
 
     public function getPanelsProperty(): Collection

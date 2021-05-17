@@ -11,6 +11,6 @@ class SyncMediaAction
 
     public function __invoke(Model $model, MediaCollection $paths, $collection, $disk = 'public')
     {
-        $this->syncMedia($model, $paths, $collection, $disk);
+        return $this->syncMedia($model, $paths, $collection, $disk);
     }
 }

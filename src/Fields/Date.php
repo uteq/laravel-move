@@ -32,11 +32,36 @@ class Date extends Field
         return $this;
     }
 
+    public function enableTime($enableTime = true)
+    {
+        $this->dateConfig['enableTime'] = $enableTime;
+
+        return $this;
+    }
+
+    public function noCalendar($noCalendar = true)
+    {
+        $this->dateConfig['noCalendar'] = $noCalendar;
+
+        return $this;
+    }
+
     public function resolveUsing($valueCallback)
     {
         $this->valueCallback = $valueCallback;
 
         return $this;
+    }
+
+    public function asTime()
+    {
+        return $this->config([
+                'dateFormat' => 'H:i',
+                'altFormat' => 'H:i',
+            ])
+            ->placeholder(__('Choose a time'))
+            ->noCalendar()
+            ->enableTime();
     }
 
     public function config(array $config)

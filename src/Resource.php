@@ -66,9 +66,11 @@ abstract class Resource
         'delete' => DeleteResource::class,
     ];
 
+    public static string $group = 'Resources';
+
     public Model $resource;
 
-    public static string $group = 'Resources';
+    public array $fields = [];
 
     public function __construct(Model $resource)
     {
@@ -430,13 +432,13 @@ abstract class Resource
         return $panels;
     }
 
-    public function fill(Model $model, array $data)
+    public function fill(Model $model, array $data, $store)
     {
         $model->fill($data);
 
         $actions = method_exists($this, 'beforeStore') ? $this->beforeStore() : [];
 
-        collect($actions)->each->__invoke($this, $model, $data);
+        collect($actions)->each->__invoke($this, $model, $data, $store);
 
         return $model;
     }
@@ -505,5 +507,12 @@ abstract class Resource
     public function redirects(): array
     {
         return static::$redirectEndpoints;
+    }
+
+    public function setFields(array $fields)
+    {
+        $this->fields = $fields;
+
+        return $this;
     }
 }

@@ -23,6 +23,9 @@ class Step extends Panel
 
     public ?string $cancelRoute = null;
 
+    public ?string $doneRoute = null;
+    public ?string $doneText = null;
+
     public function __construct(string $name, string $attribute, array $fields)
     {
         $this->attribute = $attribute;
@@ -82,6 +85,14 @@ class Step extends Panel
     public function hideCancel($hideCancel = true)
     {
         $this->hideCancel = $hideCancel;
+
+        return $this;
+    }
+
+    public function done($route, $text)
+    {
+        $this->doneRoute = $route;
+        $this->doneText = $text;
 
         return $this;
     }

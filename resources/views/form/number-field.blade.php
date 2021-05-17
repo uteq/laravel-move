@@ -3,4 +3,5 @@
             :required="$field->isRequired()"
             help-text="{{ $field->getHelpText() }}"
             type="number"
+            step="{{ $field->step ?? '1' }}"
 />

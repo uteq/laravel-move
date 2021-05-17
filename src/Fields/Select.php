@@ -11,6 +11,8 @@ class Select extends Field
 {
     public string $component = 'select-field';
 
+    public $version = 1;
+
     public $options;
 
     public $resourceName = null;
@@ -27,9 +29,18 @@ class Select extends Field
 
     public ?string $ajaxUrl = null;
 
+    public bool $addResourceEnabled = false;
+
+    public string $createResource;
+
+    public string $createForm;
+
     protected static $resourceCache = [];
 
-    public $version = 1;
+    public function init()
+    {
+        $this->show(fn ($field) => (string) ($this->getOptions()[$field->value] ?? null));
+    }
 
     public function settings(array $settings)
     {
@@ -276,5 +287,14 @@ class Select extends Field
         return is_callable($version)
             ? $version($this)
             : $version;
+    }
+
+    public function createResource(string $resource, string $form)
+    {
+        $this->createResource = $resource;
+        $this->createForm = $form;
+        $this->addResourceEnabled = true;
+
+        return $this;
     }
 }

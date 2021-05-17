@@ -19,6 +19,7 @@ trait HasResource
     public $resource;
     public $model = null;
     public $modelId = null;
+    public ?array $resourceFields = [];
 
     public function initializeHasResource()
     {
@@ -61,7 +62,17 @@ trait HasResource
 
     public function getResolvedResourceProperty()
     {
-        return Move::resolveResource($this->resource);
+        $resource = Move::resolveResource($this->resource);
+
+        if ($this->resourceFields) {
+            $resource->setFields($this->resourceFields);
+        }
+
+        if (isset($this->meta)) {
+            $resource->withMeta($this->meta ?? []);
+        }
+
+        return $resource;
     }
 
     public function getResourceProperty()
@@ -92,10 +103,22 @@ trait HasResource
 
     public function mapFields(array $resolvedFields, $store)
     {
-        return collect($resolvedFields)
-            ->filter(fn ($field) => isset($store[$field->attribute]))
-            ->mapWithKeys(fn ($field) => [$field->attribute => $store[$field->attribute]])
+        // Filter all the fields with a dot (.)
+        // This can get in the way of actual array data
+        $store = collect($store)
+            ->filter(fn ($field, $key) => ! str_contains($key, '.'))
             ->toArray();
+
+        $fields = collect($resolvedFields)
+            ->filter(fn ($field) => Arr::has($store, $field->attribute))
+            ->mapWithKeys(fn ($field) => [$field->attribute => Arr::get($store, $field->attribute)]);
+
+        $undotFields = [];
+        foreach ($fields as $key => $value) {
+            Arr::set($undotFields, $key, $value);
+        }
+
+        return $undotFields;
     }
 
     public function resolveFieldRules($model)
