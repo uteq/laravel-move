@@ -151,9 +151,7 @@ trait HasResource
             ->filter(fn ($field) => $field->attribute === $key)
             ->toArray();
 
-        $store = Arr::dot($this->store);
-
-        return $this->mapFields($this->resolveFields(null, null, $fields), $store);
+        return $this->mapFields($this->resolveFields(null, null, $fields), $this->store);
     }
 
     public function getFieldRule($key): array

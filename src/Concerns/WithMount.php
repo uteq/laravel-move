@@ -14,12 +14,41 @@ trait WithMount
 
         $this->handleBeforeMount();
 
-        $this->baseRoute = move()::getPrefix();
+        $this->mountRoutes();
 
+        $this->mountStore();
+
+        $this->mountSteps();
+
+        $this->mountModel();
+
+        $this->handleAfterMount();
+
+        if (method_exists($this, 'init')) {
+            app()->call([$this, 'init']);
+        }
+    }
+
+    private function mountRoutes(): void
+    {
+        $this->baseRoute = move()::getPrefix();
+    }
+
+    private function mountStore(): void
+    {
         $this->store = $this->fields()
-            ->mapWithKeys(fn ($field) => [$field->attribute => $field->value])
+            ->mapWithKeys(fn($field) => [$field->attribute => $field->value])
             ->toArray();
 
+        $this->mountTestStore();
+
+        $this->meta = $this->resource()->meta();
+
+        $this->model->store = $this->store;
+    }
+
+    private function mountTestStore(): void
+    {
         if (Move::usesTestStore()) {
             $testStore = $this->resource()->testStore() ?? [];
 
@@ -32,12 +61,11 @@ trait WithMount
                 return $testStore[$field] ?? null;
             })->toArray();
         }
+    }
 
-        $this->meta = $this->resource()->meta();
-
-        $this->model->store = $this->store;
-
-        if ((! $this->activeStep || ! $this->model->id) && $step = $this->steps()->first()) {
+    private function mountSteps(): void
+    {
+        if ((!$this->activeStep || !$this->model->id) && $step = $this->steps()->first()) {
             $this->activeStep = $step->attribute;
             $this->availableSteps[] = $this->activeStep;
         }
@@ -47,15 +75,12 @@ trait WithMount
                 ->map(fn ($step) => $step->attribute)
                 ->toArray();
         }
+    }
 
+    private function mountModel(): void
+    {
         $this->model->id
             ? $this->resource()->authorizeTo('update', $this->model)
             : $this->resource()->authorizeTo('create');
-
-        $this->handleAfterMount();
-
-        if (method_exists($this, 'init')) {
-            app()->call([$this, 'init']);
-        }
     }
 }

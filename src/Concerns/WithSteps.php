@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Concerns;
 
+use Illuminate\Support\Arr;
 use Uteq\Move\Fields\Step;
 
 trait WithSteps
@@ -79,7 +80,12 @@ trait WithSteps
             ->filter()
             ->toArray();
 
-        $data = $this->customValidate($this->mapFields($resolvedFields, $this->store), $rules);
+        $store = [];
+        foreach ($this->store as $key => $value) {
+            Arr::set($store, $key, $value);
+        }
+
+        $this->customValidate($this->mapFields($resolvedFields, $store), $rules);
 
         if (! $this->model->id) {
             $this->completedSteps[] = optional($step)->name;

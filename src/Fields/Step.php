@@ -25,6 +25,7 @@ class Step extends Panel
 
     public ?string $doneRoute = null;
     public ?string $doneText = null;
+    public ?\Closure $doneAction = null;
 
     public function __construct(string $name, string $attribute, array $fields)
     {
@@ -89,11 +90,24 @@ class Step extends Panel
         return $this;
     }
 
-    public function done($route, $text)
+    public function done($route, $text, \Closure $action = null)
     {
         $this->doneRoute = $route;
         $this->doneText = $text;
+        $this->doneAction = $action;
 
         return $this;
+    }
+
+    public function handleDone($component)
+    {
+        if ($this->doneAction) {
+            return app()->call([$this->doneAction, '__invoke'], [
+              'field' => $this,
+              'component' => $component,
+            ]);
+        }
+
+        return redirect($this->doneRoute);
     }
 }
