@@ -229,7 +229,7 @@ abstract class BaseResourceForm extends FormComponent
     public function render()
     {
         /** @psalm-suppress UndefinedInterfaceMethod */
-        return view('move::livewire.resource-form')
+        return view($this->resource()::$formView ?? 'move::livewire.resource-form')
             ->layout($this->resource()::$layout ?? Move::layout(), [
                 'header' => $this->resource()->singularLabel() .' details',
             ]);
