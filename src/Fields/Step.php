@@ -22,6 +22,7 @@ class Step extends Panel
     public bool $hideCancel = false;
 
     public ?string $cancelRoute = null;
+    public ?string $cancelText = null;
 
     public ?string $doneRoute = null;
     public ?string $doneText = null;
@@ -79,6 +80,13 @@ class Step extends Panel
     public function cancelRoute($cancelRoute)
     {
         $this->cancelRoute = $cancelRoute;
+
+        return $this;
+    }
+
+    public function cancelText($cancelText)
+    {
+        $this->cancelText = $cancelText;
 
         return $this;
     }
