@@ -32,7 +32,9 @@ trait HasFilter
 
     public function requestQuery()
     {
-        return array_replace(session($this->requestQueryKey()), request()->query());
+        $query = request()->query();
+
+        return array_replace(session($this->requestQueryKey(), $query), $query);
     }
 
     public function sort($field)
