@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Concerns;
 
+use Illuminate\Support\Arr;
 use Uteq\Move\Facades\Move;
 
 trait WithMount
@@ -44,7 +45,12 @@ trait WithMount
 
         $this->meta = $this->resource()->meta();
 
-        $this->model->store = $this->store;
+        $undotedStore = [];
+        foreach ($this->store as $key => $value) {
+            Arr::set($undotedStore, $key, $value);
+        }
+
+        $this->model->store = $undotedStore;
     }
 
     private function mountTestStore(): void

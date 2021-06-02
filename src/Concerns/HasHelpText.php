@@ -3,6 +3,7 @@
 namespace Uteq\Move\Concerns;
 
 use Closure;
+use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Livewire\CreateBladeView;
 
@@ -45,8 +46,13 @@ trait HasHelpText
     {
         $helpText = $this->helpText;
 
+        $undotedStore = [];
+        foreach ($this->resource['store'] as $key => $value) {
+            Arr::set($undotedStore, $key, $value);
+        }
+
         $data = array_replace_recursive($this->helpTextAttributes, [
-            'store' => $this->resource['store'],
+            'store' => $undotedStore,
             'field' => $this
         ]);
 
@@ -88,9 +94,9 @@ trait HasHelpText
         return $this->helpWidth;
     }
 
-    public function alertWhen($color, $text, Closure $condition, $attributes = [])
+    public function alertWhen(Closure $condition, $color, $text, $attributes = [])
     {
-        $this->helpText = fn ($store) => $condition($store)
+        $this->helpText = fn ($store) => $condition($store, $this)
             ? <<<'blade'
                 <x-move-alert color="{{ $color }}">{{ $text }}</x-move-alert>
               blade

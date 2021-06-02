@@ -30,6 +30,8 @@ class ResourceShow extends Component
     public $hideCard = false;
     public $class = null;
 
+    public $store;
+
     protected $crudBaseRoute = 'move';
 
     public function mount($resource)
