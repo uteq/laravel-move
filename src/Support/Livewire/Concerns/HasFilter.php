@@ -32,7 +32,7 @@ trait HasFilter
 
     public function requestQuery()
     {
-        return array_replace(session($this->requestQueryKey(), request()->query()));
+        return array_replace(session($this->requestQueryKey()), request()->query());
     }
 
     public function sort($field)
@@ -90,7 +90,8 @@ trait HasFilter
 
         $this->requestQuery = request()->query();
 
-        $this->keepRequestQuery ? session()->put($this->requestQueryKey(), $this->requestQuery) : null;
+        $this->maybeKeepRequestQuery();
+
         $this->setPage(1);
     }
 
@@ -98,11 +99,16 @@ trait HasFilter
     {
         $this->requestQuery = request()->query();
 
-        $this->keepRequestQuery ? session()->put($this->requestQueryKey(), $this->requestQuery) : null;
+        $this->maybeKeepRequestQuery();
     }
 
     public function activeFilters()
     {
         return collect($this->filter)->filter(fn ($value) => '' !== $value)->count();
+    }
+
+    public function maybeKeepRequestQuery()
+    {
+        $this->keepRequestQuery ? session()->put($this->requestQueryKey(), $this->requestQuery) : null;
     }
 }
