@@ -103,12 +103,6 @@ trait HasResource
 
     public function mapFields(array $resolvedFields, $store)
     {
-        // Filter all the fields with a dot (.)
-        // This can get in the way of actual array data
-        $store = collect($store)
-            ->filter(fn ($field, $key) => ! str_contains($key, '.'))
-            ->toArray();
-
         $fields = collect($resolvedFields)
             ->filter(fn ($field) => Arr::has($store, $field->attribute))
             ->mapWithKeys(fn ($field) => [$field->attribute => Arr::get($store, $field->attribute)]);

@@ -80,8 +80,6 @@ trait HasStore
             ? app()->call([$this, $this->actionsMethods['update']], $data)
             : app()->call([$this, $this->actionsMethods['create']], $data);
 
-        $this->emit('saved');
-
         if (method_exists($this, 'afterStore')) {
             $result = $this->afterStore($action);
 
@@ -167,6 +165,8 @@ trait HasStore
             ->mapWithKeys(function ($value, $field) use ($fields) {
                 // If the field exists as array, no need to change the rule
                 if (isset($fields[Str::before(Str::after($field, 'store.'), '.')])) {
+                    $value = count($value) > 1 ? $value : $value[0];
+
                     return [$field => $value];
                 }
 
