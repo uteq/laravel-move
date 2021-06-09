@@ -165,7 +165,7 @@ trait HasStore
             ->mapWithKeys(function ($value, $field) use ($fields) {
                 // If the field exists as array, no need to change the rule
                 if (isset($fields[Str::before(Str::after($field, 'store.'), '.')])) {
-                    $value = count($value) > 1 ? $value : $value[0];
+                    $value = count($value) > 1 ? $value : ($value[0] ?? []);
 
                     return [$field => $value];
                 }

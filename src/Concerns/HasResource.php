@@ -142,7 +142,7 @@ trait HasResource
     public function resolveAndMapFieldToFields($key): array
     {
         $fields = $this->fields()
-            ->filter(fn ($field) => $field->attribute === $key)
+            ->filter(fn ($field) => str_starts_with($field->attribute, $key))
             ->toArray();
 
         return $this->mapFields($this->resolveFields(null, null, $fields), $this->store);

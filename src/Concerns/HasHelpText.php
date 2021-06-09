@@ -47,7 +47,7 @@ trait HasHelpText
         $helpText = $this->helpText;
 
         $undotedStore = [];
-        foreach ($this->resource['store'] as $key => $value) {
+        foreach ($this->resource['store'] ?? [] as $key => $value) {
             Arr::set($undotedStore, $key, $value);
         }
 
