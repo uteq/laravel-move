@@ -52,20 +52,6 @@
     @endif
 
     <div class="{{ $class }}">
-    @if (! $hideCard)
-    <x-move-card class="mt-4">
-        @foreach ($fields as $field)
-            <x-move-row name="{{ $field->name() }}">
-                {{ $field->render('show') }}
-            </x-move-row>
-        @endforeach
-    </x-move-card>
-    @else
-        @foreach ($fields as $field)
-            <x-move-row name="{{ $field->name() }}">
-                {{ $field->render('show') }}
-            </x-move-row>
-        @endforeach
-    @endif
+        @include('move::show.panels', ['panels' => $this->panels(), 'hideCard' => $hideCard])
     </div>
 </div>

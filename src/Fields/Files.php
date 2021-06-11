@@ -2,6 +2,8 @@
 
 namespace Uteq\Move\Fields;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\RequiredIf;
 
 class Files extends Field
@@ -59,7 +61,11 @@ class Files extends Field
     {
         $this->resource->refresh();
 
-        return $this->resource->getMedia($this->attribute);
+        $model = str_contains($this->attribute, '.')
+            ? data_get($this->resource, Str::beforeLast($this->attribute, '.'))
+            : $this->resource;
+
+        return $model?->getMedia(Str::afterLast($this->attribute, '.'));
     }
 
     public function showRotate($showRotate = true)

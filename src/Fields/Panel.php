@@ -28,6 +28,7 @@ class Panel implements PanelInterface, ElementInterface
     public array $alert = [];
     public bool $isPlaceholder = false;
     public bool $sortable = false;
+    public bool $withoutCard = false;
 
     // Related models
     public $resouceForm;

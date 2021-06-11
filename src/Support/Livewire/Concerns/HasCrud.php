@@ -3,6 +3,7 @@
 namespace Uteq\Move\Support\Livewire\Concerns;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Uteq\Move\Resource;
 
 trait HasCrud
 {
@@ -57,7 +58,7 @@ trait HasCrud
         }
 
         return route($this->crudBaseRoute . '.show', [
-            'resource' => $this->resource,
+            'resource' => str_replace('.', '/', $this->resource),
             'model' => $model,
         ]);
     }
@@ -76,7 +77,7 @@ trait HasCrud
         }
 
         return route($this->crudBaseRoute . '.edit', [
-            'resource' => $resourceRoute ?: $this->resource,
+            'resource' => str_replace('.', '/', $resourceRoute ?: $this->resource),
             'model' => $this->modelById($id),
         ]);
     }
@@ -90,9 +91,16 @@ trait HasCrud
     {
         $this->crudBaseRoute ??= move()::getPrefix();
 
-        return route($this->crudBaseRoute . '.create', [
-            'resource' => $this->resource,
-        ]);
+        $parent = $this->parent();
+        $attributes = [];
+        if ($parent && $parent instanceof Resource) {
+            $attributes['parent_model'] = $parent::$model;
+            $attributes['parent_id'] = isset($parent->resource) ? $parent->resource->id : null;
+        }
+
+        return route($this->crudBaseRoute . '.create', array_replace_recursive([
+            'resource' => str_replace('.', '/', $this->resource),
+        ], $attributes));
     }
 
     public function confirmDestroy($id)
@@ -111,7 +119,7 @@ trait HasCrud
 
     public function destroy($id)
     {
-        $model = $this->resolveModel($id);
+        $model = str_replace('.', '/', $this->resolveModel($id));
 
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();
         $destroyer($model);
@@ -123,6 +131,6 @@ trait HasCrud
             );
         }
 
-        return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => $this->resource]);
+        return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => str_replace('.', '/', $this->resource)]);
     }
 }
