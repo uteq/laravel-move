@@ -14,7 +14,7 @@
         <div class="w-full md:w-1/2 @if ($i % 1 === 0) pr-6 @endif " wire:key="receipts.{{ $loop->index }}">
             <div class="border p-3 rounded my-3">
 
-                @if ($file->guessExtension() === 'pdf')
+                @if ($file->getExtension() === 'pdf' || $file->guessExtension() === 'pdf')
 
                     <div class="card-body">
 

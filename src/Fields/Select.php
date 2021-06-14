@@ -259,13 +259,24 @@ class Select extends Field
         }, 'multiple');
     }
 
-    public function values()
+    public function values($form)
     {
         $fieldStore = $this->fieldStore();
 
-        return $this->store() ?
-            ($this->multiple ? $fieldStore : array_keys($fieldStore))
-            : null;
+        $store = $this->store();
+
+        if (! $store && ! isset($form->store[$this->attribute])) {
+            $value = $this->valueCallback ? ($this->valueCallback)(null, $this->resource, $this->attribute) : null;
+            $values = $value ? [$value] : null;
+
+            $form->store[$this->attribute] = $value;
+        } else {
+            $values = $store ?: [$form->store[$this->attribute]];
+        }
+
+        return $store
+            ? ($this->multiple ? $fieldStore : array_keys($fieldStore))
+            : $values;
     }
 
     public function fieldStore()

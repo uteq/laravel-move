@@ -3,6 +3,7 @@
 namespace Uteq\Move\Support\Livewire\Concerns;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Uteq\Move\Resource;
 
 trait HasCrud
 {
@@ -57,7 +58,7 @@ trait HasCrud
         }
 
         return route($this->crudBaseRoute . '.show', [
-            'resource' => $this->resource,
+            'resource' => str_replace('.', '/', $this->resource),
             'model' => $model,
         ]);
     }
@@ -76,7 +77,7 @@ trait HasCrud
         }
 
         return route($this->crudBaseRoute . '.edit', [
-            'resource' => $resourceRoute ?: $this->resource,
+            'resource' => str_replace('.', '/', $resourceRoute ?: $this->resource),
             'model' => $this->modelById($id),
         ]);
     }
@@ -90,9 +91,16 @@ trait HasCrud
     {
         $this->crudBaseRoute ??= move()::getPrefix();
 
-        return route($this->crudBaseRoute . '.create', [
-            'resource' => $this->resource,
-        ]);
+        $parent = $this->parent();
+        $attributes = [];
+        if ($parent && $parent instanceof Resource) {
+            $attributes['parent_model'] = $parent::$model;
+            $attributes['parent_id'] = isset($parent->resource) ? $parent->resource->id : null;
+        }
+
+        return route($this->crudBaseRoute . '.create', array_replace_recursive([
+            'resource' => str_replace('.', '/', $this->resource),
+        ], $attributes));
     }
 
     public function confirmDestroy($id)
@@ -116,13 +124,17 @@ trait HasCrud
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();
         $destroyer($model);
 
-        if ($this->parent() && isset($this->parent()->resource->id)) {
-            return $this->redirectTo = $this->editRoute(
-                $this->parent()->resource->id,
-                $this->parentRoute($this->crudBaseRoute)
-            );
+        if (method_exists($this, 'parent')) {
+            if ($this->parent() && isset($this->parent()->resource->id)) {
+                return $this->redirectTo = $this->editRoute(
+                    $this->parent()->resource->id,
+                    $this->parentRoute($this->crudBaseRoute)
+                );
+            }
         }
 
-        return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => $this->resource]);
+        $this->emit('move::table:updated');
+
+        return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => str_replace('.', '/', $this->resource)]);
     }
 }

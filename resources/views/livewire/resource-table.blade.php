@@ -1,5 +1,5 @@
 <div>
-    <x-move-table.header add-action="{{ $this->addRoute() }}"
+    <x-move-table.header add-action="{!! $this->addRoute() !!}"
                          add-is-route
                          :add-text="__('Create :resource', ['resource' => $this->resource()->singularLabel()])"
                          search

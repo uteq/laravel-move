@@ -11,7 +11,7 @@
         <x-move-field.select
             model="{{ $field->store }}"
             placeholder="{{ $field->placeholder ?? null }}"
-            :values="$field->values()"
+            :values="$field->values($this)"
             :options="$field->getOptions()"
             :settings="$field->settings"
             :multiple="$field->multiple"

@@ -13,7 +13,7 @@ class Password extends Field
     {
         parent::__construct($name, $attribute, $valueCallback);
 
-        $this->valueCallback = fn () => null;
+        $this->resourceDataCallback = fn () => null;
 
         $this->beforeStore(function ($value, $field, $model, $data) {
             if (! $model->id) {

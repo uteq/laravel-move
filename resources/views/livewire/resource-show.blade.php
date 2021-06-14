@@ -52,20 +52,6 @@
     @endif
 
     <div class="{{ $class }}">
-    @if (! $hideCard)
-        @foreach ($this->panels() as $key => $panel)
-            @if (! $panel->fields) @continue @endif
-
-            <div wire:key="move-main-panel-{{ $key }}">
-                {{ $panel->render($model) }}
-            </div>
-        @endforeach
-    @else
-        @foreach ($fields as $field)
-            <x-move-row name="{{ $field->name() }}">
-                {{ $field->render('show') }}
-            </x-move-row>
-        @endforeach
-    @endif
+        @include('move::show.panels', ['panels' => $this->panels(), 'hideCard' => $hideCard])
     </div>
 </div>

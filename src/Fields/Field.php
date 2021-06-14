@@ -134,14 +134,22 @@ abstract class Field extends FieldElement
     {
         $this->name = $name;
         $this->attribute = $attribute ?? Str::snake(Str::singular($name));
-        $this->valueCallback = $valueCallback;
-        $this->generateStoreAttribute();
         $this->unique = Str::random(20);
+
+        $this->valueCallback($valueCallback);
+        $this->generateStoreAttribute();
 
         if (method_exists($this, 'init')) {
             /** @psalm-suppress InvalidArgument */
             app()->call([$this, 'init']);
         }
+    }
+
+    public function valueCallback(callable $valueCallback = null)
+    {
+        $this->valueCallback = $valueCallback;
+
+        return $this;
     }
 
     public function generateStoreAttribute()

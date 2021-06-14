@@ -315,11 +315,13 @@ trait ShowsConditionally
     {
         $request = $request ?: request();
 
-        return [
-            'create' => $this->isShownOnCreation($request),
-            'update' => $this->isShownOnUpdate($request, $resource),
-            'index' => $this->isShownOnIndex($request, $resource),
-            'show' => $this->isShownOnDetail($request, $resource),
+        $handler = [
+            'create' => fn() => $this->isShownOnCreation($request),
+            'update' => fn() => $this->isShownOnUpdate($request, $resource),
+            'index' => fn() => $this->isShownOnIndex($request, $resource),
+            'show' => fn() => $this->isShownOnDetail($request, $resource),
         ][$action] ?? false;
+
+        return $handler ? $handler() : false;
     }
 }

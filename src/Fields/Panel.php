@@ -29,6 +29,7 @@ class Panel implements PanelInterface, ElementInterface
     public array $alert = [];
     public bool $isPlaceholder = false;
     public bool $sortable = false;
+    public bool $withoutCard = false;
 
     // Related models
     public $resouceForm;
@@ -45,7 +46,6 @@ class Panel implements PanelInterface, ElementInterface
     public $class = null;
     public $description = null;
     public $afterTitle = null;
-    public $withoutCard = null;
 
     public function __construct(?string $name = null, array $fields = [])
     {

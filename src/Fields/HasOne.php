@@ -8,10 +8,10 @@ class HasOne extends Select
 {
     use HasResource;
 
-    public function __construct(string $name, string $attribute = null, string $resource = null)
+    public function __construct(string $name, string $attribute = null, string $resource = null, \Closure $valueCallback)
     {
         $this->resourceName = $this->findResourceName($name, $resource);
 
-        parent::__construct($name, $attribute);
+        parent::__construct($name, $attribute, $valueCallback);
     }
 }
