@@ -119,7 +119,7 @@ trait HasCrud
 
     public function destroy($id)
     {
-        $model = str_replace('.', '/', $this->resolveModel($id));
+        $model = $this->resolveModel($id);
 
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();
         $destroyer($model);
