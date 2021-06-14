@@ -124,11 +124,13 @@ trait HasCrud
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();
         $destroyer($model);
 
-        if ($this->parent() && isset($this->parent()->resource->id)) {
-            return $this->redirectTo = $this->editRoute(
-                $this->parent()->resource->id,
-                $this->parentRoute($this->crudBaseRoute)
-            );
+        if (method_exists($this, 'parent')) {
+            if ($this->parent() && isset($this->parent()->resource->id)) {
+                return $this->redirectTo = $this->editRoute(
+                    $this->parent()->resource->id,
+                    $this->parentRoute($this->crudBaseRoute)
+                );
+            }
         }
 
         return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => str_replace('.', '/', $this->resource)]);
