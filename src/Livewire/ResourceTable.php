@@ -44,6 +44,10 @@ class ResourceTable extends TableComponent
     public array $meta = [];
     public array $route = [];
 
+    public $listeners = [
+        'move::table:updated' => 'render',
+    ];
+
     protected $queryString = ['search', 'filter', 'order'];
 
     protected $crudBaseRoute = null;
@@ -122,6 +126,8 @@ class ResourceTable extends TableComponent
         $this->selected = [];
         $this->has_selected = false;
         $this->resetFilter();
+
+        app()->call([$this, 'render']);
     }
 
     public function handleAction()

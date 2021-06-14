@@ -133,6 +133,8 @@ trait HasCrud
             }
         }
 
+        $this->emit('move::table:updated');
+
         return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => str_replace('.', '/', $this->resource)]);
     }
 }
