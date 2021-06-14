@@ -254,11 +254,13 @@ class Select extends Field
 
         $store = $this->store();
 
-        if (! $store) {
+        if (! $store && ! $form->store[$this->attribute]) {
             $value = $this->valueCallback ? ($this->valueCallback)(null, $this->resource, $this->attribute) : null;
             $values = $value ? [$value] : null;
 
             $form->store[$this->attribute] = $value;
+        } else {
+            $values = $store ?: [$form->store[$this->attribute]];
         }
 
         return $store
