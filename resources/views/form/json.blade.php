@@ -5,7 +5,7 @@
         @foreach ($this->store[$field->attribute] ?? [] as $key => $value)
             @if ($field->fields)
             <div wire:key="json-panel-{{ $field->attribute }}-{{ $key }}" class="my-1">
-                <div class="flex items-center">
+                <div class="flex items-center w-full">
                     {{ $field->panel($this, $key) }}
 
                     <button type="button" class="text-xs text-right text-gray-400 hover:text-primary-500 hover:underline cursor-pointer p-2"
@@ -35,5 +35,8 @@
             {{ $field->addItemText }}
         </div>
     </div>
+
+    <x-move-form.input-error for="{{ $field->store }}" class="mt-2"/>
+
 </x-move-form.row>
 

@@ -55,6 +55,22 @@ trait HasStore
 
     public function save()
     {
+        $data = $this->storePrepareSaveData();
+
+        /** @psalm-suppress InvalidArgument */
+        $action = $this->{$this->property}->id
+            ? app()->call([$this, $this->actionsMethods['update']], $data)
+            : app()->call([$this, $this->actionsMethods['create']], $data);
+
+        session()->flash('status', __('Saved :resource', [
+            'resource' => $this->label(),
+        ]));
+
+        return $this->storeAfterSave($action);
+    }
+
+    public function storePrepareSaveData()
+    {
         $this->hasStoreRefreshModel();
 
         $store = $this->store;
@@ -71,15 +87,11 @@ trait HasStore
             $data['fields']['_parent_id'] = $this->parent()->resource->id;
         }
 
-        session()->flash('status', __('Saved :resource', [
-            'resource' => $this->label(),
-        ]));
+        return $data;
+    }
 
-        /** @psalm-suppress InvalidArgument */
-        $action = $this->{$this->property}->id
-            ? app()->call([$this, $this->actionsMethods['update']], $data)
-            : app()->call([$this, $this->actionsMethods['create']], $data);
-
+    public function storeAfterSave($action)
+    {
         if (method_exists($this, 'afterStore')) {
             $result = $this->afterStore($action);
 
@@ -162,6 +174,7 @@ trait HasStore
             ->toArray();
 
         $rules = collect($rules)
+            ->map(fn ($rule) => is_string($rule) ? explode('|', $rule) : $rule)
             ->mapWithKeys(function ($value, $field) use ($fields) {
                 // If the field exists as array, no need to change the rule
                 if (isset($fields[Str::before(Str::after($field, 'store.'), '.')])) {
