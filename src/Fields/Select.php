@@ -237,7 +237,7 @@ class Select extends Field
      */
     protected function mapTags()
     {
-        $this->beforeStore(function ($value, $field, \Domain\Documents\Models\Document $model) {
+        $this->beforeStore(function ($value, $field, $model) {
             $model = (clone $model)->refresh();
 
             $value = collect($value)
