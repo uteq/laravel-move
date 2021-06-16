@@ -162,7 +162,7 @@ trait HasStore
                     return [$field => $value];
                 }
 
-                return [str_replace('.', '---', $field) => $value];
+                return [$field => $value];
             })
             ->toArray();
 

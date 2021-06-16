@@ -92,10 +92,20 @@ trait HasResource
 
     public function mapFields(array $resolvedFields, $store)
     {
-        return collect($resolvedFields)
-            ->filter(fn ($field) => isset($store[$field->attribute]))
-            ->mapWithKeys(fn ($field) => [$field->attribute => $store[$field->attribute]])
+        $store = collect($store)
+            ->filter(fn ($value, $key) => ! str_contains($key, '.'))
             ->toArray();
+
+        $fields = collect($resolvedFields)
+            ->mapWithKeys(fn ($field) => [$field->attribute => Arr::get($store, $field->attribute)])
+            ->toArray();
+
+        $undotFields = [];
+        foreach ($fields as $key => $value) {
+            Arr::set($undotFields, $key, $value);
+        }
+
+        return $undotFields;
     }
 
     public function resolveFieldRules($model)
