@@ -70,8 +70,6 @@
             $element.on('open', function() {
                 self.$search.attr('tabindex', 0);
                 setTimeout(function () { self.$search.focus(); }, 10);
-
-                console.log(self);
             })
         };
     }

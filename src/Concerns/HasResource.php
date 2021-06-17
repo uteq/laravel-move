@@ -103,9 +103,13 @@ trait HasResource
 
     public function mapFields(array $resolvedFields, $store)
     {
+        $store = collect($store)
+            ->filter(fn ($value, $key) => ! str_contains($key, '.'))
+            ->toArray();
+
         $fields = collect($resolvedFields)
-            ->filter(fn ($field) => Arr::has($store, $field->attribute))
-            ->mapWithKeys(fn ($field) => [$field->attribute => Arr::get($store, $field->attribute)]);
+            ->mapWithKeys(fn ($field) => [$field->attribute => Arr::get($store, $field->attribute)])
+            ->toArray();
 
         $undotFields = [];
         foreach ($fields as $key => $value) {

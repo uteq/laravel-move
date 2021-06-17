@@ -6,6 +6,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
 use Uteq\Move\Concerns\HasParent;
@@ -170,10 +172,10 @@ abstract class BaseResourceForm extends FormComponent
         $store = [];
         foreach ($this->store as $key => $value) {
             if (str_contains($key, '.')) {
-                Arr::set($store, $key, $value);
-            } else {
-                $store = array_replace_recursive($store, [$key => $value]);
+                continue;
             }
+
+            Arr::set($store, $key, $value);
         }
 
         return $store;
