@@ -172,7 +172,9 @@ abstract class BaseResourceForm extends FormComponent
         $store = [];
         foreach ($this->store as $key => $value) {
             if (str_contains($key, '.')) {
-                continue;
+                if (isset($this->store[Str::before($key, '.')])) {
+                    continue;
+                }
             }
 
             Arr::set($store, $key, $value);
