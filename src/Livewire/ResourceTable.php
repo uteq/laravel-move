@@ -46,6 +46,7 @@ class ResourceTable extends TableComponent
 
     public $listeners = [
         'move::table:updated' => 'render',
+        ''
     ];
 
     protected $queryString = ['search', 'filter', 'order'];

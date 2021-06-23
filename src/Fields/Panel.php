@@ -30,6 +30,7 @@ class Panel implements PanelInterface, ElementInterface
     public bool $isPlaceholder = false;
     public bool $sortable = false;
     public bool $withoutCard = false;
+    public bool $withoutTitle = false;
 
     // Related models
     public $resouceForm;
@@ -225,6 +226,21 @@ class Panel implements PanelInterface, ElementInterface
     public function withoutCard(bool $withoutCard = true)
     {
         $this->withoutCard = $withoutCard;
+
+        return $this;
+    }
+
+    public function withoutTitle(bool $withoutTitle = true)
+    {
+        $this->withoutTitle = $withoutTitle;
+
+        return $this;
+    }
+
+    public function isPlaceholder()
+    {
+        $this->withoutCard();
+        $this->withoutTitle();
 
         return $this;
     }

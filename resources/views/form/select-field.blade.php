@@ -3,9 +3,10 @@
 <x-move-form.row
     custom
     :required="$field->isRequired()"
-    label="{{ $field->name }}"
+    label="{{ $field->getName() }}"
     model="{{ $field->store }}"
     help-text="{{ $field->getHelpText() }}"
+    :meta="$field->meta"
 >
     <div class="w-full text-black" x-data="{ form : false }" wire:key="move-select-field-{{ $field->attribute }}-{{ $field->getVersion() }}">
         <x-move-field.select

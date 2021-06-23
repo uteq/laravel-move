@@ -126,6 +126,7 @@ abstract class Field extends FieldElement
     protected $show = null;
     protected $form = null;
     public bool $disabled = false;
+    public bool $hideName = false;
 
     /**
      * Field constructor.
@@ -672,5 +673,17 @@ abstract class Field extends FieldElement
         }
 
         return ($this->afterUpdatedStore)($store, $key, $value, $form, $this);
+    }
+
+    public function hideName(bool $hideName = true)
+    {
+        $this->hideName = $hideName;
+
+        return $this;
+    }
+
+    public function getName()
+    {
+        return $this->hideName ? null : $this->name;
     }
 }

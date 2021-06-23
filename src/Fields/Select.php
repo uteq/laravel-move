@@ -4,6 +4,8 @@ namespace Uteq\Move\Fields;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
@@ -265,13 +267,15 @@ class Select extends Field
 
         $store = $this->store();
 
-        if (! $store && ! isset($form->store[$this->attribute])) {
+        $storeAttribute = Str::replace($this->defaultStorePrefix . '.', '', $this->store);
+
+        if (! $store && ! Arr::get($form->store, $storeAttribute)) {
             $value = $this->valueCallback ? ($this->valueCallback)(null, $this->resource, $this->attribute) : null;
             $values = $value ? [$value] : null;
 
             $form->store[$this->attribute] = $value;
         } else {
-            $values = $store ?: [$form->store[$this->attribute]];
+            $values = $store ?: [Arr::get($form->store, $storeAttribute)];
         }
 
         return $store

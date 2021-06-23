@@ -1,4 +1,4 @@
-<x-move-form.row stacked custom label="{{ $field->name }}" model="{{ $field->store }}" :required="$field->isRequired()" help-text="{{ $field->getHelpText() }}">
+<x-move-form.row :stacked="$field->stacked" custom label="{{ $field->getName() }}" model="{{ $field->store }}" :required="$field->isRequired()" help-text="{{ $field->getHelpText() }}"  :meta="$field->meta">
 
     <div class="flex-col w-full">
         <div class="mb-2">

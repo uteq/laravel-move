@@ -31,11 +31,20 @@ class Json extends Field
         $panel->id = $this->attribute ?? $this->unique;
         $panel->component = 'form.json-panel';
         $panel->resolveFields($model);
+        $panel->withMeta([
+            'is_first' => $panelKey === 0,
+        ]);
+        $panel->withoutCard();
 
         collect($panel->fields)
-            ->each(fn ($field) => $field->storePrefix = $field->defaultStorePrefix . '.' . $this->attribute . '.' . $panelKey)
-            ->each(fn ($field) => $field->generateStoreAttribute())
-            ->each(fn ($field) => $field->stacked());
+            ->each(function ($field) use ($panelKey) {
+                $field->storePrefix = $field->defaultStorePrefix . '.' . $this->attribute . '.' . $panelKey;
+                $field->hideName();
+                $field->generateStoreAttribute();
+                $field->withMeta([
+                    'with_grid' => false,
+                ]);
+            });
 
         return $panel->render($resource);
     }
