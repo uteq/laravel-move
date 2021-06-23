@@ -29,12 +29,13 @@ class ResourceTable extends TableComponent
     protected bool $keepRequestQuery = false;
     protected ?string $table;
     protected string $limit;
+    protected $actionResult;
 
     public $search;
     public $action = '-';
     public $showingAction = false;
     public $showingActionResult = false;
-    protected $actionResult;
+    public $showModal = null;
     public $showingDelete = [];
     public $sortable = false;
     public $error = null;
@@ -46,6 +47,7 @@ class ResourceTable extends TableComponent
 
     public $listeners = [
         'move::table:updated' => 'render',
+        'closeModal' => 'closeModal',
     ];
 
     protected $queryString = ['search', 'filter', 'order'];
@@ -76,6 +78,11 @@ class ResourceTable extends TableComponent
         if (method_exists($this, 'init')) {
             app()->call([$this, 'init']);
         }
+    }
+
+    public function closeModal()
+    {
+        $this->showModal = null;
     }
 
     public function resolvePage()

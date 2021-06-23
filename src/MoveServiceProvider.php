@@ -187,13 +187,6 @@ class MoveServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views' => base_path('resources/views/vendor/move'),
         ], 'move-views');
-
-//        $migrationFileName = 'create_move_table.php';
-//        if (! $this->migrationFileExists($migrationFileName)) {
-//            $this->publishes([
-//                __DIR__ . "/../database/migrations/{$migrationFileName}.stub" => database_path('migrations/' . date('Y_m_d_His', time()) . '_' . $migrationFileName),
-//            ], 'migrations');
-//        }
     }
 
     public static function migrationFileExists(string $migrationFileName): bool
@@ -229,16 +222,10 @@ class MoveServiceProvider extends ServiceProvider
 
     public function configureLivewire()
     {
-//        $this->app->afterResolving(BladeCompiler::class, function () {
-//            if (! class_exists(Livewire::class)) {
-//                return;
-//            }
-
         Livewire::component('livewire.resource-table', ResourceTable::class);
         Livewire::component('livewire.resource-show', ResourceShow::class);
         Livewire::component('livewire.resource-form', ResourceForm::class);
 
         Livewire::component('header-search', HeaderSearch::class);
-//        });
     }
 }
