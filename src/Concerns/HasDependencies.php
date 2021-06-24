@@ -97,7 +97,7 @@ trait HasDependencies
     {
         foreach ($this->dependencies as $field => $condition) {
             foreach ($condition as $type => $value) {
-                if (!$rules[$type]($value, $data[$field] ?? $data->{$field} ?? Arr::get($data, $field, false))) {
+                if (! $rules[$type]($value, $data[$field] ?? $data->{$field} ?? Arr::get($data, $field, false))) {
                     return false;
                 }
             }

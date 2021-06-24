@@ -1,4 +1,4 @@
-<x-move-panel :title="$panel->name" :panel="$panel">
+<x-move-panel :title="$panel->withoutTitle ? null : $panel->name" :panel="$panel">
     @foreach ($panel->fields as $key => $field)
         @if ($field->before)
             @php $before = $field->before @endphp

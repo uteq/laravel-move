@@ -55,18 +55,27 @@ trait HasStore
 
     public function save()
     {
-        $data = $this->storePrepareSaveData();
+        $data = $this->validateStore();
 
         /** @psalm-suppress InvalidArgument */
-        $action = $this->{$this->property}->id
-            ? app()->call([$this, $this->actionsMethods['update']], $data)
-            : app()->call([$this, $this->actionsMethods['create']], $data);
+        $action = $this->{$this->property}->id ? 'update' : 'create';
+
+        $result = app()->call([$this, $this->actionsMethods[$action]], $data);
 
         session()->flash('status', __('Saved :resource', [
             'resource' => $this->label(),
         ]));
 
-        return $this->storeAfterSave($action);
+        return $this->storeAfterSave($result);
+    }
+
+    public function validateStore()
+    {
+        $data = $this->storePrepareSaveData();
+
+        $this->customValidate($data['fields'], ($data['rules'] ?? []) ?: $this->rules($this->{$this->property}));
+
+        return $data;
     }
 
     public function storePrepareSaveData()

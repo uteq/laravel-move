@@ -37,6 +37,7 @@ abstract class BaseResourceForm extends FormComponent
     public $baseRoute = 'move';
     public $showForm = false;
     public array $meta = [];
+    public array $dirtyFields = [];
 
     public bool $hideStepsMenu = false;
     public bool $hideActions = false;
@@ -165,6 +166,8 @@ abstract class BaseResourceForm extends FormComponent
         $this->emit(static::class . '.updatedStore', $store);
 
         $this->store = $store;
+
+        $this->dirtyFields[$defaultKey] = true;
     }
 
     protected function storeAsArray()

@@ -60,6 +60,12 @@
                 </div>
             </div>
 
+            @if ($errors->count())
+                <x-move-alert color="red" class="mt-4">
+                    Een van de velden is niet goed ingevuld, controleer a.u.b. het formulier op fouten.
+                </x-move-alert>
+            @endif
+
             @if ($this->hideActions)
 
                 <x-move-action-message class="bg-green-600 text-white static top-0 right-0 flex items-center px-2 py-1" on="saved">

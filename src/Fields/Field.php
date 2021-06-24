@@ -126,6 +126,8 @@ abstract class Field extends FieldElement
     protected $show = null;
     protected $form = null;
     public bool $disabled = false;
+    public bool $hideName = false;
+    public bool $dirty = false;
 
     /**
      * Field constructor.
@@ -548,9 +550,7 @@ abstract class Field extends FieldElement
     public function removeFromModel(\Closure $conditions = null)
     {
         $this->beforeStore[] = function ($value, $field, $model, $data) use ($conditions) {
-            if ($conditions
-                && ! ($conditions($value, $field, $model, $data))
-            ) {
+            if ($conditions && ! ($conditions($value, $field, $model, $data))) {
                 return $value;
             }
 
@@ -667,10 +667,34 @@ abstract class Field extends FieldElement
 
     public function applyAfterUpdatedStore($store, $key, $value, $form)
     {
+        $this->dirty = true;
+
         if (! is_callable($this->afterUpdatedStore)) {
             return $store;
         }
 
         return ($this->afterUpdatedStore)($store, $key, $value, $form, $this);
+    }
+
+    public function hideName(bool $hideName = true)
+    {
+        $this->hideName = $hideName;
+
+        return $this;
+    }
+
+    public function getName()
+    {
+        return $this->hideName ? null : $this->name;
+    }
+
+    public function storeValue($key, $default = null)
+    {
+        $prefix = $this->storePrefix ?? null;
+        $prefix = $prefix ? $prefix . '.' : '';
+
+        return $this->dirty
+            ? Arr::get($this->resource?->store ?? [], $prefix . $key, $default)
+            : Arr::get($this->resource, $prefix . $key, $default);
     }
 }
