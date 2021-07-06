@@ -263,6 +263,13 @@ class Select extends Field
             $values = $store ?: [$form->store[$this->attribute]];
         }
 
+        // Fix for select field in JSON field.
+        if (! $values) {
+            if (Arr::get($this->resource, $storeAttribute)) {
+                $values = [Arr::get($this->resource, $storeAttribute)];
+            }
+        }
+
         return $store
             ? ($this->multiple ? $fieldStore : array_keys($fieldStore))
             : $values;

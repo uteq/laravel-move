@@ -19,6 +19,7 @@ trait HasResource
     public $resource;
     public $model = null;
     public $modelId = null;
+    public ?array $resourceFields = [];
 
     public function initializeHasResource()
     {
@@ -61,7 +62,17 @@ trait HasResource
 
     public function getResolvedResourceProperty()
     {
-        return Move::resolveResource($this->resource);
+        $resource = Move::resolveResource($this->resource);
+
+        if ($this->resourceFields) {
+            $resource->setFields($this->resourceFields);
+        }
+
+        if (isset($this->meta)) {
+            $resource->withMeta($this->meta ?? []);
+        }
+
+        return $resource;
     }
 
     public function getResourceProperty()
@@ -100,12 +111,7 @@ trait HasResource
             ->mapWithKeys(fn ($field) => [$field->attribute => Arr::get($store, $field->attribute)])
             ->toArray();
 
-        $undotFields = [];
-        foreach ($fields as $key => $value) {
-            Arr::set($undotFields, $key, $value);
-        }
-
-        return $undotFields;
+        return move_arr_expand($fields);
     }
 
     public function resolveFieldRules($model)
@@ -135,7 +141,7 @@ trait HasResource
     public function resolveAndMapFieldToFields($key): array
     {
         $fields = $this->fields()
-            ->filter(fn ($field) => $field->attribute === $key)
+            ->filter(fn ($field) => str_starts_with($key, $field->attribute))
             ->toArray();
 
         $store = Arr::dot($this->store);
@@ -146,7 +152,7 @@ trait HasResource
     public function getFieldRule($key): array
     {
         return collect($this->rules($this->{$this->property}))
-            ->filter(fn ($rules, $field) => $field === $key)
+            ->filter(fn ($rules, $field) => str_starts_with($key, $field))
             ->toArray();
     }
 

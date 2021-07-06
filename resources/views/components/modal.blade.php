@@ -1,4 +1,4 @@
-@props(['id', 'maxWidth', 'button' => null, 'value' => null, 'show' => true, 'showType' => '=='])
+@props(['id', 'maxWidth', 'button' => null, 'value' => null, 'show' => true, 'showType' => '==', 'closeOnClickAway' => true])
 
 @php
 $model = $attributes->wire('model');
@@ -96,7 +96,7 @@ switch ($maxWidth ?? '2xl') {
          style="display: none;"
     >
         <div class="fixed inset-0 transform transition-all"
-             x-on:click="show = null"
+             {{ $closeOnClickAway ? 'x-on:click="show = null"' : null }}
              x-transition:enter="ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"

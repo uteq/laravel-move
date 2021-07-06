@@ -128,9 +128,10 @@ abstract class Field extends FieldElement
     {
         $this->name = $name;
         $this->attribute = $attribute ?? Str::snake(Str::singular($name));
-        $this->valueCallback($valueCallback);
-        $this->store = $this->storePrefix() . '.' . $attribute;
         $this->unique = Str::random(20);
+
+        $this->valueCallback($valueCallback);
+        $this->generateStoreAttribute();
 
         if (method_exists($this, 'init')) {
             /** @psalm-suppress InvalidArgument */
@@ -145,6 +146,20 @@ abstract class Field extends FieldElement
         return $this;
     }
 
+    public function generateStoreAttribute()
+    {
+        $this->store = $this->storePrefix() . '.' . $this->attribute;
+    }
+
+    public function default($value)
+    {
+        $this->valueCallback = $value instanceof Closure
+            ? $value
+            : fn ($currentValue, $model, $attribute) => $value;
+
+        return $this;
+    }
+
     public function isPlaceholder(bool $value = true): self
     {
         $this->isPlaceholder = $value;
@@ -152,9 +167,23 @@ abstract class Field extends FieldElement
         return $this;
     }
 
+    public function setStorePrefix(string $storePrefix)
+    {
+        $this->storePrefix = $storePrefix;
+
+        return $this;
+    }
+
+    public function updateStorePrefix(string $storePrefix)
+    {
+        $this->setStorePrefix($storePrefix);
+
+        $this->generateStoreAttribute();
+    }
+
     public function storePrefix(): string
     {
-        return 'store';
+        return $this->storePrefix ?? $this->defaultStorePrefix;
     }
 
     public function formAttribute($formAttribute): self
@@ -198,6 +227,14 @@ abstract class Field extends FieldElement
     ): self {
         $this->resource = $resource;
 
+        if (! $this->value) {
+            $defaultValue = $this->applyValueCallback($resource);
+        }
+
+        $resourceValue = $this->getResourceAttributeValue($resource, $this->attribute);
+
+        $value = $this->value = $resourceValue ?: $defaultValue ?? null;
+
         $this->resourceDataCallback
             ? tap(
                 $this->value ?? $this->getResourceAttributeValue($resource, $this->attribute),
@@ -236,6 +273,24 @@ abstract class Field extends FieldElement
             : $value;
     }
 
+    protected function applyValueCallback($resource, $value = null)
+    {
+        $this->value = $this->valueCallback
+            ? ($this->valueCallback)($value, $resource, $this->attribute)
+            : $value;
+
+        if (! $this->value) {
+            $this->value = $this->valueCallback ? tap($value, fn ($value) => call_user_func(
+                $this->valueCallback,
+                $value,
+                $resource,
+                $this->attribute,
+            )) : $value;
+        }
+
+        return $this->value;
+    }
+
     /**
      * @param $resource
      * @param $attribute
@@ -243,7 +298,11 @@ abstract class Field extends FieldElement
      */
     protected function getResourceAttributeValue($resource, $attribute)
     {
-        return data_get($resource, str_replace('->', '.', $attribute));
+        if ($value = data_get($resource, str_replace('->', '.', $attribute))) {
+            return $value;
+        }
+
+        return Arr::get($resource, str_replace('->', '.', $attribute));
     }
 
     /**
@@ -376,6 +435,7 @@ abstract class Field extends FieldElement
 
         $data = array_replace_recursive([
             'field' => $this,
+            'store' => $this->resource['store'] ?? null,
         ], $data);
 
         if (isset($this->{$displayType}) && null !== $this->{$displayType}) {
@@ -385,7 +445,20 @@ abstract class Field extends FieldElement
                 return $handler->with($data);
             }
 
-            return is_callable($handler) ? $handler($this, $data) : $handler;
+            $view = is_callable($handler) ? $handler($this, $data) : $handler;
+
+            if (is_string($view)) {
+                $view = app('view')->make(CreateBladeView::fromString($view));
+            }
+
+            if (! $view) {
+                return $handler($this, $data);
+            }
+
+            throw_unless($view instanceof View,
+                new \Exception('"view" method on [' . get_class($this) . '] must return instance of [' . View::class . ']'));
+
+            return $view->with($data);
         }
 
         if (! $this->isVisible($this->resourceStore(), $this->type)) {
@@ -491,9 +564,7 @@ abstract class Field extends FieldElement
     public function removeFromModel(\Closure $conditions = null)
     {
         $this->beforeStore[] = function ($value, $field, $model, $data) use ($conditions) {
-            if ($conditions
-                && ! ($conditions($value, $field, $model, $data))
-            ) {
+            if ($conditions && ! ($conditions($value, $field, $model, $data))) {
                 return $value;
             }
 
@@ -535,15 +606,19 @@ abstract class Field extends FieldElement
 
     public function store($key = null, $default = null)
     {
-        $store = $this->resource->store ?: $this->resource->getAttributes();
+        $store = move_arr_expand($this->resource->store ?: $this->resource->getAttributes() ?? []);
 
         if (empty($store)) {
             return $default;
         }
 
+        $attribute = ($this->storePrefix ?? false)
+            ? Str::after($this->storePrefix . '.' . $this->attribute, 'store.')
+            : $this->attribute;
+
         return $key
-            ? Arr::get($store[$this->attribute] ?? $default, $key, $default)
-            : $store[$this->attribute] ?? $default;
+            ? Arr::get($store[$attribute] ?? $default, $key, $default)
+            : Arr::get($store, $attribute, $default);
     }
 
     public function before(Closure $before): self
@@ -599,5 +674,61 @@ abstract class Field extends FieldElement
         $this->disabled = ! $enabled;
 
         return $this;
+    }
+
+    public function afterUpdatedStore(Closure $closure)
+    {
+        $this->afterUpdatedStore = $closure;
+
+        return $this;
+    }
+
+    public function applyAfterUpdatedStore($store, $key, $value, $form)
+    {
+        $this->dirty = true;
+
+        if (! is_callable($this->afterUpdatedStore)) {
+            return $store;
+        }
+
+        return ($this->afterUpdatedStore)($store, $key, $value, $form, $this);
+    }
+
+    public function hideName(bool $hideName = true)
+    {
+        $this->hideName = $hideName;
+
+        return $this;
+    }
+
+    public function getName()
+    {
+        return $this->hideName ? null : $this->name;
+    }
+
+    public function storeValue($key, $default = null)
+    {
+        $prefix = $this->storePrefix ?? null;
+        $prefix = $prefix ? $prefix . '.' : '';
+
+        return $this->dirty
+            ? Arr::get($this->resource?->store ?? [], $prefix . $key, $default)
+            : Arr::get($this->resource, $prefix . $key, $default);
+    }
+
+    /**
+     * This is only used for array data.
+     * For example if the attribute is store.meta.items.0.key
+     * This will be return the next supposed storePrefix: store.meta.items.1
+     *
+     * @return \Illuminate\Support\Stringable
+     */
+    public function nextItemStorePrefix()
+    {
+        $number = (int) ((string) Str::of($this->storePrefix)->afterLast('.') ?? null);
+
+        return Str::of($this->storePrefix)
+            ->before($number)
+            ->append($number + 1);
     }
 }

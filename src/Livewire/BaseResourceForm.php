@@ -46,6 +46,7 @@ abstract class BaseResourceForm extends FormComponent
     protected $label;
 
     protected $listeners = [
+        'updatedStore' => 'updatedStore',
         'changedActiveStep' => 'changedActiveStep',
         'fields.$refresh' => 'refreshFields',
         'closeModal' => 'closeModal',

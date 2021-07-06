@@ -3,6 +3,8 @@
 namespace Uteq\Move\Fields;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Uteq\Move\Concerns\AuthorizedToSee;
 use Uteq\Move\Concerns\HasDependencies;
 use Uteq\Move\Concerns\Makeable;
@@ -29,6 +31,9 @@ class Panel implements PanelInterface, ElementInterface
     public bool $isPlaceholder = false;
     public bool $sortable = false;
     public bool $withoutCard = false;
+    public bool $withoutTitle = false;
+    public string $classes;
+    public string $flow = 'row';
 
     // Related models
     public $resouceForm;
@@ -44,6 +49,7 @@ class Panel implements PanelInterface, ElementInterface
     public string $folder = 'move::';
     public $class = null;
     public $description = null;
+    public $afterTitle = null;
 
     public function __construct(?string $name = null, array $fields = [])
     {
@@ -79,7 +85,7 @@ class Panel implements PanelInterface, ElementInterface
         return $this;
     }
 
-    public function resolveFields($resource)
+    public function resolveFields($resource, $component = null)
     {
         if ($this->name) {
             $this->name = isset($resource['id']) ? $this->nameOnUpdate : $this->nameOnCreate;
@@ -87,7 +93,11 @@ class Panel implements PanelInterface, ElementInterface
 
         collect($this->fields)
             ->each(fn (ElementInterface $element) => $element->addDependencies($this->dependencies)
-                ->applyResourceData($resource));
+                ->applyResourceData($resource)
+            )
+            ->when($component, fn (Collection $fields) =>
+                $fields->each(fn (ElementInterface $element) => $element->component = $component)
+            );
 
         return $this;
     }
@@ -126,12 +136,12 @@ class Panel implements PanelInterface, ElementInterface
         return $this;
     }
 
-    public function render($model)
+    public function render($model, array $data = [])
     {
-        return view($this->folder . $this->component, [
+        return view($this->folder . $this->component, array_replace_recursive([
             'panel' => $this,
             'model' => $model,
-        ]);
+        ], $data));
     }
 
     /**
@@ -170,6 +180,8 @@ class Panel implements PanelInterface, ElementInterface
         $this->resourceForm = $resourceForm;
         $this->resource = $resource;
         $this->model = $model;
+
+        return $this;
     }
 
     public function isVisible($resource, ?string $displayType = null)
@@ -190,7 +202,7 @@ class Panel implements PanelInterface, ElementInterface
 
     public function panels()
     {
-        return $this->panels;
+        return $this->panels ?? null;
     }
 
     public function titleClass($class)
@@ -203,6 +215,49 @@ class Panel implements PanelInterface, ElementInterface
     public function description($description)
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function afterTitle(\Closure $afterTitle)
+    {
+        $this->afterTitle = $afterTitle;
+
+        return $this;
+    }
+
+    public function withoutCard(bool $withoutCard = true)
+    {
+        $this->withoutCard = $withoutCard;
+
+        return $this;
+    }
+
+    public function withoutTitle(bool $withoutTitle = true)
+    {
+        $this->withoutTitle = $withoutTitle;
+
+        return $this;
+    }
+
+    public function isPlaceholder()
+    {
+        $this->withoutCard();
+        $this->withoutTitle();
+
+        return $this;
+    }
+
+    public function classes($classes)
+    {
+        $this->classes = $classes;
+
+        return $this;
+    }
+
+    public function flow($flow)
+    {
+        $this->flow = $flow;
 
         return $this;
     }
