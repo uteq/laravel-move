@@ -250,7 +250,7 @@ class Select extends Field
      */
     protected function mapTags()
     {
-        $this->beforeStore(function ($value, $field, \Domain\Documents\Models\Document $model) {
+        $this->beforeStore(function ($value, $field, $model) {
             $model = (clone $model)->refresh();
 
             $value = collect($value)
@@ -276,6 +276,13 @@ class Select extends Field
             $form->store[$this->attribute] = $value;
         } else {
             $values = $store ?: [Arr::get($form->store, $storeAttribute)];
+        }
+
+        // Fix for select field in JSON field.
+        if (! $values) {
+            if (Arr::get($this->resource, $storeAttribute)) {
+                $values = [Arr::get($this->resource, $storeAttribute)];
+            }
         }
 
         return $store

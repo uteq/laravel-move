@@ -2,6 +2,8 @@
 
 namespace Uteq\Move\Fields;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Uteq\Move\Resource;
 
 class Json extends Field
@@ -11,6 +13,7 @@ class Json extends Field
     public bool $editableKeys = true;
     public string $indexDisplayType = 'modal';
     public string $addItemText = '+ Add item';
+    public string $formDisplayType = 'form';
 
     public $fields;
 
@@ -30,6 +33,7 @@ class Json extends Field
         $panel = new Panel('', $this->fields);
         $panel->id = $this->attribute ?? $this->unique;
         $panel->component = 'form.json-panel';
+        $panel->formDisplayType = $this->formDisplayType;
         $panel->resolveFields($model);
         $panel->withMeta([
             'is_first' => $panelKey === 0,
@@ -75,7 +79,11 @@ class Json extends Field
 
     public function removeRow($component, $field, $id)
     {
+        Arr::forget($component->store, $field->attribute .'.'. $id);
+
         unset($component->store[$field->attribute][$id]);
+
+        $component->updatedStore(Arr::get($component->store, $field->attribute), $field->attribute);
     }
 
     public function blueprint(array $blueprint): self
@@ -98,4 +106,13 @@ class Json extends Field
 
         return $this;
     }
+
+    public function formDisplayType($type): self
+    {
+        $this->formDisplayType = $type;
+
+        return $this;
+    }
+
+
 }

@@ -6,9 +6,13 @@ trait WithActionableFields
 {
     public function action($store, $method, ...$args)
     {
-        $this->fields
+        $result = $this->fields
             ->filter(fn ($field) => $field->store === $store)
-            ->each(fn ($field) => $field->{$method}($this, $field, ...$args));
+            ->map(fn ($field) => $field->{$method}($this, $field, ...$args));
+
+        if ($result->count() == 1) {
+            return $result->first();
+        }
 
         return $this;
     }

@@ -2,8 +2,6 @@
 
 namespace Uteq\Move\Fields;
 
-use function Livewire\str;
-
 class Date extends Field
 {
     public string $component = 'date-field';

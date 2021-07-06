@@ -9,7 +9,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
-use Livewire\CreateBladeView;
 use Uteq\Move\Actions\UnsetField;
 use Uteq\Move\Concerns\HasDependencies;
 use Uteq\Move\Concerns\HasHelpText;
@@ -104,8 +103,6 @@ abstract class Field extends FieldElement
 
     public bool $isPlaceholder = false;
 
-    public ?Closure $afterUpdatedStore = null;
-
     public array $displayTypes = [
         'edit' => 'form',
         'update' => 'form',
@@ -119,15 +116,10 @@ abstract class Field extends FieldElement
 
     public string $unique;
 
-    public string $storePrefix;
-    public string $defaultStorePrefix = 'store';
-
     protected $index = null;
     protected $show = null;
     protected $form = null;
     public bool $disabled = false;
-    public bool $hideName = false;
-    public bool $dirty = false;
 
     /**
      * Field constructor.
@@ -180,6 +172,13 @@ abstract class Field extends FieldElement
         $this->storePrefix = $storePrefix;
 
         return $this;
+    }
+
+    public function updateStorePrefix(string $storePrefix)
+    {
+        $this->setStorePrefix($storePrefix);
+
+        $this->generateStoreAttribute();
     }
 
     public function storePrefix(): string
@@ -237,7 +236,15 @@ abstract class Field extends FieldElement
         $value = $this->value = $resourceValue ?: $defaultValue ?? null;
 
         $this->resourceDataCallback
-            ? ($this->resourceDataCallback)($value, $resource, $this->attribute)
+            ? tap(
+                $this->value ?? $this->getResourceAttributeValue($resource, $this->attribute),
+                fn ($value) => $this->value = call_user_func(
+                    $this->resourceDataCallback,
+                    $value,
+                    $resource,
+                    $this->attribute,
+                )
+            )
             : $this->fillFromResource($resource, $this->attribute);
 
         return $this;
@@ -256,7 +263,14 @@ abstract class Field extends FieldElement
 
         $value = $this->getResourceAttributeValue($resource, $this->attribute);
 
-        $this->applyValueCallback($resource, $value);
+        $this->value = $this->valueCallback
+            ? tap($value, fn ($value) => call_user_func(
+                $this->valueCallback,
+                $value,
+                $resource,
+                $this->attribute
+            ))
+            : $value;
     }
 
     protected function applyValueCallback($resource, $value = null)
@@ -592,15 +606,19 @@ abstract class Field extends FieldElement
 
     public function store($key = null, $default = null)
     {
-        $store = $this->resource->store ?: $this->resource->getAttributes();
+        $store = move_arr_expand($this->resource->store ?: $this->resource->getAttributes() ?? []);
 
         if (empty($store)) {
             return $default;
         }
 
+        $attribute = ($this->storePrefix ?? false)
+            ? Str::after($this->storePrefix . '.' . $this->attribute, 'store.')
+            : $this->attribute;
+
         return $key
-            ? Arr::get($store[$this->attribute] ?? $default, $key, $default)
-            : $store[$this->attribute] ?? $default;
+            ? Arr::get($store[$attribute] ?? $default, $key, $default)
+            : Arr::get($store, $attribute, $default);
     }
 
     public function before(Closure $before): self
@@ -696,5 +714,21 @@ abstract class Field extends FieldElement
         return $this->dirty
             ? Arr::get($this->resource?->store ?? [], $prefix . $key, $default)
             : Arr::get($this->resource, $prefix . $key, $default);
+    }
+
+    /**
+     * This is only used for array data.
+     * For example if the attribute is store.meta.items.0.key
+     * This will be return the next supposed storePrefix: store.meta.items.1
+     *
+     * @return \Illuminate\Support\Stringable
+     */
+    public function nextItemStorePrefix()
+    {
+        $number = (int) ((string) Str::of($this->storePrefix)->afterLast('.') ?? null);
+
+        return Str::of($this->storePrefix)
+            ->before($number)
+            ->append($number + 1);
     }
 }

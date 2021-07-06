@@ -19,25 +19,44 @@
 
     @endphp
 
-    <div class="w-full">
-        @if (($panel->meta['is_first'] ?? false) == true)
-        <div class="grid grid-flow-col {{ $cols }} border-b border-gray-100 py-4">
-            @foreach ($panel->fields as $key => $field)
+    @if ($panel->formDisplayType == 'form')
 
-                <div class="px-6 font-bold">{{ $field->name }}</div>
+        <div class="w-full">
+            @if (($panel->meta['is_first'] ?? false) == true)
+            <div class="grid grid-flow-col {{ $cols }} border-b border-gray-100 py-4">
+                @foreach ($panel->fields as $key => $field)
 
-            @endforeach
-        </div>
-        @endif
+                    <div class="px-6 font-bold">{{ $field->name }}</div>
 
-        <div class="grid {{ $cols }}">
-        @foreach ($panel->fields as $key => $field)
-            <div wire:key="json-panel-{{ $panel->id }}-field-{{ $field->storePrefix }}-{{ $key }}">
-                {{ $field->render('edit') }}
-
-                <x-move-form.input-error for="{{ $field->store }}" class="mt-2"/>
+                @endforeach
             </div>
-        @endforeach
+            @endif
+
+            <div class="grid {{ $cols }} w-full">
+            @foreach ($panel->fields as $key => $field)
+                <div wire:key="json-panel-{{ $panel->id }}-field-{{ $field->storePrefix }}-{{ $key }}">
+                    {{ $field->render('edit') }}
+
+                    <x-move-form.input-error for="{{ $field->store }}" class="mt-2"/>
+                </div>
+            @endforeach
+            </div>
         </div>
-    </div>
+
+    @else
+
+     <div class="grid {{ $cols }} w-full text-sm gap-2">
+         @if (($panel->meta['is_first'] ?? false) == true)
+             @foreach ($panel->fields as $key => $field)
+                <div class="font-bold">{{ $field->name }}</div>
+             @endforeach
+         @endif
+
+         @foreach ($panel->fields as $key => $field)
+             <div>{{ $field->store() }}</div>
+         @endforeach
+     </div>
+
+    @endif
+
 </x-move-panel>

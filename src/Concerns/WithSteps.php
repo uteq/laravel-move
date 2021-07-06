@@ -99,6 +99,11 @@ trait WithSteps
 
             $this->emit('changedActiveStep', $this->activeStep);
         }
+
+        return [
+            'fields' => $resolvedFields,
+            'rules' => $rules,
+        ];
     }
 
     public function resolvedAndMappedStepFields($step = null, $keepPlaceholder = true)

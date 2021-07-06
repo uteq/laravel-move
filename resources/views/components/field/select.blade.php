@@ -1,11 +1,13 @@
-@props(['model', 'options' => [], 'placeholder' => null, 'settings' => ['placeholder' => __('Select your option')], 'values' => null, 'multiple' => false])
+@props(['model', 'version' => 1, 'options' => [], 'placeholder' => null, 'settings' => ['placeholder' => __('Select your option')], 'values' => null, 'multiple' => false])
 
 @php $index = \Str::slug(str_replace('.', '-', $model)); @endphp
 
 <div class="w-full" wire:ignore>
+
     <select
         name="{{ $model }}"
-        id="{{ $model }}"
+        id="{{ $index }}"
+        wire:model="{{ $model }}"
         {{ $attributes->merge(['class' => 'select2-'. $index .' form-select rounded border-none shadow w-full']) }}
         @if ($multiple) multiple="multiple" @endif
         style="width: 100%"
@@ -82,7 +84,7 @@
         loadSelect2(element, val, settings, {
             isMultiple: @php echo json_encode($multiple ?? false) @endphp,
         }, function (e) {
-            let elementName = $(this).attr('id');
+            let elementName = $(this).attr('wire:model');
             var data = $(this).select2("val");
             @this.set(elementName, data);
         });

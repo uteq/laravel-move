@@ -95,11 +95,6 @@ class ResourceTable extends TableComponent
         }
     }
 
-    public function updateTaskOrder($order)
-    {
-        // TODO needs implementation
-    }
-
     public function resetPage()
     {
         $this->setSelected();
@@ -199,6 +194,13 @@ class ResourceTable extends TableComponent
             'table' => $this,
         ]))->layout($this->resource()::$layout ?? Move::layout(), [
             'header' => $this->resource()->label(),
+        ]);
+    }
+
+    public function updateOrder($order)
+    {
+        app()->call([$this->resource(), 'tableSort'], [
+            'order' => $order,
         ]);
     }
 

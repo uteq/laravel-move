@@ -3,6 +3,7 @@
 namespace Uteq\Move\Fields;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Uteq\Move\Concerns\AuthorizedToSee;
 use Uteq\Move\Concerns\HasDependencies;
@@ -31,6 +32,8 @@ class Panel implements PanelInterface, ElementInterface
     public bool $sortable = false;
     public bool $withoutCard = false;
     public bool $withoutTitle = false;
+    public string $classes;
+    public string $flow = 'row';
 
     // Related models
     public $resouceForm;
@@ -199,7 +202,7 @@ class Panel implements PanelInterface, ElementInterface
 
     public function panels()
     {
-        return $this->panels;
+        return $this->panels ?? null;
     }
 
     public function titleClass($class)
@@ -241,6 +244,20 @@ class Panel implements PanelInterface, ElementInterface
     {
         $this->withoutCard();
         $this->withoutTitle();
+
+        return $this;
+    }
+
+    public function classes($classes)
+    {
+        $this->classes = $classes;
+
+        return $this;
+    }
+
+    public function flow($flow)
+    {
+        $this->flow = $flow;
 
         return $this;
     }
