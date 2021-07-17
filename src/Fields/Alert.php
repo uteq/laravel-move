@@ -12,6 +12,8 @@ class Alert extends Panel
 
     public $text = null;
 
+    public $class = 'p-4 sm:p-6';
+
     public function __construct(string $type, $text)
     {
         $this->isPlaceholder();
@@ -34,6 +36,13 @@ class Alert extends Panel
     public function text($text)
     {
         $this->text = $text;
+
+        return $this;
+    }
+
+    public function class($class)
+    {
+        $this->class = $class;
 
         return $this;
     }

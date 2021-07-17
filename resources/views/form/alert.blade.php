@@ -1,4 +1,4 @@
-<div class="p-4 sm:p-6">
+<div class="{{ $panel->class }}">
     <x-move-alert :color="$panel->color">
         {{ $panel->getText($this->store) }}
     </x-move-alert>

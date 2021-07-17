@@ -17,6 +17,7 @@ use Uteq\Move\Concerns\HasRules;
 use Uteq\Move\Concerns\IsStacked;
 use Uteq\Move\Concerns\Sortable;
 use Uteq\Move\Facades\Move;
+use Livewire\CreateBladeView;
 
 abstract class Field extends FieldElement
 {
@@ -103,6 +104,8 @@ abstract class Field extends FieldElement
 
     public bool $isPlaceholder = false;
 
+    public ?Closure $afterUpdatedStore = null;
+
     public array $displayTypes = [
         'edit' => 'form',
         'update' => 'form',
@@ -116,10 +119,15 @@ abstract class Field extends FieldElement
 
     public string $unique;
 
+    public string $storePrefix;
+    public string $defaultStorePrefix = 'store';
+
     protected $index = null;
     protected $show = null;
     protected $form = null;
     public bool $disabled = false;
+    public bool $hideName = false;
+    public bool $dirty = false;
 
     /**
      * Field constructor.

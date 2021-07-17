@@ -1,6 +1,5 @@
 <div
     class="flex flex-col flex-grow border-r border-gray-600 pt-5 pb-4 overflow-y-auto bg-gradient-to-b from-primary-700 to-primary-500">
-    @if ($menuVerticalCenter) <div class="my-auto"> @endif
     @if ($logo ?? null)
         {!! $logo !!}
     @else
@@ -10,6 +9,7 @@
             </h1>
         </a>
     @endif
+    @if ($menuVerticalCenter) <div class="my-auto"> @endif
     <div class="mt-5 flex-grow flex flex-col">
         <nav class="flex-1 {{ ($withPadding ?? false) ? 'px-2' : null }}">
             @if (isset($custom) && $custom !== null && (string)$custom !== "")
