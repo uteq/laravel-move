@@ -51,7 +51,7 @@ class ResourceShow extends Component
         return $this->resource()
             ->panels($this, $this->model, 'show')
             ->each(fn ($panel) => $panel->id ??= Str::random(20))
-            ->each(fn ($panel) => $panel->component = 'show.panel');
+            ->each(fn ($panel) => $panel->component = str_replace('form', 'show', $panel->component));
     }
 
     public function render()

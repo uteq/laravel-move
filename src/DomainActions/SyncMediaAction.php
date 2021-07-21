@@ -9,8 +9,10 @@ class SyncMediaAction
 {
     use WithSyncableMedia;
 
-    public function __invoke(Model $model, MediaCollection $paths, $collection, $disk = 'public')
+    public function __invoke(Model $model, MediaCollection $paths, $collection, $disk = null)
     {
+        $disk ??= config('filesystems.default');
+
         $this->syncMedia($model, $paths, $collection, $disk);
     }
 }

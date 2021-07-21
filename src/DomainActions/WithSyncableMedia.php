@@ -18,8 +18,10 @@ trait WithSyncableMedia
         return $this;
     }
 
-    public function syncMedia(Model $model, MediaCollection $paths, $collection, $diskName = 'public')
+    public function syncMedia(Model $model, MediaCollection $paths, $collection, $diskName = null)
     {
+        $diskName ??= config('filesystems.default');
+
         if (! $model instanceof HasMedia) {
             throw new \Exception(sprintf(
                 '%s: The given model `%s` should implement the %s interface',
@@ -36,7 +38,7 @@ trait WithSyncableMedia
         $result = [];
 
         foreach ($paths->withoutDelete() as $path) {
-            if ($path->id && Media::query()->find($path->id)) {
+            if ($path->id && config('media-library.media_model')::query()->find($path->id)) {
                 continue;
             }
 
