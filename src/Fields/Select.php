@@ -4,6 +4,7 @@ namespace Uteq\Move\Fields;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
@@ -254,18 +255,20 @@ class Select extends Field
 
         $store = $this->store();
 
-        if (! $store && ! $form->store[$this->attribute]) {
+        if (! $store && ! Arr::get($form->store, $this->attribute)) {
             $value = $this->valueCallback ? ($this->valueCallback)(null, $this->resource, $this->attribute) : null;
             $values = $value ? [$value] : null;
 
             $form->store[$this->attribute] = $value;
         } else {
-            $values = $store ?: [$form->store[$this->attribute]];
+            $values = $store ?: Arr::get($form->store, $this->attribute);
         }
 
-        return $store
+        $values = $store
             ? ($this->multiple ? $fieldStore : array_keys($fieldStore))
             : $values;
+
+        return is_string($values) ? [$values] : $values;
     }
 
     public function fieldStore()

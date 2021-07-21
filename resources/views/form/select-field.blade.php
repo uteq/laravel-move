@@ -7,7 +7,9 @@
     model="{{ $field->store }}"
     help-text="{{ $field->getHelpText() }}"
 >
-    <div class="w-full text-black" x-data="{ form : false }" wire:key="move-select-field-{{ $field->attribute }}-{{ $field->getVersion() }}">
+    <div class="w-full text-black" x-data="{ form : false }"
+         wire:key="move-select-field-{{ $field->attribute }}-{{ $field->getVersion() }}"
+    >
         <x-move-field.select
             model="{{ $field->store }}"
             placeholder="{{ $field->placeholder ?? null }}"
