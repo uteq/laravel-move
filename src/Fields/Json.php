@@ -12,10 +12,16 @@ class Json extends Field
     public string $component = 'json';
     public bool $editableKeys = true;
     public string $indexDisplayType = 'modal';
-    public string $addItemText = '+ Add item';
+    public string $addItemText;
     public string $formDisplayType = 'form';
+    protected string $rowClasses;
 
     public $fields;
+
+    public function init()
+    {
+        $this->addItemText = (string) __('+ Add item');
+    }
 
     public function fields(array $fields)
     {
@@ -24,7 +30,7 @@ class Json extends Field
         return $this;
     }
 
-    public function panel($resourceForm, $panelKey)
+    public function panel($resourceForm, $panelKey, $field)
     {
         $model = $resourceForm->model;
 
@@ -35,10 +41,11 @@ class Json extends Field
         $panel->component = 'form.json-panel';
         $panel->formDisplayType = $this->formDisplayType;
         $panel->resolveFields($model);
-        $panel->withMeta([
+        $panel->withMeta(array_merge([
             'is_first' => $panelKey === 0,
-        ]);
+        ], $this->customMeta(), $this->meta));
         $panel->withoutCard();
+        $panel->removeRow = fn (...$args) => $this->removeRow(...$args);
 
         collect($panel->fields)
             ->each(function ($field) use ($panelKey) {
@@ -50,7 +57,10 @@ class Json extends Field
                 ]);
             });
 
-        return $panel->render($resource);
+        return $panel->render($resource, [
+            'parentField' => $field,
+            'panelKey' => $panelKey,
+        ]);
     }
 
     public function addItemText($text): self
@@ -83,7 +93,10 @@ class Json extends Field
 
         unset($component->store[$field->attribute][$id]);
 
-        $component->updatedStore(Arr::get($component->store, $field->attribute), $field->attribute);
+        $component->updatedStore(
+            Arr::get($component->store, $field->attribute),
+            $field->attribute
+        );
     }
 
     public function blueprint(array $blueprint): self
@@ -114,5 +127,28 @@ class Json extends Field
         return $this;
     }
 
+    public function rowClasses($rowClasses)
+    {
+        $this->rowClasses = $rowClasses;
 
+        return $this;
+    }
+
+    public function customMeta(): array
+    {
+        $meta = [];
+
+        if ($this->rowClasses ?? null) {
+            $meta['stacked_classes'] = $this->rowClasses;
+        }
+
+        return $meta;
+    }
+
+    public function hideHeader($hideHeader = true)
+    {
+        $this->meta['hide_header'] = $hideHeader;
+
+        return $this;
+    }
 }

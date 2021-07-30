@@ -1,4 +1,4 @@
-@props(['disabled' => false, 'model' => $attributes->wire('model')->value(), 'config' => []])
+@props(['disabled' => false, 'model' => $attributes->wire('model')->value(), 'config' => [], 'hasError' => false])
 
 <div class="relative w-full flex flatpickr" wire:ignore wire:key="{{ $model }}">
     <input {{ $disabled ? 'disabled' : '' }}
@@ -13,7 +13,7 @@
            x-ref="input"
            x-init="window.flatpickr($refs.input, {{ json_encode($config) }})"
         {!! $attributes->merge([
-            'class' => 'flex-1 form-input block w-full min-w-0 rounded-none rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5 border-gray-300 rounded',
+            'class' => 'flex-1 form-input block w-full min-w-0 rounded-none rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5 rounded ' . ( $hasError ? 'border-red-500' : 'border-gray-300' ),
         ]) !!}
     />
 

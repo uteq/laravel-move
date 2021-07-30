@@ -73,7 +73,10 @@ trait HasStore
     {
         $data = $this->storePrepareSaveData();
 
-        $this->customValidate($data['fields'], ($data['rules'] ?? []) ?: $this->rules($this->{$this->property}));
+        $this->customValidate(
+            $data['fields'],
+            ($data['rules'] ?? []) ?: $this->rules($this->{$this->property})
+        );
 
         return $data;
     }
@@ -196,6 +199,19 @@ trait HasStore
             })
             ->toArray();
 
+        $flatFields = Arr::dot($fields);
+
+        $ruleSet = $rules;
+
+        $rules = [];
+        foreach ($ruleSet as $key => $value) {
+            if (! isset($flatFields[$key])) {
+                continue;
+            }
+
+            $rules[$key] = $value;
+        }
+
         try {
             $valid = Validator::make($fields, $rules)->validate();
         } catch (ValidationException $e) {
@@ -255,7 +271,8 @@ trait HasStore
             $this->redirects(),
             method_exists($this->resource(), 'redirects')
                 ? $this->resource()->redirects()
-                : []
+                : [],
+            $this->customRedirects(),
         );
     }
 

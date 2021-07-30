@@ -2,13 +2,16 @@
 
 <x-move-form.row
     custom
-    :required="$field->isRequired()"
-    label="{{ $field->getName() }}"
     model="{{ $field->store }}"
+    label="{{ $field->getName() }}"
     help-text="{{ $field->getHelpText() }}"
+    :required="$field->isRequired()"
     :meta="$field->meta"
+    :stacked="$field->stacked"
 >
-    <div class="w-full text-black" x-data="{ form : false }" wire:key="move-select-field-{{ $field->attribute }}-{{ $field->getVersion() }}">
+    <div class="w-full text-black" x-data="{ form : false }"
+         wire:key="move-select-field-{{ $field->attribute }}-{{ $field->getVersion() }}"
+    >
         <x-move-field.select
             model="{{ $field->store }}"
             placeholder="{{ $field->placeholder ?? null }}"

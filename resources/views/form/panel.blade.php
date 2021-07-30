@@ -15,17 +15,12 @@
                 </div>
             @endif
 
-            @if (is_string($model))
-                @dd($model, $field, $this)
-            @endif
-
             {{ $field->render(is_string($model) ? $model : ($model->id ? 'edit' : 'create')) }}
         @endforeach
 
-        @foreach ($panel->panels() ?? [] as $subPanel)
-            @if ($subPanel->empty()) @continue @endif
-
-            {{ $subPanel->render($model) }}
-        @endforeach
+        @include('move::form.partials.render-panels', [
+            'panels' => $panel->panels(),
+            'model' => $model,
+        ])
     @if ($panel->flow === 'col') </div> @endif
 </x-move-panel>

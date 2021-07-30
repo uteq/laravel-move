@@ -5,10 +5,12 @@ namespace Uteq\Move\Fields;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Uteq\Move\Concerns\AuthorizedToSee;
 use Uteq\Move\Concerns\HasDependencies;
 use Uteq\Move\Concerns\Makeable;
 use Uteq\Move\Concerns\Metable;
+use Uteq\Move\Concerns\WithActionableFields;
 use Uteq\Move\Contracts\ElementInterface;
 use Uteq\Move\Contracts\PanelInterface;
 use Uteq\Move\Fields\Concerns\ShowsConditionally;
@@ -34,6 +36,7 @@ class Panel implements PanelInterface, ElementInterface
     public bool $withoutTitle = false;
     public string $classes;
     public string $flow = 'row';
+    public bool $stacked = false;
 
     // Related models
     public $resouceForm;
@@ -50,11 +53,13 @@ class Panel implements PanelInterface, ElementInterface
     public $class = null;
     public $description = null;
     public $afterTitle = null;
+    protected string $unique;
 
     public function __construct(?string $name = null, array $fields = [])
     {
         $this->name = $name;
         $this->fields = $fields;
+        $this->unique = (string) Str::random(20);
 
         if ($name) {
             $this->nameOnCreate = $name;
@@ -66,9 +71,9 @@ class Panel implements PanelInterface, ElementInterface
         }
     }
 
-    public static function id()
+    public function id()
     {
-        return encrypt(static::class);
+        return $this->id ?? $this->unique;
     }
 
     public function nameOnCreate(string $nameOnCreate)
@@ -260,5 +265,15 @@ class Panel implements PanelInterface, ElementInterface
         $this->flow = $flow;
 
         return $this;
+    }
+
+    public function stacked()
+    {
+        return $this->stacked;
+    }
+
+    public function getUnique()
+    {
+        return $this->unique;
     }
 }

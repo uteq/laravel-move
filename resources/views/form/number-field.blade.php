@@ -6,4 +6,5 @@
     type="number"
     step="{{ $field->step ?? '1' }}"
     :meta="$field->meta"
+    :stacked="$field->stacked"
 />

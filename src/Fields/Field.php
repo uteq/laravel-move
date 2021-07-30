@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
@@ -45,7 +46,7 @@ abstract class Field extends FieldElement
     /**
      * The callback to be used to resolve the field's display value.
      */
-    public ?Closure $resourceDataCallback = null;
+    protected ?Closure $resourceDataCallback = null;
 
     /**
      * Indicates if the field is nullable.
@@ -86,25 +87,25 @@ abstract class Field extends FieldElement
     /**
      * Define your own field filler here
      */
-    public ?Closure $fillCallback = null;
+    protected ?Closure $fillCallback = null;
 
     /**
      * @var Closure[]
      */
-    public array $beforeStore = [];
+    protected array $beforeStore = [];
 
     /**
      * @var Closure[]
      */
-    public array $afterStore = [];
+    protected array $afterStore = [];
 
     public string $store;
 
-    public ?Closure $before = null;
+    protected ?Closure $before = null;
 
     public bool $isPlaceholder = false;
 
-    public ?Closure $afterUpdatedStore = null;
+    protected ?Closure $afterUpdatedStore = null;
 
     public array $displayTypes = [
         'edit' => 'form',
@@ -125,9 +126,11 @@ abstract class Field extends FieldElement
     protected $index = null;
     protected $show = null;
     protected $form = null;
+
     public bool $disabled = false;
     public bool $hideName = false;
     public bool $dirty = false;
+    public bool $flex = true;
 
     /**
      * Field constructor.

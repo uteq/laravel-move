@@ -5,10 +5,12 @@ namespace Uteq\Move\Livewire;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\WithPagination;
+use Opis\Closure\SerializableClosure;
 use Symfony\Component\HttpFoundation\Response;
 use Uteq\Move\Concerns\HasParent;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\HasSelected;
+use Uteq\Move\Concerns\WithClosures;
 use Uteq\Move\Exceptions\ResourcesException;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Requests\ResourceIndexRequest;
@@ -17,18 +19,21 @@ use Uteq\Move\Support\Livewire\TableComponent;
 class ResourceTable extends TableComponent
 {
     use WithPagination {
-        setPage as paginationSetPage;
-        resolvePage as paginationResolvePage;
+        WithPagination::setPage as paginationSetPage;
+        WithPagination::resolvePage as paginationResolvePage;
     }
+
     use HasResource;
     use HasSelected;
     use HasParent;
-//    use WithActionableFields;
+    use WithClosures;
 
     protected static $viewType = 'index';
     protected bool $keepRequestQuery = false;
     protected ?string $table;
     protected string $limit;
+
+    public string $view = 'move::livewire.resource-table';
 
     public $search;
     public $action = '-';
@@ -43,27 +48,37 @@ class ResourceTable extends TableComponent
     public array $store = [];
     public array $meta = [];
     public array $route = [];
+    public string|null $showModal = null;
 
     public $listeners = [
         'move::table:updated' => 'render',
-        ''
     ];
 
     protected $queryString = ['search', 'filter', 'order'];
 
     protected $crudBaseRoute = null;
 
+    public $disableDeleteFor;
+
+    public $redirects;
+
+    public $closures = ['disableDeleteFor', 'redirects'];
+
     public function mount(string $resource)
     {
+        $this->resource = $resource;
         $this->crudBaseRoute ??= move()::getPrefix();
 
-        $this->resource = $resource;
+        if ($this->limit ?? null) {
+            $this->filter['limit'] = $this->limit;
+        }
 
         $this->initHasFilter();
         $this->initHasParent();
         $this->hydrate();
         $this->initializeWithPagination();
         $this->computeHasSelected();
+        $this->serializeClosures();
         $this->sortable = $this->resource()::$sortable;
         $this->route = [
             'resource' => request()->route()->parameter('resource'),
@@ -186,7 +201,7 @@ class ResourceTable extends TableComponent
         $request->route()->setParameter('model', optional($this->route['model'])['id']);
 
         /** @psalm-suppress UndefinedInterfaceMethod */
-        return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery(), $request), [
+        return view($this->view, array_merge($this->resource()->getForIndex($this->requestQuery(), $request), [
             'collection' => $this->collection(),
             'rows' => $this->rows(),
             'actionResult' => $this->actionResult,
@@ -217,5 +232,10 @@ class ResourceTable extends TableComponent
         }
 
         return $rows;
+    }
+
+    public function redirects()
+    {
+        return $this->unserializeClosure('redirects');
     }
 }

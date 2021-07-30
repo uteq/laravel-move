@@ -1,4 +1,4 @@
-@props(['title', 'content', 'id' => null, 'maxWidth' => null, 'button' => null, 'show' => true, 'withoutFooter' => false])
+@props(['title', 'content' => null, 'id' => null, 'maxWidth' => null, 'button' => null, 'show' => true, 'withoutFooter' => false])
 
 <x-move-modal :id="$id" :maxWidth="$maxWidth" {{ $attributes }} :show="$show"  :button="$button">
     <div class="px-6 py-4 text-left">
@@ -7,7 +7,7 @@
         </div>
 
         <div class="mt-4 break-words whitespace-wrap">
-            {!! $content !!}
+            {!! $content ?? $slot !!}
         </div>
     </div>
 
@@ -16,7 +16,7 @@
         @if ($footer ?? null)
             {{ $footer }}
         @else
-            <x-move-button x-on:click="show = false">
+            <x-move-button type="button" x-on:click="show = false">
                 {{ __('OK') }}
             </x-move-button>
         @endif

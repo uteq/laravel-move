@@ -25,6 +25,7 @@ trait HasCrud
     private function modelById($id)
     {
         $resourceModel = $this->resource()->model();
+
         if ($this->crudUsesSoftDelete($resourceModel)) {
             $resourceModel = $resourceModel->withTrashed();
         }
@@ -124,6 +125,20 @@ trait HasCrud
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();
         $destroyer($model);
 
+        $endpoint = false;
+
+        if ($this->endpoint('delete') instanceof \Closure) {
+            $endpoint = $this->endpoint('delete')($this);
+        }
+
+        if (isset($endpoint) || is_null($endpoint)) {
+            return ! is_null($endpoint) ? redirect()->to($endpoint) : null;
+        }
+
+        if ($this->endpoint('delete') === null) {
+            return null;
+        }
+
         if (method_exists($this, 'parent')) {
             if ($this->parent() && isset($this->parent()->resource->id)) {
                 return $this->redirectTo = $this->editRoute(
@@ -133,8 +148,18 @@ trait HasCrud
             }
         }
 
-        $this->emit('move::table:updated');
+        return $this->endpoint('delete')
+            ? $this->endpoint('delete')
+            : $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => str_replace('.', '/', $this->resource)]);
+    }
 
-        return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => str_replace('.', '/', $this->resource)]);
+    private function endpoint($key, $default = null)
+    {
+        return $this->endpoints()[$key] ?? $default;
+    }
+
+    private function endpoints()
+    {
+        return array_replace_recursive($this->redirects());
     }
 }

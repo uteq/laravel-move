@@ -10,9 +10,11 @@ class Alert extends Panel
 
     public string $color = 'primary';
 
-    public $text = null;
+    protected $text = null;
 
     public $class = 'p-4 sm:p-6';
+
+    public bool $hideIcon = false;
 
     public function __construct(string $type, $text)
     {
@@ -26,10 +28,10 @@ class Alert extends Panel
         ]);
     }
 
-    public function getText($store = [])
+    public function getText($form, $store = [])
     {
         return is_callable($this->text)
-            ? ($this->text)($store, $this)
+            ? ($this->text)($store, $this, $form)
             : $this->text;
     }
 
@@ -43,6 +45,13 @@ class Alert extends Panel
     public function class($class)
     {
         $this->class = $class;
+
+        return $this;
+    }
+
+    public function withoutIcon($hideIcon = true)
+    {
+        $this->hideIcon = $hideIcon;
 
         return $this;
     }

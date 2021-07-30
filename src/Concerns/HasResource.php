@@ -75,6 +75,11 @@ trait HasResource
         return $resource;
     }
 
+    public function getResourceClassProperty()
+    {
+        return get_class($this->resource());
+    }
+
     public function getResourceProperty()
     {
         return $this->resource();
@@ -103,6 +108,8 @@ trait HasResource
 
     public function mapFields(array $resolvedFields, $store)
     {
+        $store = move_arr_expand($store);
+
         $store = collect($store)
             ->filter(fn ($value, $key) => ! str_contains($key, '.'))
             ->toArray();

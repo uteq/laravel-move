@@ -96,14 +96,14 @@ switch ($maxWidth ?? '2xl') {
          style="display: none;"
     >
         <div class="fixed inset-0 transform transition-all"
-             {{ $closeOnClickAway ? 'x-on:click="show = null"' : null }}
+             <?php if ($closeOnClickAway): ?> x-on:click="show = null" <?php endif; ?>
              x-transition:enter="ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"
              x-transition:leave="ease-in duration-200"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
-        ><div class="absolute inset-0 bg-gray-500 opacity-75"></div></div>
+        ><div class="absolute inset-0 bg-gray-500 opacity-75 {{ $closeOnClickAway ? 'cursor-pointer' : null }}"></div></div>
 
         <div class="bg-white rounded-lg overflow-y-auto shadow-xl transform transition-all sm:w-full {{ $maxWidth }}"
              x-transition:enter="ease-out duration-300"

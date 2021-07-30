@@ -30,9 +30,10 @@ trait HasHelpText
      *
      * @return $this
      */
-    public function help($text)
+    public function help($text, $position = 'below')
     {
         $this->helpText = $text;
+        $this->meta['help_text_location'] = $position;
 
         return $this;
     }

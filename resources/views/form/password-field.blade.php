@@ -5,4 +5,5 @@
     :required="$field->isRequired()"
     help-text="{{ $field->getHelpText() }}"
     :meta="$field->meta"
+    :stacked="$field->stacked"
 />

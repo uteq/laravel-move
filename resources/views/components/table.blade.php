@@ -1,4 +1,4 @@
-@props(['table'])
+@props(['table' => null])
 
 <div {{ $attributes->merge(['class' => 'bg-white sm:rounded-lg sm:shadow']) }}>
 

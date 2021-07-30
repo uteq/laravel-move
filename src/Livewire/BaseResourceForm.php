@@ -13,11 +13,19 @@ use Uteq\Move\Concerns\HasMountActions;
 use Uteq\Move\Concerns\HasParent;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\WithActionableFields;
+use Uteq\Move\Concerns\WithClosures;
 use Uteq\Move\Concerns\WithSteps;
 use Uteq\Move\Facades\Move;
+use Uteq\Move\Fields\Panel;
 use Uteq\Move\Support\Livewire\Concerns\HasStore;
 use Uteq\Move\Support\Livewire\FormComponent;
+use function PHPUnit\Framework\isJson;
 
+/**
+ * Class BaseResourceForm
+ * @package Uteq\Move\Livewire
+ * @property Collection $panels
+ */
 abstract class BaseResourceForm extends FormComponent
 {
     use HasMountActions,
@@ -27,7 +35,8 @@ abstract class BaseResourceForm extends FormComponent
         HasParent,
         WithFileUploads,
         WithActionableFields,
-        WithSteps;
+        WithSteps,
+        WithClosures;
 
     protected static $viewType = 'edit';
 
@@ -51,6 +60,10 @@ abstract class BaseResourceForm extends FormComponent
 
     protected $property = 'model';
     protected $label;
+
+    public $redirects;
+
+    protected $closures = ['redirects'];
 
     protected $listeners = [
         'updatedStore' => 'updatedStore',
@@ -198,7 +211,14 @@ abstract class BaseResourceForm extends FormComponent
 
     public function panels()
     {
-        return collect($this->panels);
+        return $this->panels;
+    }
+
+    public function panelAction(string $panelId, string $method, ...$args)
+    {
+        $this->panels()
+            ->filter(fn ($panel) => $panel->id() === $panelId)
+            ->each(fn ($panel) => $panel->{$method}($this, $panel, ...$args));
     }
 
     public function set($attribute, $value)
@@ -207,13 +227,6 @@ abstract class BaseResourceForm extends FormComponent
         $attributePath = Str::after($attribute, '.');
 
         Arr::set($this->{$attribute}, $attributePath, $value);
-    }
-
-    public function panelAction(string $panelId, string $method, ...$args)
-    {
-        $this->panels()
-            ->filter(fn ($panel) => get_class($panel) === decrypt($panelId))
-            ->each(fn ($panel) => $panel->{$method}($this, $panel, ...$args));
     }
 
     /**
@@ -254,5 +267,10 @@ abstract class BaseResourceForm extends FormComponent
                 : $this->resolveFieldCreateRules($this->store)
             )
         );
+    }
+
+    public function customRedirects()
+    {
+        return $this->unserializeClosure('redirects');
     }
 }

@@ -24,8 +24,9 @@
                     {{ $filter->name() }}
                 </h3>
                 <div class="p-3" wire:key="filter.{{ $key }}">
-                    <x-dynamic-component :component="'move::filters.' . $filter->component()"
-                                         :filter="$filter"
+                    <x-dynamic-component
+                        :component="'move::filters.' . $filter->component()"
+                        :filter="$filter"
                     />
                 </div>
             @endforeach
@@ -86,10 +87,11 @@
                 @foreach ($row['fields'] as $field)
                     <x-move-td class="{{ Move::getWrapTableContent() && $field->wrapContent ? 'whitespace-wrap' : 'whitespace-nowrap' }}">
                         @if ($table->resource()::title($row['model']) === $field->attribute)
-                            <button wire:click="edit({{ $row['model']->id }})"
-                                    class="text-primary-500 cursor-pointer"
-                                    wire:loading.attr="disabled"
-                                    wire:loading.class="text-gray-500"
+                            <button
+                                wire:click="edit({{ $row['model']->id }})"
+                                class="text-primary-500 cursor-pointer"
+                                wire:loading.attr="disabled"
+                                wire:loading.class="text-gray-500"
                             >
                                 {!! $field->render('index') !!}
                             </button>
