@@ -11,6 +11,7 @@ use Uteq\Move\Concerns\HasDependencies;
 use Uteq\Move\Concerns\Makeable;
 use Uteq\Move\Concerns\Metable;
 use Uteq\Move\Concerns\WithActionableFields;
+use Uteq\Move\Concerns\WithRedirects;
 use Uteq\Move\Contracts\ElementInterface;
 use Uteq\Move\Contracts\PanelInterface;
 use Uteq\Move\Fields\Concerns\ShowsConditionally;
@@ -22,6 +23,7 @@ class Panel implements PanelInterface, ElementInterface
     use Makeable;
     use Metable;
     use ShowsConditionally;
+    use WithRedirects;
 
     public string $id;
     public ?string $name = null;

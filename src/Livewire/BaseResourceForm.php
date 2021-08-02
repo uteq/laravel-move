@@ -14,6 +14,7 @@ use Uteq\Move\Concerns\HasParent;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\WithActionableFields;
 use Uteq\Move\Concerns\WithClosures;
+use Uteq\Move\Concerns\WithListeners;
 use Uteq\Move\Concerns\WithSteps;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Panel;
@@ -36,7 +37,8 @@ abstract class BaseResourceForm extends FormComponent
         WithFileUploads,
         WithActionableFields,
         WithSteps,
-        WithClosures;
+        WithClosures,
+        WithListeners;
 
     protected static $viewType = 'edit';
 
@@ -56,6 +58,7 @@ abstract class BaseResourceForm extends FormComponent
     public ?string $buttonSaveText = null;
     public ?string $buttonCancelText = null;
 
+    public $closeModalClass;
     public $message;
 
     protected $property = 'model';
@@ -78,19 +81,6 @@ abstract class BaseResourceForm extends FormComponent
      * @var array
      */
     public array $store;
-
-    public function addListener($key, $method)
-    {
-        if (isset($this->listeners[$key])) {
-            throw new \Exception(sprintf(
-                '%s: The given listener `%s` already exists',
-                __METHOD__,
-                $key,
-            ));
-        }
-
-        $this->listeners = array_replace([$key => $method], $this->listeners ?? []);
-    }
 
     public function addQueryString($key)
     {
@@ -119,7 +109,13 @@ abstract class BaseResourceForm extends FormComponent
 
     public function closeModal()
     {
+        $closedModal = $this->showModal;
+
         $this->showModal = null;
+
+        collect($this->resource()->getFields())
+            ->filter(fn ($field) => method_exists($field, 'modalClosed'))
+            ->each(fn ($field) => $this->action($field->store, 'modalClosed', $closedModal));
     }
 
     public function handleAfterSaveActions()
@@ -250,7 +246,9 @@ abstract class BaseResourceForm extends FormComponent
     public function render()
     {
         /** @psalm-suppress UndefinedInterfaceMethod */
-        return view($this->resource()::$formView ?? 'move::livewire.resource-form')
+        return view($this->resource()::$formView ?? 'move::livewire.resource-form', [
+                'showModal' => $this->showModal,
+            ])
             ->layout($this->resource()::$layout ?? Move::layout(), [
                 'header' => $this->resource()->singularLabel() .' details',
             ]);

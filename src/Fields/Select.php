@@ -5,12 +5,19 @@ namespace Uteq\Move\Fields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Uteq\Move\Actions\LivewireCloseModal;
+use Uteq\Move\Concerns\Metable;
+use Uteq\Move\Concerns\WithListeners;
+use Uteq\Move\Concerns\WithModal;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
 class Select extends Field
 {
+    use WithModal, WithListeners;
+
     public string $component = 'select-field';
 
     public $version = 1;
@@ -41,7 +48,16 @@ class Select extends Field
 
     public function init()
     {
+        $this->withMeta([
+            'with_add_button' => false,
+        ]);
+
         $this->show(fn ($field) => (string) ($this->getOptions()[$field->value] ?? null));
+    }
+
+    public function modalClosed($modal)
+    {
+        $this->version($this->version + 1);
     }
 
     public function settings(array $settings)
@@ -86,7 +102,7 @@ class Select extends Field
             : null;
 
         if (! $model) {
-            return null;
+            return $this->resourceName::singularLabel();
         }
 
         if (! $this->resourceName) {
@@ -106,6 +122,10 @@ class Select extends Field
 
     public function cachedResource($name, $value, $model): ?Model
     {
+        if ($value instanceof Collection || is_array($value)) {
+            return null;
+        }
+
         if (! isset(static::$resourceCache[$name][$value]) || empty(static::$resourceCache[$name][$value])) {
             static::$resourceCache[$name] ??= [];
             static::$resourceCache[$name][$value] = $name::$model::find($value);
@@ -207,7 +227,7 @@ class Select extends Field
             'minimumInputLength' => 2,
             'language' => [
                 'inputTooShort' => <<<JS
-                    function() {
+                    () => {
                         return 'Minimaal 2 karakters vereist';
                     }
                     JS
@@ -220,9 +240,7 @@ class Select extends Field
     public function resolveDefaultOption($option): self
     {
         $this->options(function ($field) use ($option) {
-            $store = isset($field->resource->store)
-                ? $field->resource->store
-                : $field->resource->getAttributes();
+            $store = $field->resource->store ?? $field->resource->getAttributes();
 
             return is_callable($option)
                 ? $option($store[$this->attribute] ?? null)
@@ -316,6 +334,21 @@ class Select extends Field
         $this->createResource = $resource;
         $this->createForm = $form;
         $this->addResourceEnabled = true;
+
+        return $this;
+    }
+
+    public function withAddButton($withAddButton = true, $redirectsCloseModal = true): static
+    {
+        $this->meta['with_add_button'] = $withAddButton;
+
+        if ($redirectsCloseModal) {
+            $this->redirects(is_array($redirectsCloseModal) ? $redirectsCloseModal : [
+                'create' => LivewireCloseModal::make(),
+                'update' => LivewireCloseModal::make(),
+                'delete' => LivewireCloseModal::make(),
+            ]);
+        }
 
         return $this;
     }

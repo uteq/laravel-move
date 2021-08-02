@@ -256,7 +256,13 @@ trait HasStore
             return null;
         }
 
-        return redirect($this->endpointRoute($endpoint));
+        $endpointRoute = $this->endpointRoute($endpoint);
+
+        if (! $endpointRoute) {
+            return null;
+        }
+
+        return redirect($endpointRoute);
     }
 
     private function endpoint($key, $default = null)
@@ -280,6 +286,10 @@ trait HasStore
     {
         if ($endpoint instanceof \Closure) {
             return $this->endpointRoute($endpoint($this));
+        }
+
+        if (is_null($endpoint)) {
+            return null;
         }
 
         if (! is_string($endpoint)) {

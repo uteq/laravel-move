@@ -3,20 +3,15 @@
 namespace Uteq\Move\Fields;
 
 use Closure;
-use Uteq\Move\Concerns\WithClosures;
 use Uteq\Move\Facades\Move;
 
 class Table extends Panel
 {
-    use WithClosures;
-
     public string $component = 'form.table';
 
     public string $tableResource;
 
     protected Closure $disableDeleteFor;
-
-    protected $redirects;
 
     public function __construct(
         $name,
@@ -41,18 +36,6 @@ class Table extends Panel
         $this->resource($resourceClass);
 
         parent::__construct($name, $fields);
-    }
-
-    public function redirects($endpoints)
-    {
-        $this->redirects = $endpoints;
-
-        return $this;
-    }
-
-    public function getRedirects()
-    {
-        return $this->redirects;
     }
 
     public function fields()

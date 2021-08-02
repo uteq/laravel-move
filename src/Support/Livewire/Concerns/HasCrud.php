@@ -22,29 +22,6 @@ trait HasCrud
         $this->crudBaseRoute ??= move()::getPrefix();
     }
 
-    private function modelById($id)
-    {
-        $resourceModel = $this->resource()->model();
-
-        if ($this->crudUsesSoftDelete($resourceModel)) {
-            $resourceModel = $resourceModel->withTrashed();
-        }
-
-        return $resourceModel->find($id);
-    }
-
-    private function crudUsesSoftDelete($resourceModel)
-    {
-        if (null !== static::$crudUsesSoftDelete) {
-            return static::$crudUsesSoftDelete;
-        }
-
-        return static::$crudUsesSoftDelete = in_array(
-            SoftDeletes::class,
-            class_uses_recursive($resourceModel)
-        );
-    }
-
     public function show($id)
     {
         $this->redirect($this->showRoute($id));
@@ -161,5 +138,28 @@ trait HasCrud
     private function endpoints()
     {
         return array_replace_recursive($this->redirects());
+    }
+
+    private function modelById($id)
+    {
+        $resourceModel = $this->resource()->model();
+
+        if ($this->crudUsesSoftDelete($resourceModel)) {
+            $resourceModel = $resourceModel->withTrashed();
+        }
+
+        return $resourceModel->find($id);
+    }
+
+    private function crudUsesSoftDelete($resourceModel)
+    {
+        if (null !== static::$crudUsesSoftDelete) {
+            return static::$crudUsesSoftDelete;
+        }
+
+        return static::$crudUsesSoftDelete = in_array(
+            SoftDeletes::class,
+            class_uses_recursive($resourceModel)
+        );
     }
 }

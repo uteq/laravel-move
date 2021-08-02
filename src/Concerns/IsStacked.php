@@ -18,9 +18,15 @@ trait IsStacked
      *
      * @return $this
      */
-    public function stacked($stack = true)
+    public function stacked($stacked = true)
     {
-        $this->stacked = $stack;
+        if (is_string($stacked)) {
+            $this->meta['stacked_classes'] = $stacked;
+
+            $stacked = true;
+        }
+
+        $this->stacked = $stacked;
 
         return $this;
     }

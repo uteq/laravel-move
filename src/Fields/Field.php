@@ -17,6 +17,9 @@ use Uteq\Move\Concerns\HasRequired;
 use Uteq\Move\Concerns\HasRules;
 use Uteq\Move\Concerns\IsStacked;
 use Uteq\Move\Concerns\Sortable;
+use Uteq\Move\Concerns\WithClosures;
+use Uteq\Move\Concerns\WithModal;
+use Uteq\Move\Concerns\WithRedirects;
 use Uteq\Move\Facades\Move;
 use Livewire\CreateBladeView;
 
@@ -29,6 +32,8 @@ abstract class Field extends FieldElement
     use IsStacked;
     use HasDependencies;
     use HasRequired;
+    use WithModal;
+    use WithRedirects;
 
     public string $name;
     public ?string $attribute;
@@ -438,6 +443,11 @@ abstract class Field extends FieldElement
         return strtolower(Str::afterLast(static::class, '\\'));
     }
 
+    public function identification(): string
+    {
+        return static::class . '.' . $this->attribute;
+    }
+
     public function view(string $displayTypeKey, array $data = [])
     {
         $this->type = $displayTypeKey;
@@ -447,6 +457,8 @@ abstract class Field extends FieldElement
         $data = array_replace_recursive([
             'field' => $this,
             'store' => $this->resource['store'] ?? null,
+            'meta' => $this->meta,
+            'showModal' => $this->showModal,
         ], $data);
 
         if (isset($this->{$displayType}) && null !== $this->{$displayType}) {

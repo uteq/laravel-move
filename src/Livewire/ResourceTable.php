@@ -52,6 +52,7 @@ class ResourceTable extends TableComponent
 
     public $listeners = [
         'move::table:updated' => 'render',
+        'closeModal' => 'closeModal',
     ];
 
     protected $queryString = ['search', 'filter', 'order'];
@@ -63,6 +64,11 @@ class ResourceTable extends TableComponent
     public $redirects;
 
     public $closures = ['disableDeleteFor', 'redirects'];
+
+    public function test()
+    {
+        $this->emit('test:blaat');
+    }
 
     public function mount(string $resource)
     {
@@ -92,6 +98,12 @@ class ResourceTable extends TableComponent
         if (method_exists($this, 'init')) {
             app()->call([$this, 'init']);
         }
+    }
+
+    public function closeModal()
+    {
+        $this->confirmingDestroy = null;
+        $this->showModal = null;
     }
 
     public function resolvePage()

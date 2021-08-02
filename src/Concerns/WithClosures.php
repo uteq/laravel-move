@@ -8,22 +8,61 @@ trait WithClosures
 {
     protected $unserializedClosures = [];
 
-    protected function serializeClosures()
+    protected static $serializedClasses = [];
+
+    public function initializeWithClosures()
     {
-        foreach ($this->closures ?? [] as $closure) {
-            if (is_array($this->{$closure})) {
-                foreach ($this->{$closure} as $key => $value) {
-                    $this->{$closure}[$key] = $this->serializeClosure($value);
-                }
-            } elseif ($this->{$closure} instanceof \Closure) {
-                $this->{$closure} = $this->serializeClosure($this->{$closure});
-            }
-        }
+        $this->beforeMount(fn() => $this->serializeClosures());
     }
 
-    protected function serializeClosure(\Closure $closure): string
+    protected function serializeClosures()
     {
+        // No need to serialize again when already serialized
+        //  This makes it possible to create a manual serialization point, even before mount
+        if (isset(static::$serializedClasses[static::class])) {
+            return;
+        }
+
+        $this->doSerializeClosures(array_flip($this->closures ?? []), $this);
+
+        static::$serializedClasses[static::class] = true;
+    }
+
+    protected function doSerializeClosures(array $closures, object $model)
+    {
+        foreach ($closures ?? [] as $key => $closure) {
+            if ($model->{$key} == null) {
+                continue;
+            }
+
+            if (is_array($model->{$key})) {
+                $model->{$key} = (array) $this->doSerializeClosures($model->{$key}, (object) $model->{$key});
+            } elseif (is_callable($model->{$key})) {
+                $model->{$key} = $this->serializeClosure($model->{$key});
+            }
+        }
+
+        return $model;
+    }
+
+    protected function serializeClosure($closure): string
+    {
+        if (is_callable($closure) && ! $closure instanceof \Closure) {
+            $closure = fn (...$args) => $closure(...$args);
+        }
+
         return \Opis\Closure\serialize(new SerializableClosure($closure));
+    }
+
+    protected function unserializeClosures()
+    {
+        $closures = [];
+
+        foreach ($this->closures ?? [] as $key => $closure) {
+            $closures[$key] = $this->unserializeClosure($closure);
+        }
+
+        return $closures;
     }
 
     protected function unserializeClosure($closure)
@@ -38,6 +77,10 @@ trait WithClosures
 
         if (is_array($this->{$closure} ?? null)) {
             foreach ($this->{$closure} as $key => $value) {
+                if ($value == null) {
+                    continue;
+                }
+
                 $this->unserializedClosures[$closure][$key] = \Opis\Closure\unserialize($value);
             }
 
