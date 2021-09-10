@@ -8,5 +8,12 @@
     :meta="$field->meta"
     :stacked="$field->stacked"
 >
-    <x-move-field.editor id="{{ $field->unique }}" wire:model="{{ $field->store }}" :value="$this->store" />
+    <x-move-field.editor
+        id="{{ $field->unique }}"
+        wire:model="{{ $field->store }}"
+        :theme="$field->theme"
+        :value="$this->store"
+        :toolbar="$field->toolbar"
+        :rows="$field->rows"
+    />
 </x-move-form.row>

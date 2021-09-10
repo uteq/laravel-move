@@ -6,7 +6,7 @@ class Step extends Panel
 {
     public string $component = 'form.step';
 
-    public string $next;
+    public null|string $next = null;
 
     public string $attribute;
 
@@ -26,7 +26,10 @@ class Step extends Panel
 
     public ?string $doneRoute = null;
     public ?string $doneText = null;
-    public ?\Closure $doneAction = null;
+
+    protected null|\Closure|string $doneAction = null;
+
+    public array $closures = ['doneAction'];
 
     public function __construct(string $name, string $attribute, array $fields)
     {
@@ -104,18 +107,20 @@ class Step extends Panel
         $this->doneText = $text;
         $this->doneAction = $action;
 
+        $this->serializeClosures();
+
         return $this;
     }
 
     public function handleDone($component)
     {
-        if ($this->doneAction) {
-            return app()->call([$this->doneAction, '__invoke'], [
-              'field' => $this,
-              'component' => $component,
-            ]);
+        if (! $this->closure('doneAction')) {
+            return redirect($this->doneRoute);
         }
 
-        return redirect($this->doneRoute);
+        return app()->call([$this->closure('doneAction'), '__invoke'], [
+            'field' => $this,
+            'component' => $component,
+        ]);
     }
 }

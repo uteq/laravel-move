@@ -14,4 +14,9 @@ class LivewireCloseModal
 
         return null;
     }
+
+    public static function asClosure()
+    {
+        return fn (...$args) => app(static::class)(...$args);
+    }
 }

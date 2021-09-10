@@ -9,16 +9,12 @@ trait IsStacked
      *
      * @var bool
      */
-    public $stacked = false;
+    public bool $stacked = false;
 
     /**
-     * Stack the label above the field.
-     *
-     * @param bool $stack
-     *
-     * @return $this
+     * Stacks the label above the field.
      */
-    public function stacked($stacked = true)
+    public function stacked($stacked = true): static
     {
         if (is_string($stacked)) {
             $this->meta['stacked_classes'] = $stacked;
@@ -27,6 +23,7 @@ trait IsStacked
         }
 
         $this->stacked = $stacked;
+        $this->meta['stacked'] = $stacked;
 
         return $this;
     }

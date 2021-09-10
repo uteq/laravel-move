@@ -6,17 +6,19 @@
     :model="$panel->id()"
     :flex="false"
 >
-    <div wire:key="move-{{ $panel->tableResource }}-{{ $this->model->id }}" class="flex-grow">
+    <div wire:key="move-{{ \Illuminate\Support\Str::slug($panel->tableResource) }}-{{ $this->model->getKey() }}" class="flex-grow">
         <livewire:livewire.resource-table
-            view="move.form-table"
+            view="move::form.table-field"
             resource="{{ $panel->tableResource }}"
-            :key="'move-{{ $panel->tableResource }}-' . $this->model->id"
+            :wire:key="'move-'. \Illuminate\Support\Str::slug($panel->tableResource) .'-' . $this->model->getKey()"
             :parent-model="$this->model"
             :parent-resource-class="$this->resource()::class"
             :meta="$panel->meta"
-{{--            :disable-delete-for="$panel->getDisableDeleteFor()"--}}
+            :disable-delete-for="$panel->getDisableDeleteFor()"
             :redirects="$panel->getRedirects()"
             :limit="$panel->meta['limit']"
+            :show-fields="$panel->showFields"
+            :hide-fields="$panel->hideFields"
         />
     </div>
 </x-move-form.row>

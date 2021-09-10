@@ -66,7 +66,9 @@ trait HasStore
             'resource' => $this->label(),
         ]));
 
-        return $this->storeAfterSave($result);
+        $result = $this->storeAfterSave($result);
+
+        return $result;
     }
 
     public function validateStore()
@@ -278,7 +280,7 @@ trait HasStore
             method_exists($this->resource(), 'redirects')
                 ? $this->resource()->redirects()
                 : [],
-            $this->customRedirects(),
+            $this->customRedirects() ?? [],
         );
     }
 

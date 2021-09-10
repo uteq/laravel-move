@@ -8,13 +8,18 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Uteq\Move\Concerns\AuthorizedToSee;
 use Uteq\Move\Concerns\HasDependencies;
+use Uteq\Move\Concerns\HasHelpText;
+use Uteq\Move\Concerns\IsStacked;
 use Uteq\Move\Concerns\Makeable;
 use Uteq\Move\Concerns\Metable;
 use Uteq\Move\Concerns\WithActionableFields;
+use Uteq\Move\Concerns\WithClosures;
 use Uteq\Move\Concerns\WithRedirects;
 use Uteq\Move\Contracts\ElementInterface;
 use Uteq\Move\Contracts\PanelInterface;
 use Uteq\Move\Fields\Concerns\ShowsConditionally;
+use Uteq\Move\Fields\Concerns\WithHelpText;
+use Uteq\Move\Fields\Concerns\WithStackableFields;
 
 class Panel implements PanelInterface, ElementInterface
 {
@@ -24,6 +29,10 @@ class Panel implements PanelInterface, ElementInterface
     use Metable;
     use ShowsConditionally;
     use WithRedirects;
+    use WithStackableFields;
+    use WithHelpText;
+    use IsStacked;
+    use WithClosures;
 
     public string $id;
     public ?string $name = null;
@@ -38,7 +47,6 @@ class Panel implements PanelInterface, ElementInterface
     public bool $withoutTitle = false;
     public string $classes;
     public string $flow = 'row';
-    public bool $stacked = false;
 
     // Related models
     public $resouceForm;
@@ -73,26 +81,26 @@ class Panel implements PanelInterface, ElementInterface
         }
     }
 
-    public function id()
+    public function id(): string
     {
         return $this->id ?? $this->unique;
     }
 
-    public function nameOnCreate(string $nameOnCreate)
+    public function nameOnCreate(string $nameOnCreate): static
     {
         $this->nameOnCreate = $nameOnCreate;
 
         return $this;
     }
 
-    public function nameOnUpdate(string $nameOnUpdate)
+    public function nameOnUpdate(string $nameOnUpdate): static
     {
         $this->nameOnUpdate = $nameOnUpdate;
 
         return $this;
     }
 
-    public function resolveFields($resource, $component = null)
+    public function resolveFields($resource, $component = null): static
     {
         if ($this->name) {
             $this->name = isset($resource['id']) ? $this->nameOnUpdate : $this->nameOnCreate;
@@ -114,7 +122,7 @@ class Panel implements PanelInterface, ElementInterface
         return array_merge($this->fields, $this->flatPanelsFields());
     }
 
-    public function flatPanelsFields($panels = null)
+    public function flatPanelsFields($panels = null): array
     {
         $panels ??= $this->panels;
         $fields = [];
@@ -130,12 +138,12 @@ class Panel implements PanelInterface, ElementInterface
         return $fields;
     }
 
-    public function empty()
+    public function empty(): bool
     {
         return ! count($this->fields) && ! count($this->panels);
     }
 
-    public function alert($type, $description)
+    public function alert($type, $description): static
     {
         $this->alert[$type] ??= [];
         $this->alert[$type][] = $description;
@@ -157,7 +165,7 @@ class Panel implements PanelInterface, ElementInterface
      * @param Request $request
      * @return bool
      */
-    public function authorize(Request $request)
+    public function authorize(Request $request): bool
     {
         return $this->authorizedToSee($request);
     }
@@ -177,12 +185,12 @@ class Panel implements PanelInterface, ElementInterface
      *
      * @return string
      */
-    public function component()
+    public function component(): string
     {
         return $this->component;
     }
 
-    public function applyResourceData($model, $resourceForm = null, $resource = null)
+    public function applyResourceData($model, $resourceForm = null, $resource = null): static
     {
         $this->resourceForm = $resourceForm;
         $this->resource = $resource;
@@ -207,47 +215,47 @@ class Panel implements PanelInterface, ElementInterface
         return $this->isShownOn($type, $resource, request());
     }
 
-    public function panels()
+    public function panels(): ?array
     {
         return $this->panels ?? null;
     }
 
-    public function titleClass($class)
+    public function titleClass($class): static
     {
         $this->class = $class;
 
         return $this;
     }
 
-    public function description($description)
+    public function description($description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function afterTitle(\Closure $afterTitle)
+    public function afterTitle(\Closure $afterTitle): static
     {
         $this->afterTitle = $afterTitle;
 
         return $this;
     }
 
-    public function withoutCard(bool $withoutCard = true)
+    public function withoutCard(bool $withoutCard = true): static
     {
         $this->withoutCard = $withoutCard;
 
         return $this;
     }
 
-    public function withoutTitle(bool $withoutTitle = true)
+    public function withoutTitle(bool $withoutTitle = true): static
     {
         $this->withoutTitle = $withoutTitle;
 
         return $this;
     }
 
-    public function isPlaceholder()
+    public function isPlaceholder(): static
     {
         $this->withoutCard();
         $this->withoutTitle();
@@ -255,27 +263,38 @@ class Panel implements PanelInterface, ElementInterface
         return $this;
     }
 
-    public function classes($classes)
+    public function classes($classes): static
     {
         $this->classes = $classes;
 
         return $this;
     }
 
-    public function flow($flow)
+    public function flow($flow): static
     {
         $this->flow = $flow;
 
         return $this;
     }
 
-    public function stacked()
-    {
-        return $this->stacked;
-    }
-
-    public function getUnique()
+    public function getUnique(): string
     {
         return $this->unique;
+    }
+
+    public function inline(): static
+    {
+        $this->flow = 'row';
+
+        $this->withoutTitle();
+        $this->withoutCard();
+        $this->stacked('bg-white w-full last:border-b-0 border-gray-100 mb-4');
+        $this->stackFields();
+
+        $this->withMeta([
+            'help_text_location' => 'hidden',
+        ]);
+
+        return $this;
     }
 }

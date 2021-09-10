@@ -100,6 +100,10 @@ trait WithSteps
             $this->emit('changedActiveStep', $this->activeStep);
         }
 
+        if (method_exists($step, 'handleDone')) {
+            $step->handleDone($this);
+        }
+
         return [
             'fields' => $resolvedFields,
             'rules' => $rules,

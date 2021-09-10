@@ -9,10 +9,10 @@
             </svg>
         </x-slot>
 
-        <x-slot name="title">@lang('Delete :resource', ['resource' => $description])</x-slot>
+        <x-slot name="title">@lang('Delete :resource', ['resource' => $table->resource()->singularLabel()])</x-slot>
 
         <x-slot name="content">
-            @lang('Are you sure you want to remove this :resource?<br /> This action cannot be undone.', ['resource' => $description . ' ' . ($title ?? $id)])
+            @lang('Are you sure you want to remove this :resource?<br /> This action cannot be undone.', ['resource' => $table->resource()->singularLabel() . ' ' . ($title ?? $id)])
         </x-slot>
 
         <x-slot name="footer">

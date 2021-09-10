@@ -8,7 +8,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Uteq\Move\Actions\LivewireCloseModal;
-use Uteq\Move\Concerns\Metable;
 use Uteq\Move\Concerns\WithListeners;
 use Uteq\Move\Concerns\WithModal;
 use Uteq\Move\Facades\Move;
@@ -81,6 +80,10 @@ class Select extends Field
         }
 
         if (! $this->value) {
+            return null;
+        }
+
+        if (! $this->clickable) {
             return null;
         }
 
@@ -341,6 +344,8 @@ class Select extends Field
     public function withAddButton($withAddButton = true, $redirectsCloseModal = true): static
     {
         $this->meta['with_add_button'] = $withAddButton;
+
+        $this->version($this->resourceName::$model::count());
 
         if ($redirectsCloseModal) {
             $this->redirects(is_array($redirectsCloseModal) ? $redirectsCloseModal : [

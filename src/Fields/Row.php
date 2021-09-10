@@ -6,6 +6,8 @@ class Row extends Panel
 {
     public string $component = 'form.row';
 
+    public string $containerClass;
+
     public function __construct(array $fields)
     {
         parent::__construct(null, $fields);
@@ -13,13 +15,22 @@ class Row extends Panel
 
     public function init()
     {
-        /** @var \Support\Fields\Field $field */
-        foreach ($this->fields as &$field) {
-            $field->stacked();
-            $field->flex = false;
-            $field->withMeta([
-                'stacked_classes' => 'bg-white w-full last:border-b-0 border-gray-100',
-            ]);
-        }
+        $this->containerClass = 'flex gap-4 mb-4 bg-white w-full';
+
+        $this->stackFields();
+    }
+
+    public function isInline(): static
+    {
+        $this->containerClass = 'flex gap-4 bg-white w-full mb-0.5';
+
+        return $this;
+    }
+
+    public function title($title)
+    {
+        $this->meta['title'] = $title;
+
+        return $this;
     }
 }

@@ -2,15 +2,11 @@
 
 namespace Uteq\Move\Fields;
 
-use Illuminate\Support\Str;
-
 class Form extends Panel
 {
     public string $component = 'form.form';
 
     public string $flow = 'row';
-
-    public ?string $helpText = null;
 
     public bool $flex = false;
 
@@ -22,18 +18,7 @@ class Form extends Panel
             'help_text_location' => 'hidden',
         ]);
 
-        /** @var \Support\Fields\Field $field */
-        foreach ($this->fields as &$field) {
-            if (! $field instanceof Field) {
-                continue;
-            }
-
-            $field->stacked();
-            $field->flex = false;
-            $field->withMeta([
-                'stacked_classes' => 'bg-white w-full last:border-b-0 border-gray-100',
-            ]);
-        }
+        $this->stackFields();
     }
 
     public function render($model, array $data = [])
@@ -50,18 +35,6 @@ class Form extends Panel
     public function getName()
     {
         return $this->name;
-    }
-
-    public function helpText($helpText)
-    {
-        $this->helpText = $helpText;
-
-        return $this;
-    }
-
-    public function getHelpText()
-    {
-        return $this->helpText;
     }
 
     public function isRequired()

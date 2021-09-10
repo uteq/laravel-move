@@ -15,6 +15,7 @@ use Uteq\Move\Commands\ResourceCommand;
 use Uteq\Move\Controllers\MoveJavaScriptAssets;
 use Uteq\Move\Controllers\MoveStyleAssets;
 use Uteq\Move\Facades\Move;
+use Uteq\Move\Fields\Select;
 use Uteq\Move\Livewire\HeaderSearch;
 use Uteq\Move\Livewire\ResourceForm;
 use Uteq\Move\Livewire\ResourceShow;

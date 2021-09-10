@@ -3,6 +3,7 @@
 namespace Uteq\Move\Fields;
 
 use Illuminate\Support\Str;
+use Uteq\Move\Concerns\WithClosures;
 
 class Number extends Field
 {
@@ -12,8 +13,8 @@ class Number extends Field
 
     public int $decimals = 0;
 
-    public \Closure $displayFormat;
-    public \Closure $storeFormat;
+    protected \Closure $displayFormat;
+    protected \Closure $storeFormat;
 
     public function init()
     {
@@ -59,9 +60,9 @@ class Number extends Field
 
     public function numberFormat(int $decimals = 0, string $decimalSeparator = '.', string $thousandSeparator = ','): self
     {
-        $this->resourceDataCallback = fn ($value) => ($this->displayFormat)($value, $decimals, $decimalSeparator, $thousandSeparator);
+        $this->resourceDataCallback = fn ($value) => $this->applyDisplayFormat($value, $decimals, $decimalSeparator, $thousandSeparator);
 
-        $this->beforeStore(fn ($value) => ($this->storeFormat)($value, $decimals));
+        $this->beforeStore(fn ($value) => $this->applyStoreFormat($value, $decimals));
 
         return $this;
     }
@@ -78,5 +79,15 @@ class Number extends Field
         $this->storeFormat = $storeFormat;
 
         return $this;
+    }
+
+    public function applyDisplayFormat(...$args)
+    {
+        return ($this->displayFormat)(...$args);
+    }
+
+    public function applyStoreFormat(...$args)
+    {
+        return ($this->storeFormat)(...$args);
     }
 }

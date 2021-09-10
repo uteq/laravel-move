@@ -32,6 +32,9 @@ class ResourceTable extends TableComponent
     protected bool $keepRequestQuery = false;
     protected ?string $table;
     protected string $limit;
+    protected $actionResult;
+    protected $queryString = ['search', 'filter', 'order'];
+    protected $crudBaseRoute = null;
 
     public string $view = 'move::livewire.resource-table';
 
@@ -39,7 +42,6 @@ class ResourceTable extends TableComponent
     public $action = '-';
     public $showingAction = false;
     public $showingActionResult = false;
-    protected $actionResult;
     public $showingDelete = [];
     public $sortable = false;
     public $error = null;
@@ -48,27 +50,18 @@ class ResourceTable extends TableComponent
     public array $store = [];
     public array $meta = [];
     public array $route = [];
+    public array $showFields;
+    public array $hideFields;
     public string|null $showModal = null;
+    public $disableDeleteFor;
+    public $redirects;
 
     public $listeners = [
         'move::table:updated' => 'render',
         'closeModal' => 'closeModal',
     ];
 
-    protected $queryString = ['search', 'filter', 'order'];
-
-    protected $crudBaseRoute = null;
-
-    public $disableDeleteFor;
-
-    public $redirects;
-
     public $closures = ['disableDeleteFor', 'redirects'];
-
-    public function test()
-    {
-        $this->emit('test:blaat');
-    }
 
     public function mount(string $resource)
     {
@@ -213,11 +206,11 @@ class ResourceTable extends TableComponent
         $request->route()->setParameter('model', optional($this->route['model'])['id']);
 
         /** @psalm-suppress UndefinedInterfaceMethod */
-        return view($this->view, array_merge($this->resource()->getForIndex($this->requestQuery(), $request), [
+        return view($this->view, array_merge($this->getParamsForIndex($request), [
             'collection' => $this->collection(),
             'rows' => $this->rows(),
             'actionResult' => $this->actionResult,
-            'headerSlots' => $this->resource()->headerSlots($this),
+            'headerSlots' => $this->headerSlots(),
             'table' => $this,
         ]))->layout($this->resource()::$layout ?? Move::layout(), [
             'header' => $this->resource()->label(),
@@ -238,16 +231,42 @@ class ResourceTable extends TableComponent
             $resourceClass = get_class($this->resource());
             $resource = new $resourceClass($item);
 
-            $fields = $this->resource()->resolveFields($resource->model(), 'index');
-
-            $rows[] = ['model' => $resource->model(), 'fields' => $fields];
+            $rows[] = [
+                'model' => $resource->model(),
+                'fields' => $this->filterFields(
+                    $this->resource()->resolveFields($resource->model(), 'index')
+                ),
+            ];
         }
 
         return $rows;
     }
 
+    protected function headerSlots()
+    {
+        return $this->resource()->headerSlots($this);
+    }
+
     public function redirects()
     {
         return $this->unserializeClosure('redirects');
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getParamsForIndex($request)
+    {
+        $paramsForIndex = $this->resource()->getForIndex($this->requestQuery(), $request);
+        $paramsForIndex['header'] = $this->filterFields($paramsForIndex['header']);
+        return $paramsForIndex;
+    }
+
+    public function filterFields($fields)
+    {
+        return collect($fields)
+            ->when(count($this->showFields), fn($collection) => $collection->filter(fn($field) => in_array($field->attribute, $this->showFields, true)))
+            ->when(count($this->hideFields), fn($collection) => $collection->filter(fn($field) => !in_array($field->attribute, $this->hideFields, true)))
+            ->toArray();
     }
 }

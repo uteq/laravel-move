@@ -1,4 +1,8 @@
-<x-move-panel :title="$panel->withoutTitle ? null : $panel->name" :panel="$panel" :classes="$panel->classes ?? null">
+<x-move-panel
+    :title="$panel->withoutTitle ? null : $panel->name"
+    :panel="$panel"
+    :classes="$panel->classes ?? null"
+>
     @if ($panel->flow === 'col') <div class="flex"> @endif
         @foreach ($panel->fields as $key => $field)
             @if ($field->before ?? null)

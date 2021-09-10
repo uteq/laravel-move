@@ -19,13 +19,13 @@ trait WithClosures
     {
         // No need to serialize again when already serialized
         //  This makes it possible to create a manual serialization point, even before mount
-        if (isset(static::$serializedClasses[static::class])) {
+        if (isset(static::$serializedClasses[$this->unique()])) {
             return;
         }
 
         $this->doSerializeClosures(array_flip($this->closures ?? []), $this);
 
-        static::$serializedClasses[static::class] = true;
+        static::$serializedClasses[$this->unique()] = true;
     }
 
     protected function doSerializeClosures(array $closures, object $model)
@@ -47,6 +47,10 @@ trait WithClosures
 
     protected function serializeClosure($closure): string
     {
+        if (is_string($closure)) {
+            return $closure;
+        }
+
         if (is_callable($closure) && ! $closure instanceof \Closure) {
             $closure = fn (...$args) => $closure(...$args);
         }
@@ -81,7 +85,11 @@ trait WithClosures
                     continue;
                 }
 
-                $this->unserializedClosures[$closure][$key] = \Opis\Closure\unserialize($value);
+                try {
+                    $this->unserializedClosures[$closure][$key] = \Opis\Closure\unserialize($value);
+                } catch (\Throwable $t) {
+                    dd($t, $value);
+                }
             }
 
             return $this->unserializedClosures[$closure];
@@ -90,10 +98,22 @@ trait WithClosures
         return null;
     }
 
-    public function closure(string $closure, $default, ...$args): mixed
+    public function closure(string $closure, $default = null, ...$args): mixed
     {
         $closure = $this->unserializeClosure($closure);
 
         return $closure ? $closure(...$args) : $default;
+    }
+
+    private function unique()
+    {
+        return static::class . '.' . $this->resource;
+    }
+
+    public function addClosure($closure)
+    {
+        $this->closures[] = $closure;
+
+        return $this;
     }
 }

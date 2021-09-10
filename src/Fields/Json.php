@@ -81,8 +81,10 @@ class Json extends Field
 
     public function addRow($component, $field, $args = [])
     {
-        $component->store[$field->attribute] ??= [];
-        $component->store[$field->attribute][] = $this->blueprint;
+        $index = count(Arr::get($component->store, $field->attribute, []) ?: []);
+
+        $component->store = arr_expand($component->store);
+        $component->store = Arr::add($component->store, $field->attribute . '.' . $index, $this->blueprint);
 
         return $component;
     }

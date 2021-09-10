@@ -72,6 +72,9 @@ abstract class Resource
 
     public array $fields = [];
 
+    protected static $flatFields;
+    protected static $allFields;
+
     public function __construct(Model $resource)
     {
         $this->resource = $resource;
@@ -373,21 +376,26 @@ abstract class Resource
 
     public function getFields()
     {
-        return $this->fieldsFromRecursive($this->fields());
+        return $this->fieldsFromRecursive($this->allFields());
+    }
+
+    public function allFields()
+    {
+        return $this->fields();
     }
 
     public function steps()
     {
-        return collect($this->fields())
+        return collect($this->allFields())
             ->filter(fn ($field) => $field instanceof Step);
     }
 
     public function panels($resourceForm, $resource, string $displayType)
     {
-        $panels = collect($this->fields())
+        $panels = collect($this->allFields())
             ->filter(fn ($field) => $field instanceof PanelInterface);
 
-        $fields = collect($this->fields())
+        $fields = collect($this->allFields())
             ->filter(fn ($field) => $field instanceof Field)
             ->toArray();
 
