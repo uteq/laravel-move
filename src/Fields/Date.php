@@ -51,13 +51,13 @@ class Date extends Field
         return $this;
     }
 
-    public function asTime()
+    public function asTime($placeholder = null)
     {
         return $this->config([
                 'dateFormat' => 'H:i',
                 'altFormat' => 'H:i',
             ])
-            ->placeholder(__('Choose a time'))
+            ->placeholder($placeholder ?: __('Choose a time'))
             ->noCalendar()
             ->enableTime();
     }

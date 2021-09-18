@@ -12,6 +12,8 @@ class PreviewFileController extends Controller
 
     public function __invoke($filename)
     {
+        dd('hi');
+
         abort_unless(request()->hasValidSignature(), 401);
 
         return $this->pretendResponseIsFile(

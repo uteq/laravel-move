@@ -9,10 +9,10 @@
     :stacked="$field->stacked"
 >
     <x-move-field.editor
-        id="{{ $field->unique }}"
+        id="{{ \Illuminate\Support\Str::replace('.', '', $field->storePrefix ?? null . '.' . $field->unique) }}"
         wire:model="{{ $field->store }}"
         :theme="$field->theme"
-        :value="$this->store"
+        :value="$this->unpackedStore()"
         :toolbar="$field->toolbar"
         :rows="$field->rows"
     />

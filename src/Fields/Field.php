@@ -261,7 +261,7 @@ abstract class Field extends FieldElement
                     $this->attribute,
                 )
             )
-            : $this->fillFromResource($resource, $this->attribute);
+            : $this->fillFromResource($resource, $defaultValue ?? null);
 
         return $this;
     }
@@ -273,11 +273,11 @@ abstract class Field extends FieldElement
      * @param  string|null  $attribute
      * @return void
      */
-    public function fillFromResource($resource, $attribute = null): void
+    public function fillFromResource($resource, $defaultValue = null): void
     {
         $this->resource = $resource;
 
-        $value = $this->getResourceAttributeValue($resource, $this->attribute);
+        $value = $this->getResourceAttributeValue($resource, $this->attribute) ?: $defaultValue;
 
         $this->value = $this->valueCallback
             ? tap($value, fn ($value) => call_user_func(
@@ -734,8 +734,12 @@ abstract class Field extends FieldElement
         $prefix = $this->storePrefix ?? null;
         $prefix = $prefix ? $prefix . '.' : '';
 
+        $store = move_arr_expand($this->resource?->store ?? []);
+
+        $storeKey = Str::after($this->storePrefix . '.' . $key, $this->defaultStorePrefix . '.');
+
         return $this->dirty
-            ? Arr::get($this->resource?->store ?? [], $prefix . $key, $default)
+            ? Arr::get($store, $storeKey, $default)
             : Arr::get($this->resource, $prefix . $key, $default);
     }
 

@@ -21,6 +21,9 @@
         {{ $slot }}
     @endif
 
+    @if ($append ?? null)
+        {!! $append !!}
+    @endif
 
     <x-move-form.input-error for="{{ $model }}" class="mt-2"/>
 </div>

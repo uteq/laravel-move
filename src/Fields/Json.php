@@ -17,15 +17,26 @@ class Json extends Field
     protected string $rowClasses;
 
     public $fields;
+    public array $fieldMeta = [];
+    public array $fieldOptions = [];
 
     public function init()
     {
         $this->addItemText = (string) __('+ Add item');
     }
 
-    public function fields(array $fields)
+    public function fields(array $fields, array $meta = [], array $options = [])
     {
         $this->fields = $fields;
+        $this->fieldMeta = $meta ?: $this->fieldMeta;
+        $this->fieldOptions = $options ?: $this->fieldOptions;
+
+        return $this;
+    }
+
+    public function fieldMeta(array $meta = [])
+    {
+        $this->fieldMeta = $meta;
 
         return $this;
     }
@@ -50,11 +61,16 @@ class Json extends Field
         collect($panel->fields)
             ->each(function ($field) use ($panelKey) {
                 $field->storePrefix = $field->defaultStorePrefix . '.' . $this->attribute . '.' . $panelKey;
+                $field->dirty = true;
                 $field->hideName();
                 $field->generateStoreAttribute();
-                $field->withMeta([
+                $field->withMeta(array_merge([
                     'with_grid' => false,
-                ]);
+                ], $this->fieldMeta));
+
+                foreach ($this->fieldOptions as $option => $values) {
+                    $values ? $field->{$option}($values) : $field->{$option}();
+                }
             });
 
         return $panel->render($resource, [
@@ -150,6 +166,13 @@ class Json extends Field
     public function hideHeader($hideHeader = true)
     {
         $this->meta['hide_header'] = $hideHeader;
+
+        return $this;
+    }
+
+    public function hideAddButton($hideAddButton = true): self
+    {
+        $this->meta['hide_add_button'] = $hideAddButton;
 
         return $this;
     }

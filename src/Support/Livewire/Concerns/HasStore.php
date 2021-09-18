@@ -10,6 +10,9 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\ObjectPrybar;
 
+/**
+ * @property array $unpackedStore
+ */
 trait HasStore
 {
     public $inModal = false;
@@ -345,6 +348,11 @@ trait HasStore
         $this->shouldRedirect = true;
 
         return $this;
+    }
+
+    public function unpackedStore()
+    {
+        return move_arr_expand($this->store);
     }
 
     public function flattenStore($keepArrays = false)

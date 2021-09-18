@@ -106,20 +106,27 @@ trait HasFiles
 
     public function updatedFiles($data, string $key)
     {
-        if (! isset($this->tempUploadedFiles[$key])) {
-            $this->tempUploadedFiles[$key] = [];
-        }
+        $this->tempUploadedFiles[$key] ??= [];
 
-        $this->tempUploadedFiles[$key] = array_merge(
-            array_values($this->tempUploadedFiles[$key]),
-            array_values(is_array($data) ? $data : [$data])
-        );
+        if ($this->hasMultipleFiles[$key] ?? true) {
+            $this->tempUploadedFiles[$key] = array_merge(
+                array_values($this->tempUploadedFiles[$key]),
+                array_values(is_array($data) ? $data : [$data])
+            );
+        } else {
+            $this->tempUploadedFiles = [];
+            $this->tempUploadedFiles[$key] = array_values(is_array($data) ? $data : [$data]);
+        }
     }
 
     public function getTemporaryUrl(File $file)
     {
-        return URL::temporarySignedRoute(move()::getPrefix() . '.preview-file', now()->addMinutes(30), [
-            'filename' => $file->getFilename(),
-        ]);
+        return URL::temporarySignedRoute(
+            move()::getPrefix() . '.preview-file',
+            now()->addMinutes(30),
+            [
+                'filename' => $file->getFilename(),
+            ]
+        );
     }
 }

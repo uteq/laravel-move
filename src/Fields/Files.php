@@ -30,12 +30,13 @@ class Files extends Field
 
         $this->hideFromIndex();
 
-        $this->customRules([
-            $attribute . '.*' => ['file','mimes:png,jpg,jpeg,pdf,heic','max:102400'],
-            $attribute . '.0' => [
-                new RequiredIf(fn () => $this->isRequired()),
-            ],
-        ]);
+        // TODO fix custom rules
+//        $this->customRules([
+//            $attribute . '.*' => ['file','mimes:png,jpg,jpeg,pdf,heic','max:102400'],
+//            $attribute . '.0' => [
+//                new RequiredIf(fn () => $this->isRequired()),
+//            ],
+//        ]);
     }
 
     public function getAccept()

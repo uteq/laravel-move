@@ -23,16 +23,16 @@
 
         <div class="w-full">
             @if (($panel->meta['is_first'] ?? false) == true && ! ($panel->meta['hide_header'] ?? null))
-            <div class="grid grid-flow-col {{ $cols }} border-b border-gray-100 py-4">
+            <div class="grid grid-flow-col {{ $cols }} border-b border-gray-100 {{ $panel->meta['header_padding'] ?? 'py-4' }}">
                 @foreach ($panel->fields as $key => $field)
 
-                    <div class="px-6 font-bold">{{ $field->name }}</div>
+                    <div class="{{ $panel->meta['header_col_class'] ?? 'px-6 font-bold' }}">{{ $field->name }}</div>
 
                 @endforeach
             </div>
             @endif
 
-            <div class="flex items-center">
+            <div class="flex items-center {{ $panel->meta['is_first'] ? $panel->meta['first_row_class'] ?? null : null }}">
                 <div class="grid {{ $cols }} w-full">
                 @foreach ($panel->fields as $key => $field)
                     <div wire:key="json-panel-{{ $panel->id }}-field-{{ $field->storePrefix }}-{{ $key }}">
@@ -63,7 +63,9 @@
          @endif
 
          @foreach ($panel->fields as $key => $field)
-             <div>{{ $field->store() }}</div>
+             <div>
+                 {{ $field->store() }}
+             </div>
          @endforeach
      </div>
 

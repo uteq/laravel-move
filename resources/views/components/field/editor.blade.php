@@ -38,7 +38,7 @@
                     delete quill{{ $id }}.getModule('keyboard').bindings['9'];
                 @endif
                 "
-            style="min-height: {{ $rows * 16 }}em; min-width: 100%;"
+            style="min-height: {{ $rows * 3 }}em; min-width: 100%;"
             class="w-full border rounded-b"
         >
             <div class="ql-editor-{{ $id }}" tabindex="1">{!! (\Illuminate\Support\Arr::get($value, \Illuminate\Support\Str::after($name, '.'))) !!}</div>
@@ -46,7 +46,7 @@
     </div>
     <style>
         .ql-editor-{{ $id }}{
-            min-height: {{ $rows * 16 }}em;
+            min-height: {{ $rows * 3 }}em;
         }
     </style>
 </div>

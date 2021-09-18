@@ -1,36 +1,51 @@
 <x-move-form.row width="w-full" custom label="{{ $field->getName() }}" model="{{ $field->store }}" :required="$field->isRequired()" help-text="{{ $field->getHelpText() }}"  :meta="$field->meta" :stacked="$field->stacked">
 
-    <label class="w-full">
-        <div class="flex text-center items-center px-4 py-2 bg-white text-blue rounded-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-teal-800 hover:text-white hover:bg-primary-500">
-            <!-- heroicon-o-cloud-download -->
-            <svg class="w6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
-            </svg>
-            <span class="ml-2 mt-1 text-base leading-normal">
-                @lang('Add a new file')
-            </span>
+    <div
+        x-data="{ isUploading: false, progress: 0 }"
+        x-on:livewire-upload-start="isUploading = true"
+        x-on:livewire-upload-finish="isUploading = false"
+        x-on:livewire-upload-error="isUploading = false"
+        x-on:livewire-upload-progress="progress = $event.detail.progress"
+    >
+        <label
+            class="w-full"
+        >
+            <div class="flex text-center items-center px-4 py-2 bg-white text-blue rounded-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-teal-800 hover:text-white hover:bg-primary-500">
+                <!-- heroicon-o-cloud-download -->
+                <svg class="w6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                </svg>
+                <span class="ml-2 mt-1 text-base leading-normal">
+                    @lang('Add a new file')
+                </span>
+            </div>
+
+            <input type="file"
+                   name="{{ $field->store }}[]"
+                   class="hidden"
+                   wire:model="files.{{ $field->attribute }}"
+                   accept="{{ $field->getAccept() }}"
+                   capture="camera"
+                   {{ $field->isMultiple ? 'multiple' : null }}
+            />
+
+            <div wire:loading wire:target="files.{{ $field->attribute }}">
+                @lang('File is being uploaded')
+            </div>
+
+        </label>
+
+        <div x-show="isUploading">
+            <progress max="100" x-bind:value="progress"></progress>
         </div>
-        <input type="file"
-               name="{{ $field->store }}[]"
-               class="hidden"
-               wire:model="files.{{ $field->attribute }}"
-               accept="{{ $field->getAccept() }}"
-               capture="camera"
-               {{ $field->isMultiple ? 'multiple' : null }}
-        />
+    </div>
 
-        <div wire:loading wire:target="files.{{ $field->attribute }}">
-            @lang('File is being uploaded')
-        </div>
-
-    </label>
-
-    @php $this->loadFiles($field) @endphp
+    @php $files = $this->loadFiles($field) @endphp
 
     <x-slot name="append">
         <div class="grid grid-cols-1 gap-4 mt-3">
         @if ($this->files)
-            @foreach ($this->loadFiles($field) as $i => $file)
+            @foreach ($files as $i => $file)
 
                 @if (!$file instanceof \Uteq\Move\File\ResourceFileContract)
                     @continue
