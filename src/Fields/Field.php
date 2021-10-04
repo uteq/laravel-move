@@ -146,6 +146,10 @@ abstract class Field extends FieldElement
         $this->attribute = $attribute ?? Str::snake(Str::singular($name));
         $this->unique = Str::random(20);
 
+        $this->withMeta([
+            'display' => 'normal',
+        ]);
+
         $this->valueCallback($valueCallback);
         $this->generateStoreAttribute();
 

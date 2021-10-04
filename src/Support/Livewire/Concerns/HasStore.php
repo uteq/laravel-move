@@ -210,7 +210,7 @@ trait HasStore
 
         $rules = [];
         foreach ($ruleSet as $key => $value) {
-            if (! isset($flatFields[$key])) {
+            if (! array_key_exists($key, $flatFields)) {
                 continue;
             }
 

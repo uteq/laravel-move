@@ -23,7 +23,7 @@ trait IsStacked
         }
 
         $this->stacked = $stacked;
-        $this->meta['stacked'] = $stacked;
+        $this->meta['display'] = $stacked ? 'stacked' : $this->meta['display'];
 
         return $this;
     }

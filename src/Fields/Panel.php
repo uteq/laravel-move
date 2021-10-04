@@ -71,6 +71,11 @@ class Panel implements PanelInterface, ElementInterface
         $this->fields = $fields;
         $this->unique = (string) Str::random(20);
 
+        $this->withMeta([
+            'without_bg' => false,
+            'without_padding' => false
+        ]);
+
         if ($name) {
             $this->nameOnCreate = $name;
             $this->nameOnUpdate = $name;
@@ -84,6 +89,13 @@ class Panel implements PanelInterface, ElementInterface
     public function id(): string
     {
         return $this->id ?? $this->unique;
+    }
+
+    public function setFields(array $fields)
+    {
+        $this->fields = $fields;
+
+        return $this;
     }
 
     public function nameOnCreate(string $nameOnCreate): static
@@ -192,8 +204,8 @@ class Panel implements PanelInterface, ElementInterface
 
     public function applyResourceData($model, $resourceForm = null, $resource = null): static
     {
-        $this->resourceForm = $resourceForm;
-        $this->resource = $resource;
+//        $this->resourceForm = $resourceForm;
+//        $this->resource = $resource;
         $this->model = $model;
 
         return $this;

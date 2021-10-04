@@ -19,7 +19,7 @@ trait HasResource
     public $resource;
     public $model = null;
     public $modelId = null;
-    public ?array $resourceFields = [];
+    public $resourceFields = [];
 
     public function initializeHasResource()
     {
@@ -57,12 +57,16 @@ trait HasResource
 
     public function resource()
     {
-        return $this->resolvedResource;
+        return $this->resolvedResource ?? $this->getResolvedResourceProperty();
     }
 
     public function getResolvedResourceProperty()
     {
         $resource = Move::resolveResource($this->resource);
+
+        if (method_exists($this, 'loadResourceFields')) {
+            $this->loadResourceFields();
+        }
 
         if ($this->resourceFields) {
             $resource->setFields($this->resourceFields);
@@ -191,9 +195,11 @@ trait HasResource
 
     public function fields()
     {
-        return is_array($this->fields[0] ?? null)
-            ? $this->getFieldsProperty()
-            : $this->fields;
+        return collect(
+            is_array($this->fields[0] ?? null)
+                ? $this->getFieldsProperty()
+                : $this->fields ?? []
+        );
     }
 
     public function filters()

@@ -50,27 +50,27 @@
             </div>
         @endif
     </div>
-</form>
 
-<script defer>
-    document.addEventListener("livewire:load", function() {
-        $('#search-dropdown ul').first().focus();
-    });
+    <script defer>
+        document.addEventListener("livewire:load", function() {
+            $('#search-dropdown ul').first().focus();
+        });
 
-    document.addEventListener("keyup", event => {
+        document.addEventListener("keyup", event => {
 
-        if (event.key === '/') {
-            if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
-                return;
+            if (event.key === '/') {
+                if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) {
+                    return;
+                }
+
+                window.livewire.emit('startSearch')
+                document.getElementById('search_field').focus();
             }
 
-            window.livewire.emit('startSearch')
-            document.getElementById('search_field').focus();
-        }
-
-        if (event.key === 'Escape') {
-            window.livewire.emit('stopSearch');
-            document.getElementById('search_field').blur();
-        }
-    });
-</script>
+            if (event.key === 'Escape') {
+                window.livewire.emit('stopSearch');
+                document.getElementById('search_field').blur();
+            }
+        });
+    </script>
+</form>

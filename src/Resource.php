@@ -70,7 +70,7 @@ abstract class Resource
 
     public Model $resource;
 
-    public array $fields = [];
+    public array $fields;
 
     protected static $flatFields;
     protected static $allFields;
@@ -361,7 +361,7 @@ abstract class Resource
     {
         $panelFields = [];
 
-        foreach ($fields as $field) {
+        foreach ($fields ?? [] as $field) {
             if ($field instanceof Panel) {
                 $panelFields = array_merge($panelFields, $this->fieldsFromRecursive($field->fields));
             }
@@ -390,6 +390,16 @@ abstract class Resource
             ->filter(fn ($field) => $field instanceof Step);
     }
 
+    /**
+     * Overwrite this method to use your own panel
+     *
+     * @return Panel
+     */
+    public function mainPanel(): Panel
+    {
+        return new Panel();
+    }
+
     public function panels($resourceForm, $resource, string $displayType)
     {
         $panels = collect($this->allFields())
@@ -400,7 +410,7 @@ abstract class Resource
             ->toArray();
 
         if (count($fields)) {
-            $panels->prepend(new Panel(null, $fields));
+            $panels->prepend($this->mainPanel()->setFields($fields));
         }
 
         $panels = $this->recursivePanels($panels, $resourceForm, $resource, $displayType);

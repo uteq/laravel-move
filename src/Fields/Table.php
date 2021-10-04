@@ -34,6 +34,7 @@ class Table extends Panel
             'full_colspan' => true,
             'with_add_button' => false,
             'disable_delete_for' => null,
+            'display' => 'normal',
         ]);
 
         $fields ??= [

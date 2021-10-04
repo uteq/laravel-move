@@ -100,6 +100,10 @@ trait WithClosures
 
     public function closure(string $closure, $default = null, ...$args): mixed
     {
+        if (! $this->$closure instanceof \Closure) {
+            return $this->$closure;
+        }
+
         $closure = $this->unserializeClosure($closure);
 
         return $closure ? $closure(...$args) : $default;

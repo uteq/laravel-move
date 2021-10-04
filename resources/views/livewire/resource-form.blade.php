@@ -2,13 +2,13 @@
     <x-move-form-section
         submit="save"
         class="mt-5"
-        :sidebar-enabled="count($this->steps()) && $this->allStepsAvailable()"
+        :sidebar-enabled="$isSidebarEnabled"
         wire:key="{{ $this->name ?: 'resource-form-' . $this->model->getKey() ?? rand(0, 99) }}"
         wire:loading.class="opacity-50"
         wire:target="save"
         id="{{ $this->name ?: $this->id ?: \Illuminate\Support\Str::slug(get_class($this)) }}"
     >
-        @if ($this->steps()->count() && ! $this->hideStepsMenu)
+        @if ($this->hasSteps && ! $this->hideStepsMenu)
             <x-slot name="head">
                 <div class="md:flex text-center">
                     @foreach ($this->steps() as $key => $panel)

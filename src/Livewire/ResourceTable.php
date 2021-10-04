@@ -50,8 +50,8 @@ class ResourceTable extends TableComponent
     public array $store = [];
     public array $meta = [];
     public array $route = [];
-    public array $showFields;
-    public array $hideFields;
+    public array $showFields = [];
+    public array $hideFields = [];
     public string|null $showModal = null;
     public $disableDeleteFor;
     public $redirects;

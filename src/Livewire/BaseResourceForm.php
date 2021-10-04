@@ -6,8 +6,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
-use RecursiveArrayIterator;
-use RecursiveIteratorIterator;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
 use Uteq\Move\Concerns\HasParent;
@@ -17,10 +15,8 @@ use Uteq\Move\Concerns\WithClosures;
 use Uteq\Move\Concerns\WithListeners;
 use Uteq\Move\Concerns\WithSteps;
 use Uteq\Move\Facades\Move;
-use Uteq\Move\Fields\Panel;
 use Uteq\Move\Support\Livewire\Concerns\HasStore;
 use Uteq\Move\Support\Livewire\FormComponent;
-use function PHPUnit\Framework\isJson;
 
 /**
  * Class BaseResourceForm
@@ -42,6 +38,7 @@ abstract class BaseResourceForm extends FormComponent
 
     protected static $viewType = 'edit';
 
+    public $layout = null;
     public $name = null;
     public $showModal = null;
     public $showingAddResource = [];
@@ -66,7 +63,7 @@ abstract class BaseResourceForm extends FormComponent
 
     public $redirects;
 
-    protected $closures = ['redirects'];
+    protected array $closures = ['redirects'];
 
     protected $listeners = [
         'updatedStore' => 'updatedStore',
@@ -92,7 +89,7 @@ abstract class BaseResourceForm extends FormComponent
             ));
         }
 
-        array_push($this->queryString, $key);
+        $this->queryString[] = $key;
     }
 
     public function refreshFields()
@@ -134,7 +131,6 @@ abstract class BaseResourceForm extends FormComponent
         }
 
         $this->emit('afterSave' . Str::slug(static::class));
-        $this->render();
     }
 
     public function showAddResource($id)
@@ -167,7 +163,7 @@ abstract class BaseResourceForm extends FormComponent
     {
         $store = $this->storeAsArray();
 
-        foreach ($this->fields as $field) {
+        foreach ($this->fields() as $field) {
             $store = $field->applyAfterUpdatedStore($store, $defaultValue, $defaultKey, $this);
         }
 
@@ -248,8 +244,9 @@ abstract class BaseResourceForm extends FormComponent
         /** @psalm-suppress UndefinedInterfaceMethod */
         return view($this->resource()::$formView ?? 'move::livewire.resource-form', [
                 'showModal' => $this->showModal,
+                'isSidebarEnabled' => $this->isSidebarEnabled,
             ])
-            ->layout($this->resource()::$layout ?? Move::layout(), [
+            ->layout($this->layout ?? $this->resource()::$layout ?? Move::layout(), [
                 'header' => $this->resource()->singularLabel() .' details',
             ]);
     }
@@ -270,5 +267,10 @@ abstract class BaseResourceForm extends FormComponent
     public function customRedirects()
     {
         return $this->unserializeClosure('redirects');
+    }
+
+    public function getIsSidebarEnabledProperty()
+    {
+        return $this->allStepsAvailable();
     }
 }

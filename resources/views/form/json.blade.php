@@ -29,7 +29,7 @@
         @endforeach
         </div>
 
-        @if (! ($field->meta['hide_add_button'] ?? false))
+        @if ($field->meta('has_add_button'))
             @if ($field->formDisplayType === 'form')
                 <button type="button" wire:click="action('{{ $field->store }}', 'addRow', '{{ count($this->store[$field->attribute] ?? []) - 1 }}')"
                      class="text-sm text-gray-800 bg-white -bottom-3 border border-dashed max-w-md border-gray-300 hover:border-primary-300 hover:text-primary-500 hover:underline mx-auto text-center cursor-pointer rounded w-full"

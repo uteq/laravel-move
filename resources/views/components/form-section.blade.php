@@ -1,4 +1,4 @@
-@props(['submit', 'id' => time(), 'sidebarEnabled' => false, 'actions' => null])
+@props(['submit', 'id' => time(), 'sidebarEnabled' => false, 'sidebar' => null, 'actions' => null])
 
 <div {{ $attributes->merge(['class' => '']) }}>
     <div class="mt-5 md:mt-0 md:col-span-2">
@@ -12,10 +12,10 @@
 
             <div class="{{ $sidebarEnabled && (string)$sidebar !== '' ? 'lg:flex gap-4' : null }}">
                 <div class="lg:flex-grow">
-                    {{ $form }}
+                    {{ $form ?? $slot }}
                 </div>
 
-                @if ($sidebarEnabled && $sidebar !== '')
+                @if ($sidebarEnabled && ! empty($sidebar))
                     <div class="lg:flex-none lg:w-1/3">
                         {!! $sidebar ?? null !!}
 

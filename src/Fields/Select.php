@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Uteq\Move\Actions\LivewireCloseModal;
+use Uteq\Move\Concerns\WithClosures;
 use Uteq\Move\Concerns\WithListeners;
 use Uteq\Move\Concerns\WithModal;
 use Uteq\Move\Facades\Move;
@@ -15,13 +16,13 @@ use Uteq\Move\Resource;
 
 class Select extends Field
 {
-    use WithModal, WithListeners;
+    use WithModal, WithListeners, WithClosures;
 
     public string $component = 'select-field';
 
-    public $version = 1;
+    protected $version = 1;
 
-    public $options;
+    protected $options;
 
     public $resourceName = null;
 
@@ -44,6 +45,11 @@ class Select extends Field
     public string $createForm;
 
     protected static $resourceCache = [];
+
+    protected array $closures = [
+        'version',
+        'options',
+    ];
 
     public function init()
     {
@@ -186,7 +192,7 @@ class Select extends Field
 
     public function getOptions(): array
     {
-        $options = $this->options;
+        $options = $this->closure('options');
 
         $options = is_callable($options)
             ? $options($this ?? null)
@@ -325,7 +331,7 @@ class Select extends Field
 
     public function getVersion()
     {
-        $version = $this->version;
+        $version = $this->version instanceof \Closure ? $this->closure('version') : $this->version;
 
         return is_callable($version)
             ? $version($this)

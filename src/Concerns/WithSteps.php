@@ -129,6 +129,11 @@ trait WithSteps
 
         $count = $steps->filter(fn ($step) => in_array($step->attribute, $this->availableSteps))->count();
 
-        return $count == $steps->count();
+        return $count === $steps->count();
+    }
+
+    public function getHasStepsProperty()
+    {
+        return $this->steps()->count();
     }
 }

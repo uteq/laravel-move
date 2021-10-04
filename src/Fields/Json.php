@@ -23,6 +23,11 @@ class Json extends Field
     public function init()
     {
         $this->addItemText = (string) __('+ Add item');
+
+        $this->withMeta([
+            'has_add_button' => true,
+            'has_remove_button' => true,
+        ]);
     }
 
     public function fields(array $fields, array $meta = [], array $options = [])
@@ -99,7 +104,6 @@ class Json extends Field
     {
         $index = count(Arr::get($component->store, $field->attribute, []) ?: []);
 
-        $component->store = arr_expand($component->store);
         $component->store = Arr::add($component->store, $field->attribute . '.' . $index, $this->blueprint);
 
         return $component;
@@ -172,7 +176,14 @@ class Json extends Field
 
     public function hideAddButton($hideAddButton = true): self
     {
-        $this->meta['hide_add_button'] = $hideAddButton;
+        $this->meta['has_add_button'] = ! $hideAddButton;
+
+        return $this;
+    }
+
+    public function hideRemoveButton($hideRemoveButton = true): self
+    {
+        $this->meta['has_remove_button'] = ! $hideRemoveButton;
 
         return $this;
     }
