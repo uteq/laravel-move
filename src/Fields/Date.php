@@ -2,8 +2,6 @@
 
 namespace Uteq\Move\Fields;
 
-use function Livewire\str;
-
 class Date extends Field
 {
     public string $component = 'date-field';
@@ -17,7 +15,7 @@ class Date extends Field
 
     public function init()
     {
-        $this->valueCallback = fn ($date) => optional($date)->format('d-m-Y');
+        $this->afterValueCallback(fn ($date) => optional($date)->format('d-m-Y'));
 
         // Makes sure it also handles values like 19-08-1990T23:00:00.000000Z
         $this->beforeStore[] = fn ($date) => str_contains($date, 'T')

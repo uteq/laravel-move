@@ -28,7 +28,7 @@
         <x-move-sidebar />
         @endif
 
-        <div class="flex flex-col w-0 flex-1 overflow-hidden">
+        <div class="flex flex-col w-0 flex-1 h-screen overflow-hidden">
             <div class="relative z-5 flex-shrink-0 flex h-16 bg-white shadow">
                 <x-move-header />
             </div>

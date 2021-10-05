@@ -57,7 +57,7 @@ trait HasStore
     {
         $this->hasStoreRefreshModel();
 
-        $store = $this->store;
+        $store = move_arr_expand($this->store);
 
         if (method_exists($this, 'beforeStore')) {
             $store = $this->beforeStore($store);

@@ -40,3 +40,27 @@ function move_class_to_label($class)
 {
     return Str::plural(Str::title(Str::snake(class_basename($class), ' ')));
 }
+
+/**
+ * Expands a dot notation to a multidimensional array
+ *
+ * ```['person.name' => 'jack']```
+ *
+ * Will become
+ *
+ * ```[
+ *     'person' => [
+ *         'name' => 'jack'
+ *     ]
+ * ]```
+ *
+ * @param array $array
+ * @return array
+ */
+function move_arr_expand(array $array) {
+    $valueSet = [];
+    foreach ($array as $key => $item) {
+        Arr::set($valueSet, $key, $item);
+    }
+    return $valueSet;
+}

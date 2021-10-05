@@ -41,7 +41,7 @@ trait HasFiles
      */
     public function rotateFile(string $field, int $i, int $degrees = -90)
     {
-        $field = $this->fields
+        $field = $this->fields()
             ->where('attribute', $field)
             ->first();
 
@@ -69,7 +69,7 @@ trait HasFiles
 
     public function beforeStore(array $store)
     {
-        $this->fields
+        $this->fields()
             ->filter(fn ($field) => $field instanceof Files)
             ->each(function (Files $field) use (&$store) {
                 $key = $field->attribute;

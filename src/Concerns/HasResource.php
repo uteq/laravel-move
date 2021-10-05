@@ -110,7 +110,7 @@ trait HasResource
 
     public function resolveFieldRules($model)
     {
-        return $this->fields
+        return $this->fields()
             ->filter(fn ($field) => $field->isVisible($model, 'update'))
             ->flatMap(fn ($field) => $field->getRules(request()))
             ->toArray();
@@ -118,7 +118,7 @@ trait HasResource
 
     public function resolveFieldCreateRules($model)
     {
-        return $this->fields
+        return $this->fields()
             ->filter(fn ($field) => $field->isVisible($model, 'create'))
             ->flatMap(fn ($field) => $field->getCreationRules(request()))
             ->toArray();
@@ -126,7 +126,7 @@ trait HasResource
 
     public function resolveFieldUpdateRules($model)
     {
-        return $this->fields
+        return $this->fields()
             ->filter(fn ($field) => $field->isVisible($model, 'update'))
             ->flatMap(fn ($field) => $field->getUpdateRules(request()))
             ->toArray();
@@ -178,7 +178,7 @@ trait HasResource
 
     public function fields()
     {
-        return $this->fields;
+        return $this->getFieldsProperty();
     }
 
     public function filters()

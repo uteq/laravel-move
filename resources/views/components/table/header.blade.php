@@ -5,7 +5,7 @@
         {!! $beforeSearch ?? null !!}
 
         @if ($search)
-        <div class="relative mt-3 w-full text-gray-400 focus-within:text-gray-600">
+        <div class="flex items-center relative mt-3 w-full text-gray-400 focus-within:text-gray-600">
             <div class="absolute inset-y-0 left-2 flex items-center pointer-events-none">
                 <div wire:loading wire:target="search">
                     <!--x-css-spinner-->

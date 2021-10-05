@@ -210,6 +210,10 @@ abstract class Field extends FieldElement
             )
             : $this->fillFromResource($resource, $this->attribute);
 
+        if (! $this->value && $this->valueCallback) {
+            $this->value = ($this->valueCallback)($this->value, $resource, $this->attribute);
+        }
+
         return $this;
     }
 
@@ -599,5 +603,14 @@ abstract class Field extends FieldElement
         $this->disabled = ! $enabled;
 
         return $this;
+    }
+
+    public function afterValueCallback(Closure $afterCallback)
+    {
+        $callback = $this->valueCallback;
+
+        $this->valueCallback = $callback
+            ? fn($value, ...$args) => $afterCallback($callback($value, ...$args))
+            : $afterCallback;
     }
 }

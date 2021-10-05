@@ -73,33 +73,35 @@
 
             @if (! $this->hideActions)
             <x-slot name="actions">
-                <x-move-action-message class="mr-3 text-primary-600" on="saved">
-                    <div class="flex">
-                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        @lang('Saved.')
-                    </div>
-                </x-move-action-message>
 
-
-                <x-move-a href="{{ $this->cancelRoute() }}" class="justify-self-left flex-grow pl-0">
+                <a href="{{ $this->cancelRoute() }}" class="pl-0 text-primary-500 hover:text-primary-800 hover:underline">
                     @if ($this->buttonCancelText ?? null)
                         {{ $this->buttonCancelText }}
                     @else
                         {{ __('Cancel') }}
                     @endif
-                </x-move-a>
+                </a>
 
-                <x-move-button>
-                    @if ($this->buttonSaveText)
-                        {{ $this->buttonSaveText }}
-                    @elseif ($model->id)
-                        @lang('Edit :resource', ['resource' => $this->label()])
-                    @else
-                        @lang('Create :resource', ['resource' => $this->label()])
-                    @endif
-                </x-move-button>
+                <div class="flex gap-6 items-center">
+                    <x-move-action-message class="text-green-600" on="saved">
+                        <div class="flex">
+                            <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            @lang('Saved.')
+                        </div>
+                    </x-move-action-message>
+
+                    <x-move-button wire:loading.attr="disabled">
+                        @if ($this->buttonSaveText)
+                            {{ $this->buttonSaveText }}
+                        @elseif ($model->id)
+                            @lang('Edit :resource', ['resource' => $this->label()])
+                        @else
+                            @lang('Create :resource', ['resource' => $this->label()])
+                        @endif
+                    </x-move-button>
+                </div>
             </x-slot>
             @endif
         @endif
