@@ -1,4 +1,4 @@
-@props(['id', 'maxWidth', 'button' => null, 'value' => null, 'show' => true, 'showType' => '=='])
+@props(['id', 'maxWidth', 'button' => null, 'value' => null, 'show' => true, 'showType' => '==', 'defer' => false])
 
 @php
 $model = $attributes->wire('model');
@@ -58,7 +58,8 @@ switch ($maxWidth ?? '2xl') {
 <div
     id="{{ $id }}"
     x-data="{
-        show: @entangle($model),
+        <?php if ($defer): ?> show: @entangle($model).defer, <?php endif; ?>
+        <?php if (!$defer): ?> show: @entangle($model), <?php endif; ?>
         focusables() {
             // All focusable element types...
             let selector = 'a, button, input, textarea, select, details, [tabindex]:not([tabindex=\'-1\'])'

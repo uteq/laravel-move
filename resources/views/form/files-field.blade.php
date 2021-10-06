@@ -64,10 +64,11 @@
 
                             @else
                                 <div class="flex-grow">
-                                    <x-move-modal wire:model="showFile.{{ $i }}">
+                                    <x-move-modal wire:model="showFile.{{ $i + 1 }}" defer>
                                         <x-slot name="button">
                                             <div class="cursor-pointer" data-lightbox="roadtrip">
                                                 <div class="ml-4 text-sm text-center py-2">{{ $file->getClientOriginalName() }}</div>
+
                                                 <img src="{{ $file->withVersion($this->rotatedFiles)->getUrl() }}"
                                                      class="object-contain h-48 w-full"
                                                 />
@@ -97,7 +98,7 @@
                                     </svg>
                                 </div>
 
-                                <div class="w-full text-sm" wire:target="rotateFile" wire:loading>
+                                <div class="w-full text-sm" wire:target="rotateFile('{{ $field->attribute }}', {{ $i }})" wire:loading>
 
                                     <div class="flex">
                                         <svg class="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

@@ -48,11 +48,13 @@ trait HasFiles
         $file = $this->loadFiles($field)->get($i);
 
         if (! $file) {
+            session()->flash('status', 'Test');
             // TODO add a message, unable to rotate.
             return null;
         }
 
         if (! exif_imagetype($file->getPath())) {
+            session()->flash('status', 'Test');
             // TODO add a message, unable to rotate.
             return null;
         }

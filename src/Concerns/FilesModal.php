@@ -4,10 +4,10 @@ namespace Uteq\Move\Concerns;
 
 trait FilesModal
 {
-    public $showFile = false;
+    public $showFile = null;
 
-    public function showFile()
+    public function showFile($id)
     {
-        $this->showFile = true;
+        $this->showFile = $id;
     }
 }

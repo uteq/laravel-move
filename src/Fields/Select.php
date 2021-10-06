@@ -186,17 +186,25 @@ class Select extends Field
             ? $this->resolveDefaultOption($defaultOption)
             : $this->options(fn () => $defaultOption);
 
+        $minInputLength = $settings['minimumInputLength'] ?? 2;
+        $noResults = $settings['noResults'] ?? 'Geen resultaten gevonden';
+
         $this->settings = array_replace_recursive([
             'ajax' => [
                 'url' => $url,
                 'dateType' => 'json',
                 'delay' => 250,
             ],
-            'minimumInputLength' => 2,
+            'minimumInputLength' => $minInputLength,
             'language' => [
                 'inputTooShort' => <<<JS
                     function() {
-                        return 'Minimaal 2 karakters vereist';
+                        return 'Minimaal {$minInputLength} karakters vereist';
+                    }
+                    JS,
+                'noResults' => <<<JS
+                    function() {
+                        return '$noResults';
                     }
                     JS
             ],
