@@ -2,6 +2,8 @@
 
 namespace Uteq\Move\File;
 
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -46,7 +48,11 @@ class ResourceFile extends File implements ResourceFileContract
             }
         }
 
-        file_put_contents($path, file_get_contents($this->media->getFullUrl()));
+        $url = $this->media->getDiskDriverName() === 's3'
+            ? $this->media->getTemporaryUrl(now()->addMinute())
+            : $this->media->getFullUrl();
+
+        file_put_contents($path, file_get_contents($url));
 
         return $path;
     }
@@ -81,5 +87,20 @@ class ResourceFile extends File implements ResourceFileContract
     public function getUrl(): string
     {
         return $this->media->getFullUrl() . ($this->version !== null ? '?v=' . $this->version : '');
+    }
+
+    public function get()
+    {
+        return $this->media->get();
+    }
+
+    public function rotate($degrees)
+    {
+        $image = Image::make($this->getPath());
+        $image->setFileInfoFromPath($this->getPath());
+        $image->rotate($degrees);
+        $image->save();
+
+        Storage::disk($this->media->disk)->put($this->media->id . '/' . $this->media->file_name, (string) $image);
     }
 }

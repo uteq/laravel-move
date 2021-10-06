@@ -69,13 +69,16 @@
                                             <div class="cursor-pointer" data-lightbox="roadtrip">
                                                 <div class="ml-4 text-sm text-center py-2">{{ $file->getClientOriginalName() }}</div>
 
-                                                <img src="{{ $file->withVersion($this->rotatedFiles)->getUrl() }}"
+                                                <img src="{{ $file->withVersion($this->rotatedFiles[$i] ?? 0)->getUrl() }}"
                                                      class="object-contain h-48 w-full"
+                                                     wire:key="image-{{ $i + 1 }}-{{ $this->rotatedFiles[$i] ?? 0 }}"
                                                 />
+
+                                                <div wire:target="files" wire:loading>...</div>
                                             </div>
                                         </x-slot>
 
-                                        <img src="{{ $file->withVersion($this->rotatedFiles)->getUrl() }}"
+                                        <img src="{{ $file->withVersion($this->rotatedFiles[$i] ?? 0)->getUrl() }}"
                                              class="card-img"
                                         />
                                     </x-move-modal>

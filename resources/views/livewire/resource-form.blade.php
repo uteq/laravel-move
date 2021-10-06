@@ -108,17 +108,25 @@
 
     </x-move-form-section>
 
-    @push('modals')
+    @if (session('status'))
+    <div class="fixed top-0 right-0 bg-green-500 text-white py-2 text-center text-xs px-4"
+         wire:key="{{ md5(session('status') . time()) }}"
+         x-data="{ show: true }"
+         x-show="show"
+         x-init="setTimeout(() => show = false, {{ session('timeout') ?? '3000' }})"
+    >
+        {{ session('status') }}
+    </div>
+    @endif
 
-        @if (session('status'))
-            <div class="absolute top-0 right-0 bg-green-500 text-white py-2 text-center text-xs px-4"
-                 x-data="{ show: true }"
-                 x-show="show"
-                 x-init="setTimeout(() => show = false, 3000)"
-            >
-                {{ session('status') }}
-            </div>
-        @endif
-
-    @endpush
+    @if (session('error'))
+    <div class="fixed top-0 right-0 bg-red-500 text-white py-2 text-center text-xs px-4"
+         wire:key="{{ md5(session('error') . time()) }}"
+         x-data="{ show: true }"
+         x-show="show"
+         x-init="setTimeout(() => show = false, {{ session('timeout') ?? '3000' }})"
+    >
+        {{ session('error') }}
+    </div>
+    @endif
 </div>

@@ -4,7 +4,6 @@ namespace Uteq\Move\DomainActions;
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Uteq\Move\DataTransferObjects\MediaCollection;
 
 trait WithSyncableMedia

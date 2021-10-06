@@ -22,7 +22,7 @@ trait HasFiles
     public $file;
     public $tempUploadedFiles = [];
     public $deletedFiles = [];
-    public int $rotatedFiles = 0;
+    public array $rotatedFiles = [];
 
     public function removeFile(string $field, int $i): void
     {
@@ -42,29 +42,28 @@ trait HasFiles
     public function rotateFile(string $field, int $i, int $degrees = -90)
     {
         $field = $this->fields()
-            ->where('attribute', $field)
-            ->first();
+            ->firstWhere('attribute', $field);
 
+        /** @var ResourceFile $file */
         $file = $this->loadFiles($field)->get($i);
 
         if (! $file) {
-            session()->flash('status', 'Test');
-            // TODO add a message, unable to rotate.
+            session()->flash('error', __('Something went wrong rotating the image. No file loaded'));
+
             return null;
         }
 
         if (! exif_imagetype($file->getPath())) {
-            session()->flash('status', 'Test');
-            // TODO add a message, unable to rotate.
+            session()->flash('error', __('Something went wrong rotating the image. Unable to retrieve correct data from file path'));
+            session()->flash('timout', 5000);
+
             return null;
         }
 
-        $image = Image::make($file->getPath());
-        $image->setFileInfoFromPath($file->getPath());
-        $image->rotate($degrees);
-        $image->save();
+        $file->rotate($degrees);
 
-        $this->rotatedFiles++;
+        $this->rotatedFiles[$i] ??= 0;
+        $this->rotatedFiles[$i]++;
 
         $this->loadFiles($field);
     }
@@ -89,8 +88,10 @@ trait HasFiles
         $urls = $this->loadFiles($field, true)
             ->map(function (ResourceFileContract $file, $key) use ($field) {
 
-                // Only add Resource file to be deleted
-                if (isset($this->deletedFiles[$field->attribute][$key]) && ! $file instanceof ResourceFile) {
+                $inDelete = isset($this->deletedFiles[$field->attribute][$key]);
+
+                // Only add Resource file to deleted if it already exists
+                if ($inDelete && ! $file instanceof ResourceFile) {
                     return null;
                 }
 
@@ -98,7 +99,7 @@ trait HasFiles
                     'id' => $file instanceof ResourceFile ? $file->id() : null,
                     'path' => $file->getPath(),
                     'name' => $file->getClientOriginalName(),
-                    'action' => isset($this->deletedFiles[$field->attribute][$key]) ? 'delete' : 'create',
+                    'action' => $inDelete ? 'delete' : 'create',
                 ]);
             })
             ->toArray();
