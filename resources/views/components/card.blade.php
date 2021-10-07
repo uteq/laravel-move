@@ -13,7 +13,7 @@
                 <div class="ml-4 mt-4">
                     <h3 class="text-lg leading-6 font-medium text-gray-900">
             @endif
-                        {{ $heading }}
+                        {!! $heading !!}
             @if (! $headingWithoutStyle)
                     </h3>
                 </div>

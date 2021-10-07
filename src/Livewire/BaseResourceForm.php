@@ -33,6 +33,7 @@ abstract class BaseResourceForm extends FormComponent
     public $baseRoute = 'move';
     public $showForm = false;
     public array $meta = [];
+    public array $dirtyFields = [];
 
     public bool $hideStepsMenu = false;
     public bool $hideActions = false;
@@ -146,11 +147,37 @@ abstract class BaseResourceForm extends FormComponent
         );
     }
 
-    public function updatedStore($key, $value)
+    public function updatedStore($defaultKey, $defaultValue)
     {
-        $this->model->store = $this->store;
+        $store = $this->storeAsArray();
 
-        $this->emit(static::class . '.updatedStore', $this->store);
+        foreach ($this->fields() as $field) {
+            $store = $field->applyAfterUpdatedStore($store, $defaultValue, $defaultKey, $this);
+        }
+
+        $this->model->store = $store;
+
+        $this->emit(static::class . '.updatedStore', $store);
+
+        $this->store = $store;
+
+        $this->dirtyFields[$defaultKey] = true;
+    }
+
+    protected function storeAsArray()
+    {
+        $store = [];
+        foreach ($this->store as $key => $value) {
+            if (str_contains($key, '.')) {
+                if (isset($this->store[Str::before($key, '.')])) {
+                    continue;
+                }
+            }
+
+            Arr::set($store, $key, $value);
+        }
+
+        return $store;
     }
 
     public function getPanelsProperty(): Collection

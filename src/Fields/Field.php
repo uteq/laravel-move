@@ -121,6 +121,10 @@ abstract class Field extends FieldElement
     protected $form = null;
     public bool $disabled = false;
 
+    protected ?Closure $afterUpdatedStore = null;
+
+    public bool $dirty = false;
+
     /**
      * Field constructor.
      */
@@ -247,7 +251,7 @@ abstract class Field extends FieldElement
      */
     protected function getResourceAttributeValue($resource, $attribute)
     {
-        return data_get($resource, str_replace('->', '.', $attribute));
+        return Arr::get($resource, str_replace('->', '.', $attribute));
     }
 
     /**
@@ -539,15 +543,19 @@ abstract class Field extends FieldElement
 
     public function store($key = null, $default = null)
     {
-        $store = $this->resource->store ?: $this->resource->getAttributes();
+        $store = move_arr_expand($this->resource->store ?: $this->resource->getAttributes() ?? []);
 
         if (empty($store)) {
             return $default;
         }
 
+        $attribute = ($this->storePrefix ?? false)
+            ? Str::after($this->storePrefix . '.' . $this->attribute, 'store.')
+            : $this->attribute;
+
         return $key
-            ? Arr::get($store[$this->attribute] ?? $default, $key, $default)
-            : $store[$this->attribute] ?? $default;
+            ? Arr::get($store[$attribute] ?? $default, $key, $default)
+            : Arr::get($store, $attribute, $default);
     }
 
     public function before(Closure $before): self
@@ -612,5 +620,46 @@ abstract class Field extends FieldElement
         $this->valueCallback = $callback
             ? fn($value, ...$args) => $afterCallback($callback($value, ...$args))
             : $afterCallback;
+    }
+
+    public function applyAfterUpdatedStore($store, $key, $value, $form)
+    {
+        $this->dirty = true;
+
+        if (! is_callable($this->afterUpdatedStore)) {
+            return $store;
+        }
+
+        return ($this->afterUpdatedStore)($store, $key, $value, $form, $this);
+    }
+
+    public function storeValue($key, $default = null)
+    {
+        $prefix = $this->storePrefix ?? null;
+        $prefix = $prefix ? $prefix . '.' : '';
+
+        $store = move_arr_expand($this->resource?->store ?? []);
+
+        $storeKey = Str::after($this->storePrefix . '.' . $key, $this->defaultStorePrefix . '.');
+
+        return $this->dirty
+            ? Arr::get($store, $storeKey, $default)
+            : Arr::get($this->resource, $prefix . $key, $default);
+    }
+
+    /**
+     * This is only used for array data.
+     * For example if the attribute is store.meta.items.0.key
+     * This will be return the next supposed storePrefix: store.meta.items.1
+     *
+     * @return \Illuminate\Support\Stringable
+     */
+    public function nextItemStorePrefix()
+    {
+        $number = (int) ((string) Str::of($this->storePrefix)->afterLast('.') ?? null);
+
+        return Str::of($this->storePrefix)
+            ->before($number)
+            ->append($number + 1);
     }
 }

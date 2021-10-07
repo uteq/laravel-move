@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Concerns;
 
+use Illuminate\Support\Arr;
 use Uteq\Move\Facades\Move;
 
 trait WithMount
@@ -14,12 +15,48 @@ trait WithMount
 
         $this->handleBeforeMount();
 
+        $this->mountRoutes();
+
+        $this->mountStore();
+
+        $this->mountSteps();
+
+        $this->mountModel();
+
+        $this->handleAfterMount();
+
+        if (method_exists($this, 'init')) {
+            app()->call([$this, 'init']);
+        }
+    }
+
+    private function mountRoutes(): void
+    {
         $this->baseRoute = move()::getPrefix();
+    }
 
-        $this->store = $this->fields()
-            ->mapWithKeys(fn ($field) => [$field->attribute => $field->value])
-            ->toArray();
+    private function mountStore(): void
+    {
+        $this->store ??= [];
 
+        foreach ($this->fields() as $field) {
+            Arr::set($this->store, $field->attribute, $field->value);
+        }
+
+        $this->mountTestStore();
+
+        $this->meta = $this->resource()->meta();
+
+        $undotedStore = [];
+        foreach ($this->store as $key => $value) {
+            Arr::set($undotedStore, $key, $value);
+        }
+
+        $this->model->store = $undotedStore;
+    }
+
+    private function mountTestStore(): void
+    {
         if (Move::usesTestStore()) {
             $testStore = $this->resource()->testStore() ?? [];
 
@@ -32,12 +69,11 @@ trait WithMount
                 return $testStore[$field] ?? null;
             })->toArray();
         }
+    }
 
-        $this->meta = $this->resource()->meta();
-
-        $this->model->store = $this->store;
-
-        if ((! $this->activeStep || ! $this->model->id) && $step = $this->steps()->first()) {
+    private function mountSteps(): void
+    {
+        if ((!$this->activeStep || !$this->model->id) && $step = $this->steps()->first()) {
             $this->activeStep = $step->attribute;
             $this->availableSteps[] = $this->activeStep;
         }
@@ -47,15 +83,12 @@ trait WithMount
                 ->map(fn ($step) => $step->attribute)
                 ->toArray();
         }
+    }
 
+    private function mountModel(): void
+    {
         $this->model->id
             ? $this->resource()->authorizeTo('update', $this->model)
             : $this->resource()->authorizeTo('create');
-
-        $this->handleAfterMount();
-
-        if (method_exists($this, 'init')) {
-            app()->call([$this, 'init']);
-        }
     }
 }
