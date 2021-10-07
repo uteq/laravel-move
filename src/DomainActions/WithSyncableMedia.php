@@ -17,7 +17,13 @@ trait WithSyncableMedia
         return $this;
     }
 
-    public function syncMedia(Model $model, MediaCollection $paths, $collection, $diskName = null)
+    public function syncMedia(
+        Model $model,
+        MediaCollection $paths,
+        $collection,
+        $diskName = null,
+        $manipulations = [],
+    )
     {
         $diskName ??= config('filesystems.default');
 
@@ -46,6 +52,7 @@ trait WithSyncableMedia
             }
 
             $result[] = $model->addMediaFromString(file_get_contents($path->path))
+                ->withManipulations($manipulations)
                 ->usingName(pathinfo($path->name, PATHINFO_FILENAME))
                 ->usingFileName($path->name)
                 ->toMediaCollection($collection, $diskName);

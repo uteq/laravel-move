@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\DataTransferObjects;
 
+use Closure;
 use Uteq\Move\Support\DataTransferObjectCollection;
 
 class MediaCollection extends DataTransferObjectCollection implements MediaCollectable
@@ -25,7 +26,11 @@ class MediaCollection extends DataTransferObjectCollection implements MediaColle
             ));
         }
 
-        return new self(collect($data)->map(fn ($item) => new MediaData($item))->toArray());
+        return new self(
+            collect($data)
+                ->map(fn ($item) => $item instanceof MediaData ? $item : new MediaData($item))
+                ->toArray()
+        );
     }
 
     public function onlyDelete()
@@ -40,5 +45,14 @@ class MediaCollection extends DataTransferObjectCollection implements MediaColle
         return collect($this->collection)
             ->filter(fn ($item) => $item)
             ->filter(fn (MediaData $item) => $item->action !== 'delete');
+    }
+
+    public function each(Closure $closure): static
+    {
+        return static::create(
+            collect($this->collection)
+                ->each($closure)
+                ->toArray()
+        );
     }
 }

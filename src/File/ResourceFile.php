@@ -101,6 +101,7 @@ class ResourceFile extends File implements ResourceFileContract
         $image->rotate($degrees);
         $image->save();
 
-        Storage::disk($this->media->disk)->put($this->media->id . '/' . $this->media->file_name, (string) $image);
+        Storage::disk($this->media->disk)
+            ->put($this->media->id . '/' . $this->media->file_name, (string) $image);
     }
 }
