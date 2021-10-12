@@ -60,7 +60,14 @@ trait HasFiles
             return null;
         }
 
-        $file->rotate($degrees);
+        if (method_exists($file, 'rotate')) {
+            $file->rotate($degrees);
+        } else {
+            $image = Image::make($file->getPath());
+            $image->setFileInfoFromPath($file->getPath());
+            $image->rotate($degrees);
+            $image->save();
+        }
 
         $this->rotatedFiles[$i] ??= 0;
         $this->rotatedFiles[$i]++;

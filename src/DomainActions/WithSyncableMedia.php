@@ -51,8 +51,12 @@ trait WithSyncableMedia
                 continue;
             }
 
-            $result[] = $model->addMediaFromString(file_get_contents($path->path))
-                ->withManipulations($manipulations)
+            if (method_exists($this, 'beforeSyncMedia')) {
+                $pathPath = $this->beforeSyncMedia($path->path);
+            }
+
+            $result[] = $model->addMediaFromString(file_get_contents($pathPath ?? $path->path))
+                ->withManipulations(['*' => $manipulations])
                 ->usingName(pathinfo($path->name, PATHINFO_FILENAME))
                 ->usingFileName($path->name)
                 ->toMediaCollection($collection, $diskName);
