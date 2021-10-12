@@ -56,7 +56,7 @@ trait WithSyncableMedia
             }
 
             $result[] = $model->addMediaFromString(file_get_contents($pathPath ?? $path->path))
-                ->withManipulations(['*' => $manipulations])
+                ->withManipulations($manipulations)
                 ->usingName(pathinfo($path->name, PATHINFO_FILENAME))
                 ->usingFileName($path->name)
                 ->toMediaCollection($collection, $diskName);
