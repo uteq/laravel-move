@@ -53,12 +53,12 @@ trait HasFiles
             return null;
         }
 
-        if (! exif_imagetype($file->getPath())) {
-            session()->flash('error', __('Something went wrong rotating the image. Unable to retrieve correct data from file path'));
-            session()->flash('timout', 5000);
-
-            return null;
-        }
+//        if (! exif_imagetype($file->getPath())) {
+//            session()->flash('error', __('Something went wrong rotating the image. Unable to retrieve correct data from file path'));
+//            session()->flash('timout', 5000);
+//
+//            return null;
+//        }
 
         if (method_exists($file, 'rotate')) {
             $file->rotate($degrees);
