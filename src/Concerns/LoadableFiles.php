@@ -10,9 +10,12 @@ use Uteq\Move\File\TemporaryUploadedResourceFile;
 trait LoadableFiles
 {
     public $files = [];
+    public $hasMultipleFiles = [];
 
     public function loadFiles(Field $field, $withDeleted = false)
     {
+        $this->hasMultipleFiles[$field->attribute] = $field->isMultiple;
+
         $field->applyResourceData($this->model);
 
         $existingFiles = collect($field->media())

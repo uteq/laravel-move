@@ -18,6 +18,42 @@
             :settings="$field->settings"
             :multiple="$field->multiple"
         ></x-move-field.select>
+
+        @if ($field->meta['with_add_button'])
+            <x-move-secondary-button wire:click="$set('showModal', '{{ \Str::slug($field->resourceName) }}')" class="mt-2">
+                {{ __('Create :resource', ['resource' => $field->resourceName()]) }}
+            </x-move-secondary-button>
+
+            @if ($this->showModal === \Str::slug($field->resourceName))
+                <x-move-dialog-modal
+                    wire:model="showModal.{{ \Str::slug($field->resourceName) }}"
+                    title="{{ __('Create :resource', ['resource' => $field->resourceName()]) }}"
+                >
+                    <x-slot name="content">
+                        <livewire:livewire.resource-form
+                            wire:key="modal-form-{{ \Str::slug($field->resourceName) }}"
+                            name="modal-form-{{ \Str::slug($field->resourceName) }}"
+                            :resource="$field->resourceName"
+                            :model="$field->resourceName::newModel()"
+                            :redirects="$field->getRedirects()"
+                            hide-actions
+                        />
+                    </x-slot>
+
+                    <x-slot name="footer">
+                        <div class="flex items-center justify-between">
+                            <x-move-secondary-button wire:click="$set('showModal', null)">
+                                Annuleren
+                            </x-move-secondary-button>
+
+                            <x-move-button form="modal-form-{{ \Str::slug($field->resourceName) }}">
+                                {{ __('Create :resource', ['resource' => $field->resourceName()]) }}
+                            </x-move-button>
+                        </div>
+                    </x-slot>
+                </x-move-dialog-modal>
+            @endif
+        @endif
     </div>
 </x-move-form.row>
 

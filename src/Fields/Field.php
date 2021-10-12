@@ -44,7 +44,7 @@ abstract class Field extends FieldElement
     /**
      * The callback to be used to resolve the field's display value.
      */
-    public ?Closure $resourceDataCallback = null;
+    protected ?Closure $resourceDataCallback = null;
 
     /**
      * Indicates if the field is nullable.
@@ -85,21 +85,21 @@ abstract class Field extends FieldElement
     /**
      * Define your own field filler here
      */
-    public ?Closure $fillCallback = null;
+    protected ?Closure $fillCallback = null;
 
     /**
      * @var Closure[]
      */
-    public array $beforeStore = [];
+    protected array $beforeStore = [];
 
     /**
      * @var Closure[]
      */
-    public array $afterStore = [];
+    protected array $afterStore = [];
 
     public string $store;
 
-    public ?Closure $before = null;
+    protected ?Closure $before = null;
 
     public bool $isPlaceholder = false;
 
@@ -119,6 +119,7 @@ abstract class Field extends FieldElement
     protected $index = null;
     protected $show = null;
     protected $form = null;
+
     public bool $disabled = false;
 
     protected ?Closure $afterUpdatedStore = null;
@@ -336,7 +337,7 @@ abstract class Field extends FieldElement
 
     public function resourceUrl($resource)
     {
-        $resource = Move::getByClass(get_class($resource));
+        $resource = Move::getByClass(is_string($resource) ? $resource : get_class($resource));
 
         $resource = str_replace('.', '/', $resource);
 
@@ -661,5 +662,15 @@ abstract class Field extends FieldElement
         return Str::of($this->storePrefix)
             ->before($number)
             ->append($number + 1);
+    }
+
+    public function hasBefore()
+    {
+        return (bool) $this->before;
+    }
+
+    public function getBefore()
+    {
+        return $this->before;
     }
 }

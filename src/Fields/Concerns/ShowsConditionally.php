@@ -12,35 +12,35 @@ trait ShowsConditionally
      *
      * @var Closure|bool
      */
-    public $showOnIndex = true;
+    protected $showOnIndex = true;
 
     /**
      * Indicates if the element should be shown on the detail view.
      *
      * @var Closure|bool
      */
-    public $showOnDetail = true;
+    protected $showOnDetail = true;
 
     /**
      * Indicates if the element should be shown on the creation view.
      *
      * @var Closure|bool
      */
-    public $showOnCreation = true;
+    protected $showOnCreation = true;
 
     /**
      * Indicates if the element should be shown on the update view.
      *
      * @var Closure|bool
      */
-    public $showOnUpdate = true;
+    protected $showOnUpdate = true;
 
     /**
      * Indicates if the element is only shown on the detail screen.
      *
      * @var bool
      */
-    public bool $onlyOnDetail = false;
+    protected bool $onlyOnDetail = false;
 
     /**
      * Specify that the element should be hidden from the index view.

@@ -37,7 +37,7 @@ trait HasRequired
     public function isRequired(): bool
     {
         return with($this->requiredCallback, function ($callback) {
-            if ($callback === true || (is_callable($callback) && call_user_func($callback, request(), $this->resource))) {
+            if ($callback === true || (is_callable($callback) && call_user_func($callback, request(), $this->resource, $this->resource['store'] ?? []))) {
                 return true;
             }
 

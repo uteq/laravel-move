@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 trait AuthorizedToSee
 {
-    public \Closure $seeCallback;
+    protected \Closure $seeCallback;
 
     public function authorizedToSee(Request $request)
     {

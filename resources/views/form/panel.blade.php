@@ -1,7 +1,7 @@
 <x-move-panel :title="$panel->name" :panel="$panel">
     @foreach ($panel->fields as $key => $field)
-        @if ($field->before)
-            @php $before = $field->before @endphp
+        @if ($field->hasBefore())
+            @php $before = $field->getBefore() @endphp
             <div class="pt-2 px-4 last:pb-4 bg-white w-full  grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-4">
                     <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">

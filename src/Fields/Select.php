@@ -5,14 +5,25 @@ namespace Uteq\Move\Fields;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Uteq\Move\Actions\LivewireCloseModal;
+use Uteq\Move\Concerns\WithClosures;
+use Uteq\Move\Concerns\WithListeners;
+use Uteq\Move\Concerns\WithModal;
+use Uteq\Move\Concerns\WithRedirects;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
 class Select extends Field
 {
+    use WithModal, WithListeners, WithClosures, WithRedirects;
+
     public string $component = 'select-field';
 
-    public $options;
+    protected $version = 1;
+
+    protected $options;
 
     public $resourceName = null;
 
@@ -28,9 +39,32 @@ class Select extends Field
 
     public ?string $ajaxUrl = null;
 
+    public bool $addResourceEnabled = false;
+
+    public string $createResource;
+
+    public string $createForm;
+
     protected static $resourceCache = [];
 
-    public $version = 1;
+    protected array $closures = [
+        'version',
+        'options',
+    ];
+
+    public function init()
+    {
+        $this->withMeta([
+            'with_add_button' => false,
+        ]);
+
+        $this->show(fn ($field) => (string) ($this->getOptions()[$field->value] ?? null));
+    }
+
+    public function modalClosed($modal)
+    {
+        $this->version($this->version + 1);
+    }
 
     public function settings(array $settings)
     {
@@ -56,6 +90,10 @@ class Select extends Field
             return null;
         }
 
+        if (! $this->clickable) {
+            return null;
+        }
+
         return route(move()::getPrefix() . '.show', [
             'resource' => $this->resourceRouteName(),
             'model' => $this->value,
@@ -74,7 +112,9 @@ class Select extends Field
             : null;
 
         if (! $model) {
-            return null;
+            return $this->resourceName
+                ? $this->resourceName::singularLabel()
+                : null;
         }
 
         if (! $this->resourceName) {
@@ -94,6 +134,10 @@ class Select extends Field
 
     public function cachedResource($name, $value, $model): ?Model
     {
+        if ($value instanceof Collection || is_array($value)) {
+            return null;
+        }
+
         if (! isset(static::$resourceCache[$name][$value]) || empty(static::$resourceCache[$name][$value])) {
             static::$resourceCache[$name] ??= [];
             static::$resourceCache[$name][$value] = $name::$model::find($value);
@@ -151,7 +195,7 @@ class Select extends Field
 
     public function getOptions(): array
     {
-        $options = $this->options;
+        $options = $this->closure('options');
 
         $options = is_callable($options)
             ? $options($this ?? null)
@@ -293,10 +337,36 @@ class Select extends Field
 
     public function getVersion()
     {
-        $version = $this->version;
+        $version = $this->version instanceof \Closure ? $this->closure('version') : $this->version;
 
         return is_callable($version)
             ? $version($this)
             : $version;
+    }
+
+    public function createResource(string $resource, string $form)
+    {
+        $this->createResource = $resource;
+        $this->createForm = $form;
+        $this->addResourceEnabled = true;
+
+        return $this;
+    }
+
+    public function withAddButton($withAddButton = true, $redirectsCloseModal = true): static
+    {
+        $this->meta['with_add_button'] = $withAddButton;
+
+        $this->version($this->resourceName::$model::count());
+
+        if ($redirectsCloseModal) {
+            $this->redirects(is_array($redirectsCloseModal) ? $redirectsCloseModal : [
+                'create' => LivewireCloseModal::make(),
+                'update' => LivewireCloseModal::make(),
+                'delete' => LivewireCloseModal::make(),
+            ]);
+        }
+
+        return $this;
     }
 }

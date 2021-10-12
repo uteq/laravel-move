@@ -4,11 +4,21 @@ namespace Uteq\Move\Concerns;
 
 trait WithActionableFields
 {
-    public function action($store, $method, ...$args)
+    public function action($storeKey, $method, ...$args)
     {
-        $this->fields()
-            ->filter(fn ($field) => $field->store === $store)
-            ->each(fn ($field) => $field->{$method}($this, $field, ...$args));
+        $store = move_arr_expand($this->store);
+
+        $result = $this->fields()
+            ->filter(fn ($field) => $field->store === $storeKey)
+            ->map(function ($field) use ($method, $args, $store) {
+                $this->store = $store;
+
+                return $field->{$method}($this, $field, ...$args);
+            });
+
+        if ($result->count() == 1) {
+            return $result->first();
+        }
 
         return $this;
     }

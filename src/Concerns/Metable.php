@@ -16,9 +16,11 @@ trait Metable
      *
      * @return array
      */
-    public function meta()
+    public function meta($key = null, $default = null)
     {
-        return $this->meta;
+        return $key
+            ? $this->meta[$key] ?? $default
+            : $this->meta;
     }
 
     /**

@@ -2,6 +2,10 @@
 
 namespace Uteq\Move\Concerns;
 
+use Closure;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+
 trait HasDependencies
 {
     protected $dependencies = [];
@@ -16,6 +20,13 @@ trait HasDependencies
         $type = is_callable($value) ? 'callback' : 'value';
 
         $this->dependencies[$field] = [$type => $value];
+
+        return $this;
+    }
+
+    public function dependsOnCall(string $field, Closure $callback)
+    {
+        $this->dependencies[$field] = ['call' => $callback];
 
         return $this;
     }
@@ -61,7 +72,8 @@ trait HasDependencies
     {
         /** @psalm-suppress UnusedClosureParam */
         $rules = [
-            'callback' => fn ($value, $result) => $value($result, $this),
+            'callback' => fn ($value, $result) => $value($result, $this, $data),
+            'call' => fn ($value, $result) => app()->call($value, ['result' => $result, 'field' => $this, 'store' => $data]),
             'value' => fn ($value, $result) => $result == $value,
             'not' => fn ($value, $result) => $result != $value,
             'not_null' => fn ($value, $result) => $result !== null,
@@ -73,9 +85,19 @@ trait HasDependencies
             return true;
         }
 
+        $dataWithoutDots = collect($data)
+            ->filter(fn ($value, $key) => ! Str::contains($key, '.'))
+            ->toArray();
+
+        return $this->areDependenciesSatisfiedWithData($rules, $data)
+            || $this->areDependenciesSatisfiedWithData($rules, $dataWithoutDots);
+    }
+
+    private function areDependenciesSatisfiedWithData(array $rules, $data): bool
+    {
         foreach ($this->dependencies as $field => $condition) {
             foreach ($condition as $type => $value) {
-                if (! $rules[$type]($value, $data[$field] ?? $data->{$field} ?? null)) {
+                if (! $rules[$type]($value, $data[$field] ?? $data->{$field} ?? Arr::get($data, $field, false))) {
                     return false;
                 }
             }
