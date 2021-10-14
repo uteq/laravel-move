@@ -62,21 +62,6 @@ abstract class Field extends FieldElement
     public Model $resource;
 
     /**
-     * The validation rules for creation and updates.
-     */
-    public array $rules = [];
-
-    /**
-     * The validation rules for creation.
-     */
-    public array $creationRules = [];
-
-    /**
-     * The validation rules for updates.
-     */
-    public array $updateRules = [];
-
-    /**
      * The attribute used to keep the data in to
      * submit with the form.
      */

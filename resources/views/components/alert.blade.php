@@ -1,7 +1,18 @@
-@props(['title' => null, 'color' => 'teal', 'hideIcon' => false, 'withoutPadding' => false, 'borderColor' => null])
+@props(['title' => null, 'borderPosition' => 'top', 'color' => 'teal', 'hideIcon' => false, 'withoutPadding' => false, 'borderColor' => null])
+
+@php
+
+    $borderClass = [
+        'top' => 'border-t-4',
+        'left' => 'border-l-4',
+        'right' => 'border-r-4',
+        'bottom' => 'border-b-4',
+    ][$borderPosition];
+
+@endphp
 
 <div {{ $attributes->merge([
-        'class' => 'bg-' . $color .'-100 border-t-4 ' . ($borderColor ?: 'border-' . $color .'-500') . ' rounded-b text-' . $color .'-900 '. ($withoutPadding ? 'px-4 py-3' : null) .' shadow-md'
+        'class' => 'bg-' . $color .'-100 '. $borderClass . ' ' . ($borderColor ?: 'border-' . $color .'-500') . ' rounded-b text-' . $color .'-900 '. ($withoutPadding ? 'px-4 py-3' : null) .' shadow-md'
      ]) }}
      role="alert"
 >

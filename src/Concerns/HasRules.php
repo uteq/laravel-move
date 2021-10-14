@@ -10,22 +10,22 @@ trait HasRules
     /**
      * The validation rules for creation and updates.
      */
-    public array $rules = [];
+    protected array $rules = [];
 
     /**
      * The validation rules for creation.
      */
-    public array $creationRules = [];
+    protected array $creationRules = [];
 
     /**
      * The validation rules for updates.
      */
-    public array $updateRules = [];
+    protected array $updateRules = [];
 
     /**
      * Validation rules with a custom attribute
      */
-    public array $customRules = [];
+    protected array $customRules = [];
 
     /**
      * Set the validation rules for the field.

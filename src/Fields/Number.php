@@ -12,8 +12,8 @@ class Number extends Field
 
     public int $decimals = 0;
 
-    public \Closure $displayFormat;
-    public \Closure $storeFormat;
+    protected \Closure $displayFormat;
+    protected \Closure $storeFormat;
 
     public function init()
     {

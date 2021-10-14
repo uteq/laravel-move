@@ -9,7 +9,7 @@ trait HasHelpText
      *
      * @var string
      */
-    public $helpText;
+    protected $helpText;
 
     /**
      * The width of the help text tooltip.
