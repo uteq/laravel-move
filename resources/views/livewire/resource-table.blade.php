@@ -1,8 +1,11 @@
 <div>
-    <x-move-table.header add-action="{!! $this->addRoute() !!}"
-                         add-is-route
-                         :add-text="__('Create :resource', ['resource' => $this->resource()->singularLabel()])"
-                         search
+    <x-move-table.header
+        :table="$table"
+        :hide-add-action="! $table->meta('with_add_button')"
+        add-action="{!! $this->addRoute() !!}"
+        add-is-route
+        :add-text="__('Create :resource', ['resource' => $this->resource()->singularLabel()])"
+        search
     >
         @foreach ($headerSlots as $name => $value)
         <x-slot :name="$name">{!! $value !!}</x-slot>
@@ -10,6 +13,7 @@
     </x-move-table.header>
 
     <x-move-table :table="$table" class="mt-4 table-hover" wire:loading.class="opacity-50">
+        @if ($table->meta('with_filters'))
         <x-slot name="filters">
 
             @if ($table->has_filters)
@@ -24,8 +28,9 @@
                     {{ $filter->name() }}
                 </h3>
                 <div class="p-3" wire:key="filter.{{ $key }}">
-                    <x-dynamic-component :component="'move::filters.' . $filter->component()"
-                                         :filter="$filter"
+                    <x-dynamic-component
+                        :component="'move::filters.' . $filter->component()"
+                        :filter="$filter"
                     />
                 </div>
             @endforeach
@@ -41,6 +46,7 @@
                 </select>
             </div>
         </x-slot>
+        @endif
 
         <x-slot name="head">
             <tr>
@@ -77,11 +83,13 @@
                     </x-move-td>
                 @endif
                 <x-move-td>
+                    @if ($table->meta('with_checkbox'))
                     <x-move-field.checkbox
                         model="selected.{{ $row['model']->id }}"
                         value="{{ $row['model']->id }}"
                         wire:key="selected-checkbox-{{ $row['model']->id }}"
                     />
+                    @endif
                 </x-move-td>
                 @foreach ($row['fields'] as $field)
                     <x-move-td class="{{ Move::getWrapTableContent() && $field->wrapContent ? 'whitespace-wrap' : 'whitespace-nowrap' }}">
@@ -101,6 +109,7 @@
                 <x-move-td class="whitespace-nowrap">
                     <x-move-table.item-actions
                         :table="$table"
+                        :meta="$table->meta"
                         id="{{ $row['model']->id }}"
                         description="{{ $table->resource()->label() }}"
                     />
@@ -111,9 +120,12 @@
                 <x-move-td class="hover:bg-gray-50 text-center" colspan="{{ count($header) + 2 }}">
                     <div class="p-10">
                         <p class="mb-3">@lang('No items available')</p>
+
+                        @if ($table->meta('with_add_button'))
                         <a href="{{ $table->addRoute() }}" class="underline text-primary-500">
                             @lang('Create first :resource', ['resource' => $table->resource()->singularLabel()])
                         </a>
+                        @endif
                     </div>
                 </x-move-td>
             </tr>

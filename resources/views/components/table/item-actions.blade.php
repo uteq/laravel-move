@@ -1,7 +1,7 @@
-@props(['table', 'id', 'description'])
+@props(['table', 'id', 'description', 'meta' => []])
 
 <div class="text-right text-sm leading-5 font-medium" wire:key="table-actions.{{ $id }}">
-    @if ($table->resource()->can('view') && $table->resource()->actionEnabled('view'))
+    @if (($table->resource()->can('view') && $table->resource()->actionEnabled('view')) && $table->meta('with_item_view'))
     <a href="{{ $table->showRoute($id) }}" class="inline-flex cursor-pointer">
         <!--heroicon-o-eye -->
         <svg class="text-gray-400 hover:text-gray-600 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -11,7 +11,7 @@
     </a>
     @endif
 
-    @if ($table->resource()->can('update') && $table->resource()->actionEnabled('update'))
+    @if (($table->resource()->can('update') && $table->resource()->actionEnabled('update')) && $table->meta('with_item_update'))
     <a href="{{ $table->editRoute($id) }}" class="inline-flex cursor-pointer" wire:loading.attr="disabled">
         <!-- heroicon-s-pencil -->
         <svg class="text-gray-400 hover:text-gray-600 h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -20,7 +20,7 @@
     </a>
     @endif
 
-    @if ($table->resource()->can('delete') && $table->resource()->actionEnabled('delete'))
+    @if (($table->resource()->can('delete') && $table->resource()->actionEnabled('delete')) && $table->meta('with_item_delete'))
     <a class="inline-flex cursor-pointer" wire:key="a-confirming.destroy.{{ $id }}">
 
         <!-- Logout Other Devices Confirmation Modal -->

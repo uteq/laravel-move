@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Uteq\Move\Concerns\HasParent;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\HasSelected;
+use Uteq\Move\Concerns\Metable;
 use Uteq\Move\Exceptions\ResourcesException;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Requests\ResourceIndexRequest;
@@ -23,6 +24,7 @@ class ResourceTable extends TableComponent
     use HasResource;
     use HasSelected;
     use HasParent;
+    use Metable;
 //    use WithActionableFields;
 
     protected static $viewType = 'index';
@@ -42,7 +44,6 @@ class ResourceTable extends TableComponent
     public $hasError = false;
     public array $actionFields = [];
     public array $store = [];
-    public array $meta = [];
     public array $route = [];
 
     public $listeners = [
@@ -70,6 +71,16 @@ class ResourceTable extends TableComponent
             'resource' => request()->route()->parameter('resource'),
             'model' => request()->route()->parameter('model'),
         ];
+
+        $this->meta = array_replace_recursive([
+            'with_add_button' => false,
+            'with_search' => true,
+            'with_filters' => true,
+            'with_checkbox' => true,
+            'with_item_view' => true,
+            'with_item_update' => true,
+            'with_item_delete' => true,
+        ], $this->meta);
 
         $this->resource()->authorizeTo('viewAny');
 

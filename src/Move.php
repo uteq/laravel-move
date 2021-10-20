@@ -118,6 +118,11 @@ class Move
         return str_replace('.', '/', $resourceName);
     }
 
+    public function resourceKey(string $alias)
+    {
+        return $this->fullResourceName($this->getByClass($alias));
+    }
+
     public function resourceNamespace(string $namespace, string $prefix = '', $movePrefix = null)
     {
         $this->customResourceNamespaces[$prefix] = $namespace;

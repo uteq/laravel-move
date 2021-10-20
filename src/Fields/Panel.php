@@ -5,11 +5,16 @@ namespace Uteq\Move\Fields;
 use Illuminate\Http\Request;
 use Uteq\Move\Concerns\AuthorizedToSee;
 use Uteq\Move\Concerns\HasDependencies;
+use Uteq\Move\Concerns\IsStacked;
 use Uteq\Move\Concerns\Makeable;
 use Uteq\Move\Concerns\Metable;
+use Uteq\Move\Concerns\WithClosures;
+use Uteq\Move\Concerns\WithRedirects;
 use Uteq\Move\Contracts\ElementInterface;
 use Uteq\Move\Contracts\PanelInterface;
 use Uteq\Move\Fields\Concerns\ShowsConditionally;
+use Uteq\Move\Fields\Concerns\WithHelpText;
+use Uteq\Move\Fields\Concerns\WithStackableFields;
 
 class Panel implements PanelInterface, ElementInterface
 {
@@ -18,6 +23,11 @@ class Panel implements PanelInterface, ElementInterface
     use Makeable;
     use Metable;
     use ShowsConditionally;
+    use WithRedirects;
+    use WithStackableFields;
+    use WithHelpText;
+    use IsStacked;
+    use WithClosures;
 
     public string $id;
     public ?string $name = null;
@@ -204,6 +214,77 @@ class Panel implements PanelInterface, ElementInterface
     public function description($description)
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function afterTitle(\Closure $afterTitle): static
+    {
+        $this->afterTitle = $afterTitle;
+
+        return $this;
+    }
+
+    public function withoutCard(bool $withoutCard = true): static
+    {
+        $this->withoutCard = $withoutCard;
+
+        return $this;
+    }
+
+    public function withoutTitle(bool $withoutTitle = true): static
+    {
+        $this->withoutTitle = $withoutTitle;
+
+        return $this;
+    }
+
+    public function isPlaceholder(): static
+    {
+        $this->withoutCard();
+        $this->withoutTitle();
+
+        return $this;
+    }
+
+    public function classes($classes): static
+    {
+        $this->classes = $classes;
+
+        return $this;
+    }
+
+    public function flow($flow): static
+    {
+        $this->flow = $flow;
+
+        return $this;
+    }
+
+    public function getUnique(): string
+    {
+        return $this->unique;
+    }
+
+    public function inline(): static
+    {
+        $this->flow = 'row';
+
+        $this->withoutTitle();
+        $this->withoutCard();
+        $this->stacked('bg-white w-full last:border-b-0 border-gray-100 mb-4');
+        $this->stackFields();
+
+        $this->withMeta([
+            'help_text_location' => 'hidden',
+        ]);
+
+        return $this;
+    }
+
+    public function setFolder($folder): static
+    {
+        $this->folder = $folder;
 
         return $this;
     }
