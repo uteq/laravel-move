@@ -73,7 +73,7 @@ class ResourceTable extends TableComponent
         ];
 
         $this->meta = array_replace_recursive([
-            'with_add_button' => false,
+            'with_add_button' => true,
             'with_search' => true,
             'with_filters' => true,
             'with_checkbox' => true,
