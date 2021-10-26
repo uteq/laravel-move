@@ -424,10 +424,16 @@ abstract class Field extends FieldElement
 
     public function beforeStore(Closure $beforeStore, $key = null): self
     {
-        $key ? $this->beforeStore[$key] = $beforeStore
+        $key
+            ? $this->beforeStore[$key] = $beforeStore
             : $this->beforeStore[] = $beforeStore;
 
         return $this;
+    }
+
+    public function hasBeforeStore()
+    {
+        return isset($this->beforeStore);
     }
 
     public function afterStore(Closure $afterStore, $key = null): self
@@ -436,6 +442,11 @@ abstract class Field extends FieldElement
              : $this->afterStore[] = $afterStore;
 
         return $this;
+    }
+
+    public function hasAfterStore()
+    {
+        return isset($this->afterStore);
     }
 
     public function handleBeforeStore($value, $field, $model, $data): array

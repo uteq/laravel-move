@@ -269,7 +269,7 @@ abstract class Resource
     public function handleFieldsBeforeStore(Model $model, array $data, Resource $resource)
     {
         $beforeStoreFields = collect($resource->getFields())
-            ->filter(fn ($item) => isset($item->beforeStore));
+            ->filter(fn ($item) => $item->hasBeforeStore());
 
         foreach ($beforeStoreFields as $beforeStoreField) {
             $value = $data[$beforeStoreField->attribute] ?? null;
@@ -283,7 +283,7 @@ abstract class Resource
     public function handleFieldsAfterStore(Model $model, array $data, Resource $resource)
     {
         $afterStoreFields = collect($resource->getFields())
-            ->filter(fn ($item) => isset($item->afterStore));
+            ->filter(fn ($item) => $item->hasAfterStore());
 
         foreach ($data as $field => $value) {
             $afterStoreField = $afterStoreFields
