@@ -19,7 +19,8 @@ trait HasResource
     public $resource;
     public $model = null;
     public $modelId = null;
-    public $resourceFields = [];
+
+    protected $resourceFields = [];
 
     public function initializeHasResource()
     {
@@ -27,6 +28,7 @@ trait HasResource
 
         $this->beforeMount(function () {
             $this->model ??= $this->resolveResourceModel();
+
             $this->modelId = optional($this->model)->{$this->model->getKey()};
 
             $this->fields = collect($this->getFieldsProperty());
@@ -64,8 +66,8 @@ trait HasResource
     {
         $resource = Move::resolveResource($this->resource);
 
-        if (method_exists($this, 'loadResourceFields')) {
-            $this->loadResourceFields();
+        if (method_exists($this, 'resourceFields')) {
+            $this->resourceFields = $this->resourceFields();
         }
 
         if ($this->resourceFields) {

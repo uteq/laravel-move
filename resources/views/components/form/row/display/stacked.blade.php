@@ -36,4 +36,8 @@
     @endif
 
     <x-move-form.input-error for="{{ $model }}" class="mt-2"/>
+
+    @if ($helpText && ($meta['help_text_location'] ?? 'below') == 'below')
+        {!! $helpText !!}
+    @endif
 </div>

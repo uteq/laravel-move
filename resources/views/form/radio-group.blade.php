@@ -10,7 +10,6 @@
 >
     <fieldset id="move-radio-group-fieldset-{{ $field->store }}" class="flex">
         @foreach ($field->getOptions() as $value => $description)
-
             <label class="
                 {{ $loop->first ? 'rounded-l-lg' : 'border-l-0 -ml-px' }}
                 {{ $loop->last ? 'rounded-r-lg' : 'border-r-0' }}

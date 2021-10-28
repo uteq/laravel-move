@@ -37,9 +37,11 @@ trait WithMount
 
     private function mountStore(): void
     {
-        $this->store = $this->fields()
-            ->mapWithKeys(fn($field) => [$field->attribute => $field->value])
-            ->toArray();
+        $this->store ??= [];
+
+        foreach ($this->fields() as $field) {
+            Arr::set($this->store, $field->attribute, $field->value);
+        }
 
         $this->mountTestStore();
 

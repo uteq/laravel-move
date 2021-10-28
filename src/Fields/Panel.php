@@ -187,9 +187,11 @@ class Panel implements PanelInterface, ElementInterface
      *
      * @param string $component
      */
-    public function setComponent(string $component)
+    public function setComponent(string $component): static
     {
         $this->component = $component;
+
+        return $this;
     }
 
     /**
@@ -306,6 +308,13 @@ class Panel implements PanelInterface, ElementInterface
         $this->withMeta([
             'help_text_location' => 'hidden',
         ]);
+
+        return $this;
+    }
+
+    public function setFolder($folder): static
+    {
+        $this->folder = $folder;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace Uteq\Move\Livewire;
 
 use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
+use Uteq\Move\Exceptions\UnknownResourceException;
 use Uteq\Move\Facades\Move;
 
 class HeaderSearch extends Component
@@ -42,7 +43,13 @@ class HeaderSearch extends Component
         $resources = collect(Move::all())
             // Only globally Searchable
             ->filter(fn ($resource) => $resource::$globallySearchable === true)
-            ->filter(fn ($resource) => Move::resolveResource($resource)->can('viewAny'))
+            ->filter(function ($resource) {
+                try {
+                    return Move::resolveResource($resource)->can('viewAny');
+                } catch (UnknownResourceException) {
+                    return false;
+                }
+            })
             ->filter(function ($resource) {
                 $resourceModel = $resource::$model;
 

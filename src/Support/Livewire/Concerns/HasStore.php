@@ -194,20 +194,19 @@ trait HasStore
             ->map(fn ($rule) => is_string($rule) ? explode('|', $rule) : $rule)
             ->mapWithKeys(function ($value, $field) use ($fields) {
                 // If the field exists as array, no need to change the rule
-                if (isset($fields[Str::before(Str::after($field, 'store.'), '.')])) {
+                if (isset($fields[Str::before(Str::after($field, 'store.'), '.')]) && $value) {
                     $value = count($value) > 1 ? $value : ($value[0] ?? []);
 
                     return [$field => $value];
                 }
 
-                return [$field => $value];
+                return [$field => $value ?: []];
             })
             ->toArray();
 
         $flatFields = Arr::dot($fields);
 
         $ruleSet = $rules;
-
         $rules = [];
         foreach ($ruleSet as $key => $value) {
             if (! array_key_exists($key, $flatFields)) {

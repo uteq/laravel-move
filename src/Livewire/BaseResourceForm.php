@@ -39,6 +39,7 @@ abstract class BaseResourceForm extends FormComponent
     protected static $viewType = 'edit';
 
     public $layout = null;
+    protected $layoutVariables = [];
     public $name = null;
     public $showModal = null;
     public $showingAddResource = [];
@@ -62,6 +63,8 @@ abstract class BaseResourceForm extends FormComponent
     protected $label;
 
     public $redirects;
+
+    public int $version = 1;
 
     protected array $closures = ['redirects'];
 
@@ -246,9 +249,9 @@ abstract class BaseResourceForm extends FormComponent
                 'showModal' => $this->showModal,
                 'isSidebarEnabled' => $this->isSidebarEnabled,
             ])
-            ->layout($this->layout ?? $this->resource()::$layout ?? Move::layout(), [
+            ->layout($this->layout ?? $this->resource()::$layout ?? Move::layout(), array_replace([
                 'header' => $this->resource()->singularLabel() .' details',
-            ]);
+            ], $this->layoutVariables));
     }
 
     public function rules($model = null): array

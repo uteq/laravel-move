@@ -10,17 +10,17 @@
 
             {!! $head ?? null !!}
 
-            <div class="{{ $sidebarEnabled && (string)$sidebar !== '' ? 'lg:flex gap-4' : null }}">
+            <div class="{{ $sidebarEnabled && ((string)$sidebar !== '' || $actions) ? 'lg:flex gap-4' : null }}">
                 <div class="lg:flex-grow">
                     {{ $form ?? $slot }}
                 </div>
 
-                @if ($sidebarEnabled && ! empty($sidebar))
+                @if ($sidebarEnabled && (! empty($sidebar) || $actions))
                     <div class="lg:flex-none lg:w-1/3">
                         {!! $sidebar ?? null !!}
 
                         @if (isset($actions))
-                            <div class="shadow flex items-center px-4 py-3 bg-white sm:px-6 rounded border border-gray-100 mt-5">
+                            <div class="shadow xl:flex justify-between items-center px-4 py-3 bg-white sm:px-6 rounded border border-gray-100">
                                 {{ $actions }}
                             </div>
                         @endif

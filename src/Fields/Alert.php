@@ -2,6 +2,9 @@
 
 namespace Uteq\Move\Fields;
 
+use Illuminate\View\ComponentAttributeBag;
+use JetBrains\PhpStorm\Pure;
+
 class Alert extends Panel
 {
     public string $component = 'form.alert';
@@ -15,6 +18,8 @@ class Alert extends Panel
     public $class = 'p-4 sm:p-6';
 
     public bool $hideIcon = false;
+
+    protected array $properties = [];
 
     public function __construct(string $type, $text)
     {
@@ -54,5 +59,17 @@ class Alert extends Panel
         $this->hideIcon = $hideIcon;
 
         return $this;
+    }
+
+    public function properties(array $properties)
+    {
+        $this->properties = $properties;
+
+        return $this;
+    }
+
+    public function getProperties(): array
+    {
+        return $this->properties;
     }
 }

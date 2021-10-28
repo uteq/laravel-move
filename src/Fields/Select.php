@@ -26,7 +26,7 @@ class Select extends Field
 
     public $resourceName = null;
 
-    public ?\Closure $customIndexName = null;
+    protected ?\Closure $customIndexName = null;
 
     public array $settings = [];
 
@@ -47,7 +47,7 @@ class Select extends Field
     protected static $resourceCache = [];
 
     protected array $closures = [
-        'version',
+//        'version',
         'options',
     ];
 
@@ -331,7 +331,9 @@ class Select extends Field
 
     public function getVersion()
     {
-        $version = $this->version instanceof \Closure ? $this->closure('version') : $this->version;
+//        $version = $this->version instanceof \Closure ? $this->closure('version') : $this->version;
+
+        $version = $this->version;
 
         return is_callable($version)
             ? $version($this)

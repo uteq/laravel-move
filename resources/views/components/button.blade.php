@@ -6,7 +6,7 @@ $classes[] = $inline ? 'inline-flex' : 'block';
 
 $classes[] = [
     'primary' => 'bg-primary-600 hover:bg-primary-700 active:bg-primary-900 focus:border-primary-900',
-    'blue' => 'bg-primary-600 hover:bg-primary-700 active:bg-primary-900 focus:border-primary-900',
+    'blue' => 'bg-blue-600 hover:bg-blue-700 active:bg-blue-900 focus:border-blue-900',
     'red' => 'bg-red-600 hover:bg-red-700 active:bg-red-900 focus:border-red-900',
     'green' => 'bg-green-600 hover:bg-green-700 active:bg-green-900 focus:border-green-900',
     'yellow' => 'bg-yellow-600 hover:bg-yellow-700 active:bg-yellow-900 focus:border-yellow-900',
@@ -28,6 +28,7 @@ $classes[] = [
     'gray' => 'bg-gray-600 hover:bg-gray-700 active:bg-gray-900 focus:border-gray-900',
     'coolGray' => 'bg-coolGray-600 hover:bg-coolGray-700 active:bg-coolGray-900 focus:border-coolGray-900',
     'blueGray' => 'bg-blueGray-600 hover:bg-blueGray-700 active:bg-blueGray-900 focus:border-blueGray-900',
+    'white' => 'bg-white hover:bg-white active:bg-black focus:border-black text-black',
 ][$color];
 @endphp
 
