@@ -6,7 +6,7 @@ trait WithActionableFields
 {
     public function action($storeKey, $method, ...$args)
     {
-        $store = $this->store;
+        $store = move_undot($this->store);
 
         $result = $this->fields()
             ->filter(fn ($field) => $field->store === $storeKey)

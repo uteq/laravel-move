@@ -65,3 +65,7 @@ function move_arr_expand(array $array) {
     }
     return $valueSet;
 }
+
+function move_undot(array $array): array {
+    return move_arr_expand($array);
+}
