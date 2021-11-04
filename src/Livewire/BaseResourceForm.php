@@ -257,12 +257,12 @@ abstract class BaseResourceForm extends FormComponent
     public function rules($model = null): array
     {
         return array_replace_recursive(
-            $this->resolveFieldRules($this->store),
+            $this->resolveFieldRules($model),
             (
                 // TODO model never exists whenever the rules are loaded
-            (optional($model)->id || $this->modelId)
-                ? $this->resolveFieldUpdateRules($this->store)
-                : $this->resolveFieldCreateRules($this->store)
+                (optional($model)->id || $this->modelId)
+                    ? $this->resolveFieldUpdateRules($this->store)
+                    : $this->resolveFieldCreateRules($this->store)
             )
         );
     }

@@ -27,11 +27,13 @@ trait HasResource
         $this->initializeHasMountActions();
 
         $this->beforeMount(function () {
+
             $this->model ??= $this->resolveResourceModel();
 
             $this->modelId = optional($this->model)->{$this->model->getKey()};
 
             $this->fields = collect($this->getFieldsProperty());
+
         });
     }
 
@@ -41,7 +43,11 @@ trait HasResource
             return $this->model;
         }
 
-        $resource = Move::resolveResource(request()->route()->parameter('resource') ?? null ?: $this->resource);
+        $resource = Move::resolveResource(
+            request()->route()->parameter('resource')
+                ?? null
+                ?: $this->resource
+        );
 
         if (! $resource) {
             return null;
@@ -96,9 +102,11 @@ trait HasResource
         return $this->resource()->newModel()->newQuery()->find($id);
     }
 
-    public function resolvedFields()
+    public function resolvedFields($model = null)
     {
-        return collect($this->resolveFields());
+        $model = is_array($model) ? $this->model : $model;
+
+        return collect($this->resolveFields($model));
     }
 
     public function resolveFields(Model $model = null, $keepPlaceholder = false, array $fields = null)
@@ -142,7 +150,7 @@ trait HasResource
 
     public function resolveFieldCreateRules($model)
     {
-        return $this->resolvedFields($model)
+        return $this->resolvedFields()
             ->filter(fn ($field) => $field->isVisible($model, 'create'))
             ->flatMap(fn ($field) => $field->getCreationRules(request()))
             ->toArray();

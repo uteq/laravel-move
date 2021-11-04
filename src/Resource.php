@@ -319,11 +319,15 @@ abstract class Resource
 
     public function resolveFields(Model $model = null, $type = null, $keepPlaceholder = false, array $fields = null)
     {
-        $model = $model ?: $this->resource;
+        if ($model && ! $model->exists) {
+            $model = $this->resource && $this->resource->exists ? $this->resource : $model;
+        } elseif (! $model) {
+            $model = $this->resource;
+        }
 
         $type = $type ?: (isset($model->id) ? 'edit' : 'create');
 
-        $visibleFields = collect($fields ?: $this->getFields())
+        $visibleFields = collect($fields ?: $this->getFields($model))
             ->filter(function (ElementInterface $field) use ($type, $model, $keepPlaceholder) {
                 // Whenever the field is a placeholder, it should always be added whenever resolving the fields
                 //  This way it can be added to the model data.
@@ -363,7 +367,10 @@ abstract class Resource
 
         foreach ($fields ?? [] as $field) {
             if ($field instanceof Panel) {
-                $panelFields = array_merge($panelFields, $this->fieldsFromRecursive($field->resolveFields($this->resource)->fields));
+                $panelFields = array_merge(
+                    $panelFields,
+                    $this->fieldsFromRecursive($field->resolveFields($this->resource)->fields)
+                );
             }
 
             if ($field instanceof Field) {
@@ -374,14 +381,17 @@ abstract class Resource
         return $panelFields;
     }
 
-    public function getFields()
+    public function getFields($model = null)
     {
-        return $this->fieldsFromRecursive($this->allFields());
+        // Ensures the resource has a valid model
+        $this->resource = $model && ! $this->resource->exists ? $model : $this->resource;
+
+        return $this->fieldsFromRecursive($this->allFields($model));
     }
 
-    public function allFields()
+    public function allFields($model = null)
     {
-        return $this->fields();
+        return $this->fields($model);
     }
 
     public function steps()

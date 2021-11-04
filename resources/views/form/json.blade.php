@@ -9,6 +9,7 @@
     <div class="flex-col w-full">
         <div class="mb-2">
         @foreach (\Illuminate\Support\Arr::get($this->store, $field->attribute, []) ?: [] as $key => $value)
+
             @if ($field->fields)
             <div wire:key="json-panel-{{ $field->attribute }}-{{ $key }}" class="my-1">
                 <div class="flex items-center w-full">

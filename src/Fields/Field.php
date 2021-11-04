@@ -174,8 +174,8 @@ abstract class Field extends FieldElement
     public function default($value)
     {
         $this->valueCallback = $value instanceof Closure
-            ? $value
-            : fn ($currentValue, $model, $attribute) => $value;
+            ? fn ($currentValue, $model, $attribute) => $currentValue ?: $value($currentValue, $model, $attribute)
+            : fn ($currentValue, $model, $attribute) => $currentValue ?: $value;
 
         return $this;
     }
@@ -245,10 +245,20 @@ abstract class Field extends FieldElement
         $resource,
         $attribute = null
     ): self {
+
         $this->resource = $resource;
 
-        if (! $this->value) {
-            $defaultValue = $this->applyValueCallback($resource);
+        if (! $this->value && ! Arr::has($resource, $this->attribute)) {
+            $this->value = $this->applyValueCallback($resource);
+
+            return $this;
+        }
+
+        if (! empty($this->value)) {
+
+            $this->fillFromResource($resource, $defaultValue ?? null);
+
+            return $this;
         }
 
         $resourceValue = $this->getResourceAttributeValue($resource, $this->attribute);
@@ -504,8 +514,6 @@ abstract class Field extends FieldElement
 
     public function isVisible($resource, ?string $displayType = null): bool
     {
-        ray($this);
-
         if (! $this->areDependenciesSatisfied($resource)) {
             return false;
         }
