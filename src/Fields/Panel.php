@@ -119,8 +119,9 @@ class Panel implements PanelInterface, ElementInterface
         }
 
         collect($this->fields)
-            ->each(fn (ElementInterface $element) => $element->addDependencies($this->dependencies)
-                ->applyResourceData($resource)
+            ->each(fn (ElementInterface $element) =>
+                $element->addDependencies($this->dependencies)
+                    ->applyResourceData($resource)
             )
             ->when($component, fn (Collection $fields) =>
                 $fields->each(fn (ElementInterface $element) => $element->component = $component)

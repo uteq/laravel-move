@@ -63,7 +63,7 @@ class Alert extends Panel
 
     public function properties(array $properties)
     {
-        $this->properties = $properties;
+        $this->properties = array_replace($this->properties, $properties);
 
         return $this;
     }
@@ -71,5 +71,12 @@ class Alert extends Panel
     public function getProperties(): array
     {
         return $this->properties;
+    }
+
+    public function color($color)
+    {
+        $this->properties['color'] = $color;
+
+        return $this;
     }
 }

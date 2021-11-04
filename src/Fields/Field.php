@@ -504,6 +504,8 @@ abstract class Field extends FieldElement
 
     public function isVisible($resource, ?string $displayType = null): bool
     {
+        ray($this);
+
         if (! $this->areDependenciesSatisfied($resource)) {
             return false;
         }

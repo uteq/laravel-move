@@ -14,9 +14,6 @@
 
     <x-slot name="footer">
         <div class="flex items-center justify-between">
-            <x-move-secondary-button wire:click="$set('showModal', null)">
-                {{ __('Cancel') }}
-            </x-move-secondary-button>
 
             <x-move-button form="modal-form-{{ $showModal }}">
                 {{ __('Create :resource', ['resource' => $this->resourceClass::singularLabel()]) }}

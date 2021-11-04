@@ -363,7 +363,7 @@ abstract class Resource
 
         foreach ($fields ?? [] as $field) {
             if ($field instanceof Panel) {
-                $panelFields = array_merge($panelFields, $this->fieldsFromRecursive($field->fields));
+                $panelFields = array_merge($panelFields, $this->fieldsFromRecursive($field->resolveFields($this->resource)->fields));
             }
 
             if ($field instanceof Field) {

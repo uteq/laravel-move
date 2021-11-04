@@ -80,7 +80,7 @@ trait HasStore
 
         $this->customValidate(
             $data['fields'],
-            ($data['rules'] ?? []) ?: $this->rules($this->{$this->property})
+            (($data['rules'] ?? []) ?: $this->rules($this->{$this->property}))
         );
 
         return $data;
