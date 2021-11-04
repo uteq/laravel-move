@@ -28,6 +28,8 @@ class Json extends Field
             'has_add_button' => true,
             'has_remove_button' => true,
         ]);
+
+        return $this;
     }
 
     public function fields(array $fields, array $meta = [], array $options = [])
