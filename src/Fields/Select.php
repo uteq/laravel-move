@@ -112,9 +112,7 @@ class Select extends Field
             : null;
 
         if (! $model) {
-            return $this->resourceName
-                ? $this->resourceName::singularLabel()
-                : null;
+            return null;
         }
 
         if (! $this->resourceName) {

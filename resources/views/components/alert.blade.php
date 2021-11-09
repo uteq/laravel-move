@@ -12,7 +12,7 @@
 @endphp
 
 <div {{ $attributes->merge([
-        'class' => 'bg-' . $color .'-100 '. $borderClass . ' ' . ($borderColor ?: 'border-' . $color .'-500') . ' rounded-b text-' . $color .'-900 '. ($withoutPadding ? 'px-4 py-3' : null) .' shadow-md'
+        'class' => 'bg-' . $color .'-100 '. $borderClass . ' ' . ($borderColor ?: 'border-' . $color .'-500') . ' rounded-b text-' . $color .'-900 '. ($withoutPadding ? null : 'px-4 py-3') .' shadow-md'
      ]) }}
      role="alert"
 >
