@@ -15,6 +15,8 @@ trait HasCrud
         'create' => 'create',
     ];
 
+    protected array $hasCrudModelByIdCache = [];
+
     protected static $crudUsesSoftDelete = null;
 
     public function initializeHasCrud()
@@ -25,11 +27,20 @@ trait HasCrud
     private function modelById($id)
     {
         $resourceModel = $this->resource()->model();
+
         if ($this->crudUsesSoftDelete($resourceModel)) {
             $resourceModel = $resourceModel->withTrashed();
         }
 
-        return $resourceModel->find($id);
+        if ($this->rows ?? null) {
+            return collect($this->rows)
+                ->filter(fn ($row) => (int)  $row['model']['id'] === (int) $id)
+                ->filter(fn ($row) => $row['model']::class === $resourceModel::class)
+                ->map(fn ($row) => $row['model'])
+                ->first();
+        }
+
+        return $this->hasCrudModelByIdCache[$resourceModel::class][$id] ??= $resourceModel->find($id);
     }
 
     private function crudUsesSoftDelete($resourceModel)

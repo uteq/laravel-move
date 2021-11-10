@@ -55,6 +55,8 @@ class ResourceTable extends TableComponent
 
     protected $crudBaseRoute = null;
 
+    protected $rows = [];
+
     public function mount(string $resource)
     {
         $this->crudBaseRoute ??= move()::getPrefix();
@@ -223,16 +225,20 @@ class ResourceTable extends TableComponent
 
     protected function rows()
     {
-        $rows = [];
-        foreach ($this->collection() as $item) {
-            $resourceClass = get_class($this->resource());
-            $resource = new $resourceClass($item);
+        if (! $this->rows) {
+            $this->rows = [];
+            foreach ($this->collection() as $item) {
+                $resourceClass = get_class($this->resource());
+                $resource = new $resourceClass($item);
 
-            $fields = $this->resource()->resolveFields($resource->model(), 'index');
+                $fields = $this->resource()->resolveFields($resource->model(), 'index');
 
-            $rows[] = ['model' => $resource->model(), 'fields' => $fields];
+                $this->rows[] = ['model' => $resource->model(), 'fields' => $fields];
+            }
+
+            return $this->rows;
         }
 
-        return $rows;
+        return $this->rows;
     }
 }
