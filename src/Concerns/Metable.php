@@ -2,6 +2,8 @@
 
 namespace Uteq\Move\Concerns;
 
+use Illuminate\Support\Arr;
+
 trait Metable
 {
     /**
@@ -19,7 +21,7 @@ trait Metable
     public function meta($key = null, $default = null)
     {
         return $key
-            ? $this->meta[$key] ?? $default
+            ? Arr::get($this->meta, $key, $default)
             : $this->meta;
     }
 

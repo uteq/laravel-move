@@ -32,22 +32,17 @@ trait HasFilter
 
     public function requestQuery()
     {
-        $query = request()->query();
-
-        return array_replace(session($this->requestQueryKey(), $query), $query);
+        return array_replace(session($this->requestQueryKey(), $this->requestQuery), $this->requestQuery);
     }
 
     public function sort($field)
     {
         $order = $this->order[$field] ?? null;
 
-        if (! $order) {
-            $order = 'asc';
-        } elseif ($order === 'asc') {
-            $order = 'desc';
-        } elseif ($order === 'desc') {
-            $order = null;
-        }
+        $order = [
+            'desc' => null,
+            'asc' => 'desc',
+        ][$order] ?? 'asc';
 
         $this->order = [$field => $order];
 

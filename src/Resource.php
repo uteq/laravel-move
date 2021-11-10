@@ -183,6 +183,8 @@ abstract class Resource
 
         $filter = $requestQuery['filter'] ?? [];
 
+        ray($requestQuery);
+
         return [
             'resource' => $this,
             'header' => $this->visibleFields('index'),
