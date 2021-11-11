@@ -52,6 +52,7 @@
     </div>
 </form>
 
+@push('scripts')
 <script defer>
     document.addEventListener("livewire:load", function() {
         $('#search-dropdown ul').first().focus();
@@ -74,3 +75,4 @@
         }
     });
 </script>
+@endpush

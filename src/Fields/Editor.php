@@ -15,8 +15,10 @@ class Editor extends Textarea
 
     public function fixUTF8($string): string
     {
+        $original = $string;
+
         if (mb_detect_encoding(mb_convert_encoding($string, 'Windows-1251', 'UTF-8'), 'Windows-1251,UTF-8', true) === 'UTF-8') {
-            return utf8_decode($string);
+            return utf8_decode($string) ?: $string;
         }
 
         try {

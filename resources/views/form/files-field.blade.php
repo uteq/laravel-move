@@ -78,7 +78,7 @@
                                             </div>
                                         </x-slot>
 
-                                        <img src="{{ $file->withVersion($this->rotatedFiles[$i] ?? 0)->getUrl() }}"
+                                        <img src="{{ $file->withVersion(count($this->rotatedFiles[$i] ?? []))->getUrl() }}"
                                              class="card-img"
                                         />
                                     </x-move-modal>

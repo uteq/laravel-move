@@ -1,8 +1,9 @@
 @props(['id', 'theme' => 'snow', 'name' => optional($attributes->wire('model'))->value(), 'value' => null, 'disableTab' => false])
 
-<div wire:ignore>
+<div wire:ignore wire:key="quill-editor-container-{{ $id }}">
     <div class="mt-2 bg-white">
         <div
+            wire:key="quill-editor-{{ $id }}"
             x-data
             x-ref="quillEditor{{ $id }}"
             x-init="
@@ -38,7 +39,9 @@
             style="min-height: 200px; min-width: 100%;"
             class="w-full border rounded-b"
         >
-            <div class="ql-editor" tabindex="1">{!! (\Illuminate\Support\Arr::get($value, \Illuminate\Support\Str::after($name, '.'))) !!}</div>
+            <div class="ql-editor" tabindex="1">
+                {!! (\Illuminate\Support\Arr::get($value, \Illuminate\Support\Str::after($name, '.'))) !!}
+            </div>
         </div>
     </div>
     <style>
@@ -46,5 +49,6 @@
             min-height:200px;
         }
     </style>
+
+    <div class="hidden" ></div>
 </div>
-<div class="hidden" ></div>

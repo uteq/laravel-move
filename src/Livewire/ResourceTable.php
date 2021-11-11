@@ -204,8 +204,6 @@ class ResourceTable extends TableComponent
         $request->route()->setParameter('resource', $this->route['resource']);
         $request->route()->setParameter('model', optional($this->route['model'])['id']);
 
-        ray($this->requestQuery());
-
         /** @psalm-suppress UndefinedInterfaceMethod */
         return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery(), $request), [
             'collection' => $this->collection(),

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Uteq\Move\Concerns\GloballySearchable;
 use Uteq\Move\Concerns\Metable;
@@ -183,8 +184,6 @@ abstract class Resource
 
         $filter = $requestQuery['filter'] ?? [];
 
-        ray($requestQuery);
-
         return [
             'resource' => $this,
             'header' => $this->visibleFields('index'),
@@ -274,7 +273,7 @@ abstract class Resource
             ->filter(fn ($item) => $item->hasBeforeStore());
 
         foreach ($beforeStoreFields as $beforeStoreField) {
-            $value = $data[$beforeStoreField->attribute] ?? null;
+            $value = Arr::get($data, $beforeStoreField->attribute);
 
             $data = $beforeStoreField->handleBeforeStore($value, $beforeStoreField->attribute, $model, $data);
         }

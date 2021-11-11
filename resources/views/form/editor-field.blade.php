@@ -6,5 +6,10 @@
     :required="$field->isRequired()"
     :flex="false"
 >
-    <x-move-field.editor id="{{ $field->unique }}" wire:model="{{ $field->store }}" :value="$this->store" />
+    <x-move-field.editor
+        wire:key="field-editor-{{ $field->unique }}"
+        id="{{ $field->unique }}"
+        wire:model="{{ $field->store }}"
+        :value="$this->store"
+    />
 </x-move-form.row>
