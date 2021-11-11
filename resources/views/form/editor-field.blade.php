@@ -7,7 +7,6 @@
     :flex="false"
 >
     <x-move-field.editor
-        wire:key="field-editor-{{ $field->unique }}"
         id="{{ $field->unique }}"
         wire:model="{{ $field->store }}"
         :value="$this->store"

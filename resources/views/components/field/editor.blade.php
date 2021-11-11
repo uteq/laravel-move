@@ -1,6 +1,6 @@
 @props(['id', 'theme' => 'snow', 'name' => optional($attributes->wire('model'))->value(), 'value' => null, 'disableTab' => false])
 
-<div wire:ignore wire:key="quill-editor-container-{{ $id }}">
+<div wire:ignore>
     <div class="mt-2 bg-white">
         <div
             wire:key="quill-editor-{{ $id }}"
@@ -33,15 +33,13 @@
                 });
 
                 @if ($disableTab)
-                    delete quill{{ $id }}.getModule('keyboard').bindings['9'];
+                delete quill{{ $id }}.getModule('keyboard').bindings['9'];
                 @endif
                 "
             style="min-height: 200px; min-width: 100%;"
             class="w-full border rounded-b"
         >
-            <div class="ql-editor" tabindex="1">
-                {!! (\Illuminate\Support\Arr::get($value, \Illuminate\Support\Str::after($name, '.'))) !!}
-            </div>
+            <div class="ql-editor" tabindex="1">{!! (\Illuminate\Support\Arr::get($value, \Illuminate\Support\Str::after($name, '.'))) !!}</div>
         </div>
     </div>
     <style>
@@ -49,6 +47,5 @@
             min-height:200px;
         }
     </style>
-
-    <div class="hidden" ></div>
 </div>
+<div class="hidden" ></div>
