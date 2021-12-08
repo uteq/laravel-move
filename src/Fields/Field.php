@@ -665,8 +665,8 @@ abstract class Field extends FieldElement
         return (bool) $this->before;
     }
 
-    public function getBefore()
+    public function getBefore(...$args)
     {
-        return $this->before;
+        return is_callable($this->before) ? ($this->before)($this, ...$args) : $this->before;
     }
 }
