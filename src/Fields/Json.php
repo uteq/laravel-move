@@ -9,7 +9,7 @@ class Json extends Field
     public array $blueprint = [];
     public string $indexDisplayType = 'modal';
 
-    public function isPlaceholder(bool $value = true): self
+    public function isPlaceholder(bool $value = true): static
     {
         $this->hide($value);
 
@@ -26,26 +26,26 @@ class Json extends Field
         return $component;
     }
 
-    public function removeParagraph($component, $field, $id)
+    public function removeParagraph($component, $field, $id): void
     {
         unset($component->store[$field->attribute][$id]);
     }
 
-    public function blueprint(array $blueprint): self
+    public function blueprint(array $blueprint): static
     {
         $this->blueprint = $blueprint;
 
         return $this;
     }
 
-    public function editableKeys(bool $editableKeys = true): self
+    public function editableKeys(bool $editableKeys = true): static
     {
         $this->editableKeys = $editableKeys;
 
         return $this;
     }
 
-    public function indexDisplayType($type): self
+    public function indexDisplayType($type): static
     {
         $this->indexDisplayType = $type;
 

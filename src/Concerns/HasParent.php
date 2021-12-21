@@ -8,7 +8,7 @@ trait HasParent
     public $parentModel;
     protected $parent;
 
-    public function initHasParent()
+    public function initHasParent(): void
     {
         if ($this->parentModel) {
             session()->put(static::class . '.' . $this->resource . '.parent', [
@@ -42,7 +42,7 @@ trait HasParent
         return $this->parent;
     }
 
-    public function parentRoute($baseRoute)
+    public function parentRoute($baseRoute): string
     {
         return str_replace($baseRoute . '/', '', $this->parent()->route());
     }

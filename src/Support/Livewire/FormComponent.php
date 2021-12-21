@@ -31,7 +31,7 @@ abstract class FormComponent extends Component
         ];
     }
 
-    public function header()
+    public function header(): string
     {
         if (method_exists($this, 'label')) {
             $this->label = $this->label();

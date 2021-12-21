@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Uteq\Move\Concerns\GloballySearchable;
 use Uteq\Move\Concerns\Metable;
@@ -76,6 +77,7 @@ abstract class Resource
         $this->resource = $resource;
 
         if (method_exists($this, 'initialize')) {
+            /** @psalm-suppress InvalidArgument */
             app()->call([$this, 'initialize']);
         }
     }
@@ -124,7 +126,7 @@ abstract class Resource
         return Str::plural(Str::kebab(class_basename(get_called_class())));
     }
 
-    public static function newResource(): self
+    public static function newResource(): static
     {
         return new static(static::newModel());
     }
@@ -200,7 +202,7 @@ abstract class Resource
         ];
     }
 
-    public function getForDetail(): array
+    public function getForDetail($requestQuery): array
     {
         if (! isset(static::$model)) {
             throw new \Exception(sprintf(
@@ -228,7 +230,7 @@ abstract class Resource
         ];
     }
 
-    public function handler($key, array $args = [])
+    public function handler(string $key, array $args = [])
     {
         return app()->make($this->actionHandlers[$key]
             ?? (static::$defaultActionHandlers[$key] ?? null)
@@ -313,7 +315,10 @@ abstract class Resource
         return $handler($model);
     }
 
-    public function resolveFields(Model $model = null, $type = null, $keepPlaceholder = false, array $fields = null)
+    /**
+     * @psalm-return list<mixed>
+     */
+    public function resolveFields(Model $model = null, $type = null, $keepPlaceholder = false, array $fields = null): array
     {
         $model = $model ?: $this->resource;
 
@@ -323,6 +328,7 @@ abstract class Resource
             ->filter(function (ElementInterface $field) use ($type, $model, $keepPlaceholder) {
                 // Whenever the field is a placeholder, it should always be added whenever resolving the fields
                 //  This way it can be added to the model data.
+                /** @psalm-suppress NoInterfaceProperties */
                 if ($keepPlaceholder && $field->isPlaceholder) {
                     return true;
                 }
@@ -342,7 +348,7 @@ abstract class Resource
         return $fields;
     }
 
-    public function visibleFields($type = null, $model = null)
+    public function visibleFields(string|null $type = null, $model = null): array
     {
         $model = $model ?: $this->resource;
 
@@ -353,7 +359,12 @@ abstract class Resource
             ->toArray();
     }
 
-    public function fieldsFromRecursive($fields)
+    /**
+     * @return (Field|mixed)[]
+     *
+     * @psalm-return array<Field|mixed>
+     */
+    public function fieldsFromRecursive(array $fields): array
     {
         $panelFields = [];
 
@@ -375,7 +386,7 @@ abstract class Resource
         return $this->fieldsFromRecursive($this->fields());
     }
 
-    public function steps()
+    public function steps(): Collection
     {
         return collect($this->fields())
             ->filter(fn ($field) => $field instanceof Step);
@@ -399,13 +410,18 @@ abstract class Resource
         return $panels;
     }
 
-    public function recursivePanels($panels, $resourceForm, $resource, $displayType)
-    {
+    public function recursivePanels(
+        $panels,
+        $resourceForm,
+        $resource,
+        string $displayType
+    ) {
         foreach ($panels as &$panel) {
             if (! $panel instanceof PanelInterface) {
                 continue;
             }
 
+            /** @var Panel $panel */
             $elements = $panel->fields;
 
             $panel->applyResourceData($this->resource, $resourceForm, $this);
@@ -424,14 +440,19 @@ abstract class Resource
                 ->toArray();
 
             if (count($panel->panels)) {
-                $panel->panels = $this->recursivePanels($panel->panels, $resourceForm, $resource, $displayType);
+                $panel->panels = $this->recursivePanels(
+                    $panel->panels,
+                    $resourceForm,
+                    $resource,
+                    $displayType
+                );
             }
         }
 
         return $panels;
     }
 
-    public function fill(Model $model, array $data)
+    public function fill(Model $model, array $data): Model
     {
         $model->fill($data);
 
@@ -447,7 +468,7 @@ abstract class Resource
         return Move::resourceRoute(get_class($this));
     }
 
-    public function fullRoute($action)
+    public function fullRoute($action): void
     {
 
     }
@@ -457,7 +478,7 @@ abstract class Resource
         return null;
     }
 
-    public function name()
+    public function name(): string
     {
         return (string) Str::of(static::class)
             ->afterLast('\\')

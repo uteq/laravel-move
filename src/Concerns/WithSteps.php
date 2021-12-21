@@ -11,6 +11,9 @@ trait WithSteps
     public array $completedSteps = [];
     public array $availableSteps = [];
 
+    /**
+     * @return \Uteq\Move\Livewire\BaseResourceForm|null
+     */
     public function changedActiveStep($activeStep)
     {
         if ($this->isCurrentStepDisabled($activeStep)) {
@@ -20,7 +23,7 @@ trait WithSteps
         $this->activeStep = $activeStep;
     }
 
-    public function setActiveStep($stepName = null)
+    public function setActiveStep($stepName = null): \Uteq\Move\Livewire\BaseResourceForm
     {
         if ($this->isCurrentStepDisabled($stepName)) {
             return $this;
@@ -67,7 +70,7 @@ trait WithSteps
             ->reject(fn ($panel) => $panel->empty());
     }
 
-    public function validateStep($step = null, $setNext = true)
+    public function validateStep($step = null, $setNext = true): void
     {
         $resolvedFields = $this->resolvedStepFields($step);
 
@@ -79,7 +82,7 @@ trait WithSteps
             ->filter()
             ->toArray();
 
-        $data = $this->customValidate($this->mapFields($resolvedFields, $this->store), $rules);
+        $this->customValidate($this->mapFields($resolvedFields, $this->store), $rules);
 
         if (! $this->model->id) {
             $this->completedSteps[] = optional($step)->name;
@@ -108,7 +111,7 @@ trait WithSteps
         return $this->resolveFields($this->model, $keepPlaceholder, $fields);
     }
 
-    public function allStepsAvailable()
+    public function allStepsAvailable(): bool
     {
         $steps = $this->steps();
 

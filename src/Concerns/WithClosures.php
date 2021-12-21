@@ -2,19 +2,31 @@
 
 namespace Uteq\Move\Concerns;
 
+use Exception;
 use Opis\Closure\SerializableClosure;
 
+/**
+ * @property array $listeners
+ */
 trait WithClosures
 {
     protected $unserializedClosures = [];
 
     protected static $serializedClasses = [];
 
-    public function initializeWithClosures()
+    public function initializeWithClosures(): void
     {
+        if (! method_exists($this, 'beforeMount')) {
+            return;
+        }
+
         $this->beforeMount(fn() => $this->serializeClosures());
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     protected function serializeClosures()
     {
         // No need to serialize again when already serialized
@@ -23,14 +35,19 @@ trait WithClosures
             return;
         }
 
-        $this->doSerializeClosures(array_flip($this->closures ?? []), $this);
+        /** @psalm-suppress TypeDoesNotContainType */
+        if (! isset($this->closures)) {
+            throw new Exception('Class: '. static::class .' is missing property closures.');
+        }
+
+        $this->doSerializeClosures(array_flip($this->closures), $this);
 
         static::$serializedClasses[$this->unique()] = true;
     }
 
-    protected function doSerializeClosures(array $closures, object $model)
+    protected function doSerializeClosures(array $closures, object $model): object
     {
-        foreach ($closures ?? [] as $key => $closure) {
+        foreach ($closures as $key => $_closure) {
             if ($model->{$key} == null) {
                 continue;
             }
@@ -58,11 +75,19 @@ trait WithClosures
         return \Opis\Closure\serialize(new SerializableClosure($closure));
     }
 
-    protected function unserializeClosures()
+    /**
+     * @throws Exception
+     */
+    protected function unserializeClosures(): array
     {
+        /** @psalm-suppress TypeDoesNotContainType */
+        if (! isset($this->closures)) {
+            throw new Exception('Class: '. static::class .' is missing property closures.');
+        }
+
         $closures = [];
 
-        foreach ($this->closures ?? [] as $key => $closure) {
+        foreach ($this->closures as $key => $closure) {
             $closures[$key] = $this->unserializeClosure($closure);
         }
 
@@ -109,13 +134,22 @@ trait WithClosures
         return $closure ? $closure(...$args) : $default;
     }
 
-    private function unique()
+    private function unique(): string
     {
         return static::class . '.' . $this->resource;
     }
 
-    public function addClosure($closure)
+    /**
+     * @throws Exception
+     */
+    public function addClosure($closure): static
     {
+        /** @psalm-suppress TypeDoesNotContainType */
+        if (! isset($this->closures)) {
+            throw new Exception('Class: '. static::class .' is missing property closures.');
+        }
+
+        /** @psalm-suppress UndefinedThisPropertyAssignment */
         $this->closures[] = $closure;
 
         return $this;

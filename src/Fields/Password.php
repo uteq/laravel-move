@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Fields;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Uteq\Move\Actions\UnsetField;
 
@@ -9,22 +10,23 @@ class Password extends Field
 {
     public string $component = 'password-field';
 
-    public function __construct(string $name, string $attribute = null, callable $valueCallback = null)
-    {
+    public function __construct(
+        string $name,
+        string $attribute = null,
+        Closure $valueCallback = null
+    ) {
         parent::__construct($name, $attribute, $valueCallback);
 
         $this->resourceDataCallback = fn () => null;
 
-        $this->beforeStore(function ($value, $field, $model, $data) {
+        $this->beforeStore(function ($value, $_field, $model): string {
             if (! $model->id) {
                 return $value;
             }
 
-            if ($value) {
-                return bcrypt($value);
-            } else {
-                return UnsetField::class;
-            }
+            return $value
+                ? bcrypt($value)
+                : UnsetField::class;
         });
     }
 

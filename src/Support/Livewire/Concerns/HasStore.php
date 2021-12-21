@@ -46,7 +46,7 @@ trait HasStore
         return [];
     }
 
-    public function hasStoreRefreshModel()
+    public function hasStoreRefreshModel(): void
     {
         if ($this->{$this->property}->id) {
             $this->{$this->property}->refresh();
@@ -55,6 +55,7 @@ trait HasStore
 
     public function save()
     {
+
         $this->hasStoreRefreshModel();
 
         $store = move_arr_expand($this->store);
@@ -85,7 +86,7 @@ trait HasStore
         return $action;
     }
 
-    public function updateWithoutRedirect(array $fields, array $rules = null)
+    public function updateWithoutRedirect(array $fields, array $rules = null): \Uteq\Move\Livewire\BaseResourceForm
     {
         $this->disableRedirect();
         $this->update($fields, $rules);
@@ -146,7 +147,7 @@ trait HasStore
         return $this->endpointRoute('index');
     }
 
-    public function customValidate(array $fields, array $rules, array $messages = [], $customAttributes = [])
+    public function customValidate(array $fields, array $rules, array $messages = [], $customAttributes = []): array
     {
         $this->resetErrorBag();
 
@@ -188,6 +189,11 @@ trait HasStore
             ->toArray();
     }
 
+    /**
+     * @return array
+     *
+     * @psalm-return array<string, mixed>
+     */
     protected function getRules()
     {
         $preparedRules = [];
@@ -198,7 +204,10 @@ trait HasStore
         return $preparedRules;
     }
 
-    public function maybeRedirectFromAction($action)
+    /**
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|false|null
+     */
+    public function maybeRedirectFromAction($action): \Illuminate\Routing\Redirector|false|null|\Illuminate\Http\RedirectResponse
     {
         if (! $this->shouldRedirect) {
             return false;
@@ -218,7 +227,7 @@ trait HasStore
         return $this->endpoints()[$key] ?? $default;
     }
 
-    private function endpoints()
+    private function endpoints(): array
     {
         return array_replace_recursive(
             $this->redirectEndpoints,
@@ -259,7 +268,10 @@ trait HasStore
             );
     }
 
-    private function routeParams()
+    /**
+     * @psalm-return array{resource?: mixed}
+     */
+    private function routeParams(): array
     {
         $params = [];
         if ($this->resource) {
@@ -269,26 +281,26 @@ trait HasStore
         return $params;
     }
 
-    public function routeNameFromEndpoint($endpoint)
+    public function routeNameFromEndpoint($endpoint): string
     {
         return $this->baseRoute . '.' . $endpoint;
     }
 
-    public function disableRedirect()
+    public function disableRedirect(): \Uteq\Move\Livewire\BaseResourceForm
     {
         $this->shouldRedirect = false;
 
         return $this;
     }
 
-    public function enableRedirect()
+    public function enableRedirect(): \Uteq\Move\Livewire\BaseResourceForm
     {
         $this->shouldRedirect = true;
 
         return $this;
     }
 
-    public function flattenStore($keepArrays = false)
+    public function flattenStore($keepArrays = false): \Uteq\Move\Livewire\BaseResourceForm
     {
         $this->store = Arr::dot(
             collect($this->store)

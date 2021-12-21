@@ -2,20 +2,24 @@
 
 namespace Uteq\Move\Fields;
 
+use Illuminate\Support\Str;
+use Stringable;
+
 class Currency extends Number
 {
     public array $rules = [];
 
-    public function numberFormat(int $decimals = 0, string $decimalSeparator = '.', string $thousandSeparator = ','): self
+    public function numberFormat(int $decimals = 0, string $decimalSeparator = '.', string $thousandSeparator = ','): static
     {
-        $this->resourceDataCallback = function ($value) {
-            $value = rtrim($value, '0');
-            $value = (substr($value, -1) === '.') ? str_replace('.', '', $value) : $value;
-
-            return $value;
+        $this->resourceDataCallback = function ($value): string {
+            return Str::of($value)
+                ->rtrim('0')
+                ->when(str_ends_with($value, '.'), function($string) {
+                   return $string->replace('.', '');
+                });
         };
 
-        $this->beforeStore($this->storeFormat($decimals));
+        $this->beforeStore(fn () => $this->storeFormat(fn () => $decimals));
 
         return $this;
     }

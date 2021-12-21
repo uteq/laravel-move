@@ -2,9 +2,12 @@
 
 namespace Uteq\Move\Actions;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Uteq\Move\Concerns\Makeable;
 use Uteq\Move\Concerns\Metable;
+use Uteq\Move\Resource;
 
 class Action
 {
@@ -17,20 +20,30 @@ class Action
     public string $component = 'confirm-action';
 
     /** The text to be used for the action's confirm button. */
-    public string $confirmButtonText = 'Apply action';
+    public string $confirmButtonText;
 
     /** The text to be used for the action's cancel button. */
-    public string $cancelButtonText = 'Cancel';
+    public string $cancelButtonText;
 
     /** The text to be used for the action's confirmation text. */
-    public string $confirmText = 'Weet u zeker dat u deze actie uit wilt voeren?';
+    public string $confirmText;
 
-    public \Uteq\Move\Resource $resource;
+    public Resource $resource;
 
     public Collection $collection;
 
+    public function __construct()
+    {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        $this->confirmButtonText ??= __('Apply action');
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        $this->cancelButtonText ??= __('Cancel');
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
+        $this->confirmText ??= __('Are you sure you want to perform this action?');
+    }
+
     public function handleLivewireRequest(
-        \Uteq\Move\Resource $resource,
+        Resource $resource,
         Collection $collection,
         array $actionFields
     ) {
@@ -48,7 +61,7 @@ class Action
         return null;
     }
 
-    public function render(\Uteq\Move\Resource $resource)
+    public function render(Resource $resource): View|Factory
     {
         return view('move::actions.' . $this->component, [
             'action' => $this,
@@ -57,7 +70,10 @@ class Action
         ]);
     }
 
-    public function resolveFields(\Uteq\Move\Resource $resource)
+    /**
+     * @psalm-return list<mixed>
+     */
+    public function resolveFields(Resource $resource): array
     {
         $fields = [];
         foreach ($this->fields() as $field) {
@@ -69,6 +85,9 @@ class Action
         return $fields;
     }
 
+    /**
+     * @psalm-return array<empty, empty>
+     */
     public function fields()
     {
         return [];

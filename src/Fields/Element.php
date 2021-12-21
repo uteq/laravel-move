@@ -45,7 +45,7 @@ abstract class Element extends Component implements ElementInterface
      *
      * @param string $component
      */
-    public function setComponent(string $component)
+    public function setComponent(string $component): void
     {
         $this->component = $component;
     }

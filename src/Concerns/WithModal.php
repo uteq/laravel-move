@@ -6,14 +6,14 @@ trait WithModal
 {
     public ?string $showModal = null;
 
-    public function initializeWithModal()
+    public function initializeWithModal(): void
     {
         $this->listeners = array_replace([
             'closeModal' => 'closeModal',
         ], $this->listeners);
     }
 
-    public function closeModal()
+    public function closeModal(): void
     {
         $this->showModal = null;
     }

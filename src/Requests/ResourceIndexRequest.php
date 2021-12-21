@@ -4,7 +4,10 @@ namespace Uteq\Move\Requests;
 
 class ResourceIndexRequest extends ResourceRequest
 {
-    public function rules()
+    /**
+     * @psalm-return array<empty, empty>
+     */
+    public function rules(): array
     {
         return [];
     }

@@ -18,8 +18,8 @@ use Uteq\Move\Support\Livewire\TableComponent;
 class ResourceTable extends TableComponent
 {
     use WithPagination {
-        setPage as paginationSetPage;
-        resolvePage as paginationResolvePage;
+        WithPagination::setPage as paginationSetPage;
+        WithPagination::resolvePage as paginationResolvePage;
     }
     use HasResource;
     use HasSelected;
@@ -57,7 +57,7 @@ class ResourceTable extends TableComponent
 
     protected $rows = [];
 
-    public function mount(string $resource)
+    public function mount(string $resource): void
     {
         $this->crudBaseRoute ??= move()::getPrefix();
 
@@ -89,11 +89,12 @@ class ResourceTable extends TableComponent
         Move::registerTable($this);
 
         if (method_exists($this, 'init')) {
+            /** @psalm-suppress InvalidArgument */
             app()->call([$this, 'init']);
         }
     }
 
-    public function closeModal()
+    public function closeModal(): void
     {
         $this->showModal = null;
     }
@@ -105,7 +106,7 @@ class ResourceTable extends TableComponent
             : $this->paginationResolvePage();
     }
 
-    public function setPage($page)
+    public function setPage($page): void
     {
         $this->paginationSetPage($page);
 
@@ -114,23 +115,23 @@ class ResourceTable extends TableComponent
         }
     }
 
-    public function resetPage()
+    public function resetPage(): void
     {
         $this->setSelected();
     }
 
-    public function hydrate()
+    public function hydrate(): void
     {
         $this->table = get_class($this->resource()->resource);
         $this->keepRequestQuery = $this->resource()::$keepRequestQuery;
     }
 
-    public function showDelete()
+    public function showDelete(): void
     {
         $this->showingDelete = true;
     }
 
-    public function handleDelete()
+    public function handleDelete(): void
     {
         $handler = $this->resource()->handler('delete')
             ?: fn ($item) => $item->delete();
@@ -145,6 +146,9 @@ class ResourceTable extends TableComponent
         app()->call([$this, 'render']);
     }
 
+    /**
+     * @return Response|null
+     */
     public function handleAction()
     {
         try {
@@ -194,7 +198,7 @@ class ResourceTable extends TableComponent
             ->first();
     }
 
-    public function showAction($showingAction = true)
+    public function showAction(bool $showingAction = true): void
     {
         $this->showingAction = $showingAction;
     }
@@ -204,19 +208,25 @@ class ResourceTable extends TableComponent
         $request->route()->setParameter('resource', $this->route['resource']);
         $request->route()->setParameter('model', optional($this->route['model'])['id']);
 
-        /** @psalm-suppress UndefinedInterfaceMethod */
-        return view('move::livewire.resource-table', array_merge($this->resource()->getForIndex($this->requestQuery(), $request), [
+        $data = array_merge($this->resource()->getForIndex($this->requestQuery(), $request), [
             'collection' => $this->collection(),
             'rows' => $this->rows(),
             'actionResult' => $this->actionResult,
             'headerSlots' => $this->resource()->headerSlots($this),
             'table' => $this,
-        ]))->layout($this->resource()::$layout ?? Move::layout(), [
-            'header' => $this->resource()->label(),
         ]);
+
+        /**
+         * @psalm-suppress UndefinedInterfaceMethod
+         * @psalm-suppress InvalidReturnStatement
+         */
+        return view('move::livewire.resource-table', $data)
+            ->layout($this->resource()::$layout ?? Move::layout(), [
+                'header' => $this->resource()->label(),
+            ]);
     }
 
-    public function updateOrder($order)
+    public function updateOrder($order): void
     {
         app()->call([$this->resource(), 'tableSort'], [
             'order' => $order,

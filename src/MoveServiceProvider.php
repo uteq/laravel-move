@@ -21,7 +21,7 @@ use Uteq\Move\Livewire\ResourceTable;
 
 class MoveServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'move');
 
@@ -32,7 +32,7 @@ class MoveServiceProvider extends ServiceProvider
         $this->configureCommands();
     }
 
-    public function configureComponents()
+    public function configureComponents(): void
     {
         $this->callAfterResolving(BladeCompiler::class, function () {
             $this->registerComponent('field.checkbox');
@@ -122,7 +122,7 @@ class MoveServiceProvider extends ServiceProvider
         });
     }
 
-    public function configureNamespaces()
+    public function configureNamespaces(): void
     {
         foreach (Move::all() as $alias => $class) {
             if (! isset($class::$model)) {
@@ -158,7 +158,7 @@ class MoveServiceProvider extends ServiceProvider
         }
     }
 
-    protected function configureBladeDirectives()
+    protected function configureBladeDirectives(): void
     {
         Blade::directive('moveStyles', [MoveBladeDirectives::class, 'moveStyles']);
         Blade::directive('moveScripts', [MoveBladeDirectives::class, 'moveScripts']);
@@ -178,7 +178,7 @@ class MoveServiceProvider extends ServiceProvider
         ]);
     }
 
-    public function configurePublishers()
+    public function configurePublishers(): void
     {
         $this->publishes([
             __DIR__ . '/../config/move.php' => config_path('move.php'),
@@ -213,14 +213,14 @@ class MoveServiceProvider extends ServiceProvider
         $this->configureLivewire();
     }
 
-    public function registerComponentAutoDiscovery()
+    public function registerComponentAutoDiscovery(): void
     {
         $this->app->singleton(ResourceFinder::class, function () {
             return new ResourceFinder(new Filesystem, base_path() . DIRECTORY_SEPARATOR);
         });
     }
 
-    public function configureLivewire()
+    public function configureLivewire(): void
     {
         Livewire::component('livewire.resource-table', ResourceTable::class);
         Livewire::component('livewire.resource-show', ResourceShow::class);

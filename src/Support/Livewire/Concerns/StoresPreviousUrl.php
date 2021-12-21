@@ -8,7 +8,7 @@ trait StoresPreviousUrl
 {
     public $previous;
 
-    public function initializeStoresPreviousUrl()
+    public function initializeStoresPreviousUrl(): void
     {
         if (request()->method() !== 'POST') {
             $this->previous = url()->previous();

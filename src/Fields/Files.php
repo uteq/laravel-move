@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Fields;
 
+use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\RequiredIf;
@@ -24,7 +25,7 @@ class Files extends Field
     public function __construct(
         string $name,
         string $attribute,
-        callable $valueCallback = null
+        Closure $valueCallback = null
     ) {
         parent::__construct($name, $attribute, $valueCallback);
 
@@ -38,19 +39,19 @@ class Files extends Field
 //        ]);
     }
 
-    public function getAccept()
+    public function getAccept(): string
     {
         return implode(', ', $this->accept);
     }
 
-    public function accept(array $accept)
+    public function accept(array $accept): static
     {
         $this->accept = $accept;
 
         return $this;
     }
 
-    public function isSingular(bool $value = true)
+    public function isSingular(bool $value = true): static
     {
         $this->isMultiple = ! $value;
 
@@ -68,14 +69,14 @@ class Files extends Field
         return $model?->getMedia(Str::afterLast($this->attribute, '.'));
     }
 
-    public function showRotate($showRotate = true)
+    public function showRotate($showRotate = true): static
     {
         $this->showRotate = true;
 
         return $this;
     }
 
-    public function hideRotate($showRotate = false)
+    public function hideRotate($showRotate = false): static
     {
         $this->showRotate = false;
 

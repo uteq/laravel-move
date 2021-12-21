@@ -17,21 +17,21 @@ class Status extends Field
 
     public $falseValue = false;
 
-    public function headerInfoPopup($text): self
+    public function headerInfoPopup($text): static
     {
         $this->infoPopupText = $text;
 
         return $this;
     }
 
-    public function trueValue($value): self
+    public function trueValue($value): static
     {
         $this->trueValue = $value;
 
         return $this;
     }
 
-    public function falseValue($value): self
+    public function falseValue($value): static
     {
         $this->falseValue = $value;
 

@@ -13,13 +13,16 @@ abstract class TableComponent extends Component
     use HasFilter;
     use HasCrud;
 
-    public function getTotalProperty()
+    public function getTotalProperty(): int
     {
         return $this->query()->count();
     }
 
     abstract public function query(): Builder;
 
+    /**
+     * @return void
+     */
     public function render(ResourceIndexRequest $request)
     {
         //

@@ -2,9 +2,11 @@
 
 namespace Uteq\Move\Fields;
 
+use Closure;
+
 class Country extends Select
 {
-    public function __construct(string $name, string $attribute = null, callable $valueCallback = null)
+    public function __construct(string $name, string $attribute = null, Closure $valueCallback = null)
     {
         parent::__construct($name, $attribute, $valueCallback);
 

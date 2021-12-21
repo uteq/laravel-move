@@ -6,7 +6,7 @@ trait FilesModal
 {
     public $showFile = null;
 
-    public function showFile($id)
+    public function showFile($id): void
     {
         $this->showFile = $id;
     }

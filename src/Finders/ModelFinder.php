@@ -17,7 +17,7 @@ class ModelFinder
         $this->app = $app;
     }
 
-    public function find(string $path)
+    public function find(string $path): string
     {
         if (! $this->isNamespaced($path)) {
             return $this->app->getNamespace() . 'Models\\'.  str_replace('/', '\\', $path);
@@ -26,7 +26,7 @@ class ModelFinder
         return $path;
     }
 
-    public function isNamespaced($path)
+    public function isNamespaced(string $path): bool
     {
         return Str::startsWith($path, [$this->app->getNamespace(), '\\']);
     }

@@ -60,14 +60,7 @@ trait HasFiles
             return null;
         }
 
-        if (method_exists($file, 'rotate')) {
-            $file->rotate($degrees);
-        } else {
-            $image = Image::make($file->getPath());
-            $image->setFileInfoFromPath($file->getPath());
-            $image->rotate($degrees);
-            $image->save();
-        }
+        $file->rotate($degrees);
 
         $this->rotatedFiles[$i] ??= 0;
         $this->rotatedFiles[$i]++;
@@ -88,7 +81,7 @@ trait HasFiles
         return $store;
     }
 
-    public function getFilesPaths(Field $field)
+    public function getFilesPaths(Field $field): \Uteq\Move\DataTransferObjects\MediaCollection
     {
         $field->applyResourceData($this->model ?: static::newModel());
 
@@ -114,7 +107,7 @@ trait HasFiles
         return new MediaCollection($urls);
     }
 
-    public function updatedFiles($data, string $key)
+    public function updatedFiles($data, string $key): void
     {
         if (! isset($this->tempUploadedFiles[$key])) {
             $this->tempUploadedFiles[$key] = [];
@@ -126,7 +119,7 @@ trait HasFiles
         );
     }
 
-    public function getTemporaryUrl(File $file)
+    public function getTemporaryUrl(File $file): string
     {
         return URL::temporarySignedRoute(move()::getPrefix() . '.preview-file', now()->addMinutes(30), [
             'filename' => $file->getFilename(),

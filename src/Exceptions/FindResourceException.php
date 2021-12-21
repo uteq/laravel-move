@@ -4,7 +4,7 @@ namespace Uteq\Move\Exceptions;
 
 class FindResourceException extends \Exception
 {
-    public static function multipleImplementationsOfResource(string $resource, array $resources)
+    public static function multipleImplementationsOfResource(string $resource, array $resources): static
     {
         return new static(sprintf(
             'Multiple implementations detected of resource `%s` please namespace your resource to only let it return one resource. Detected implementations: `%s`',

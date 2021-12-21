@@ -2,11 +2,11 @@
 
 namespace Uteq\Move\Fields;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Uteq\Move\Actions\LivewireCloseModal;
 use Uteq\Move\Concerns\WithClosures;
 use Uteq\Move\Concerns\WithListeners;
@@ -27,7 +27,7 @@ class Select extends Field
 
     public $resourceName = null;
 
-    public ?\Closure $customIndexName = null;
+    public ?Closure $customIndexName = null;
 
     public array $settings = [];
 
@@ -66,14 +66,14 @@ class Select extends Field
         $this->version($this->version + 1);
     }
 
-    public function settings(array $settings)
+    public function settings(array $settings): static
     {
         $this->settings = array_replace($this->settings, $settings);
 
         return $this;
     }
 
-    public function indexName(\Closure $indexName): self
+    public function indexName(Closure $indexName): static
     {
         $this->customIndexName = $indexName;
 
@@ -144,7 +144,7 @@ class Select extends Field
         return static::$resourceCache[$name][$value];
     }
 
-    public function resource($resource): self
+    public function resource($resource): static
     {
         if (! class_exists($resource)) {
             throw new \Exception(sprintf(
@@ -168,14 +168,19 @@ class Select extends Field
         return $this;
     }
 
-    public function options($options): self
+    /**
+     * @param (array|null|string)[]|\Closure $options
+     *
+     * @psalm-param Closure():mixed|\Closure(mixed):mixed|array<string, array|null|string> $options
+     */
+    public function options(array|Closure $options): static
     {
         $this->options = $options;
 
         return $this;
     }
 
-    public function query($query): self
+    public function query($query): static
     {
         $this->query = $query;
 
@@ -215,14 +220,14 @@ class Select extends Field
         return [];
     }
 
-    public function customQuery($customQuery): self
+    public function customQuery($customQuery): static
     {
         $this->customQuery = $customQuery;
 
         return $this;
     }
 
-    public function ajax(string $url, $defaultOption = null, array $settings = []): self
+    public function ajax(string $url, $defaultOption = null, array $settings = []): static
     {
         is_callable($defaultOption)
             ? $this->resolveDefaultOption($defaultOption)
@@ -255,22 +260,19 @@ class Select extends Field
         return $this;
     }
 
-    public function resolveDefaultOption($option): self
+    public function resolveDefaultOption(callable $option): static
     {
         $this->options(function ($field) use ($option) {
-            $store = isset($field->resource->store)
-                ? $field->resource->store
-                : $field->resource->getAttributes();
+            $store = $field->resource->store
+                ?? $field->resource->getAttributes();
 
-            return is_callable($option)
-                ? $option($store[$this->attribute] ?? null)
-                : $option;
+            return $option($store[$this->attribute] ?? null);
         });
 
         return $this;
     }
 
-    public function multiple($multiple = true)
+    public function multiple($multiple = true): static
     {
         $this->multiple = $multiple;
 
@@ -286,7 +288,7 @@ class Select extends Field
     /**
      * This makes sure that when using the 'multiple' implementation the tags will be mapped to the correct value.
      */
-    protected function mapTags()
+    protected function mapTags(): void
     {
         $this->beforeStore(function ($value, $field, $model) {
             $model = (clone $model)->refresh();
@@ -326,7 +328,7 @@ class Select extends Field
         return is_array($this->store()) ? $this->store() : [$this->store() => true];
     }
 
-    public function version($version)
+    public function version($version): static
     {
         $this->version = $version;
 
@@ -335,14 +337,14 @@ class Select extends Field
 
     public function getVersion()
     {
-        $version = $this->version instanceof \Closure ? $this->closure('version') : $this->version;
+        $version = $this->version instanceof Closure ? $this->closure('version') : $this->version;
 
         return is_callable($version)
             ? $version($this)
             : $version;
     }
 
-    public function createResource(string $resource, string $form)
+    public function createResource(string $resource, string $form): static
     {
         $this->createResource = $resource;
         $this->createForm = $form;

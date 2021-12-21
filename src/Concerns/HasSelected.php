@@ -7,23 +7,24 @@ trait HasSelected
     public $has_selected = false;
     public $select_type = [];
     public $selected = [];
+    public $meta = [];
 
-    public function initializeHaSelected()
+    public function initializeHaSelected(): void
     {
         $this->computeHasSelected();
     }
 
-    public function hasSelected()
+    public function hasSelected(): bool
     {
         return count($this->selected) > 0;
     }
 
-    public function computeHasSelected()
+    public function computeHasSelected(): void
     {
         $this->has_selected = count($this->selected) > 0;
     }
 
-    public function updatedSelectType($value, $key)
+    public function updatedSelectType($value, $key): void
     {
         if ($key === 'table' && $value === false) {
             $this->select_type['all'] = false;
@@ -36,7 +37,7 @@ trait HasSelected
         $this->setSelected();
     }
 
-    public function setSelected()
+    public function setSelected(): void
     {
         $this->selected = [];
 
@@ -60,7 +61,7 @@ trait HasSelected
             : $default;
     }
 
-    public function updatedSelected($value, $key)
+    public function updatedSelected($value, $key): void
     {
         $this->meta['selected'] = true;
 
@@ -74,7 +75,7 @@ trait HasSelected
             : $this->query()->get();
     }
 
-    public function selected($key, $default = false)
+    public function selected($key, $default = false): bool
     {
         return (bool)($this->selected[$key] ?? $default);
     }

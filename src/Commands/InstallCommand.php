@@ -23,7 +23,7 @@ class InstallCommand extends Command
      */
     protected $description = 'Install the Move and Jetstream components and resources';
 
-    public function handle()
+    public function handle(): void
     {
         if (! $this->option('skip-jetstream')) {
             $this->line('Installing Jetstream. This can take a while');

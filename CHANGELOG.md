@@ -2,6 +2,15 @@
 
 All notable changes to `laravel-move` will be documented in this file
 
+## 0.3.0 - 2021-12-21
+
+Only upgrade to 0.3.0 if you are willing to debug a lot.
+This is a stable version that is for `> php8.0`.
+A lot of features where added, with a lot of them without backwards compatability.
+
+Fixes
+- A lot of stability fixes
+
 ## 0.2.4 - 2021-03-01
 
 Fixes:

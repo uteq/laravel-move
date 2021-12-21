@@ -15,24 +15,29 @@ class HeaderSearch extends Component
 
     protected $listeners = ['startSearch', 'stopSearch'];
 
-    public function startSearch()
+    public function startSearch(): void
     {
         $this->showSearchResult = true;
     }
 
-    public function stopSearch()
+    public function stopSearch(): void
     {
         $this->search = null;
         $this->showSearchResult = false;
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
     {
         return view(Move::headerSearch(), [
             'searchResult' => $this->searchResult(),
         ]);
     }
 
+    /**
+     * @return array|null
+     *
+     * @psalm-return array<empty, empty>|null
+     */
     public function searchResult()
     {
         if (! $this->search) {
@@ -80,7 +85,7 @@ class HeaderSearch extends Component
         $this->showSearchResult = (strlen($this->search) > 0);
     }
 
-    public function updatedShowSearchResult()
+    public function updatedShowSearchResult(): void
     {
         if (! $this->showSearchResult) {
             $this->search = null;

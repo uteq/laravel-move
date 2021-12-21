@@ -8,7 +8,7 @@ class TrashedStatus
     const WITH = 'with';
     const ONLY = 'only';
 
-    public static function fromBoolean($status)
+    public static function fromBoolean($status): string
     {
         return $status ? self::WITH : self::DEFAULT;
     }

@@ -13,7 +13,7 @@ class Date extends Field
         "allowInput" => true,
     ];
 
-    public function init()
+    public function init(): void
     {
         $this->afterValueCallback(fn ($date) => optional($date)->format('d-m-Y'));
 
@@ -23,21 +23,21 @@ class Date extends Field
             : $date;
     }
 
-    public function format(string $format)
+    public function format(string $format): static
     {
         $this->dateConfig['dateFormat'] = $format;
 
         return $this;
     }
 
-    public function resolveUsing($valueCallback)
+    public function resolveUsing($valueCallback): static
     {
         $this->valueCallback = $valueCallback;
 
         return $this;
     }
 
-    public function config(array $config)
+    public function config(array $config): static
     {
         $this->dateConfig = array_replace_recursive($this->dateConfig, $config);
 

@@ -17,7 +17,7 @@ class Table extends Panel
 
     public array $hideFields = [];
 
-    protected Closure $disableDeleteFor;
+    protected ?Closure $disableDeleteFor = null;
 
     public function __construct(
         $name,
@@ -98,23 +98,25 @@ class Table extends Panel
         return $this;
     }
 
-    public function showFields(array $showFields)
+    public function showFields(array $showFields): static
     {
         $this->showFields = $showFields;
 
         return $this;
     }
 
-    public function hideFields(array $hideFields)
+    public function hideFields(array $hideFields): static
     {
         $this->hideFields = $hideFields;
 
         return $this;
     }
 
-    public function fields()
+    public function fields(): \Illuminate\Support\Collection
     {
-        $fields = ($this->fields ?? null) ?: (new ($this->resourceClass)($this->model))->fields();
+        $fields = ! empty($this->fields)
+                ? $this->fields
+                : (new ($this->resourceClass)($this->model))->fields();
 
         return collect($fields)
             ->filter(fn ($field) => in_array($field->attribute, $this->showFields, true))
@@ -129,7 +131,7 @@ class Table extends Panel
             });
     }
 
-    public function resource(string $resource)
+    public function resource(string $resource): static
     {
         if (class_exists($resource)) {
             $resource = Move::resourceKey($resource);
@@ -140,37 +142,37 @@ class Table extends Panel
         return $this;
     }
 
-    public function withAddButton($withAddButton = true)
+    public function withAddButton($withAddButton = true): static
     {
         $this->meta['with_add_button'] = $withAddButton;
 
         return $this;
     }
 
-    public function withDelete($withDelete = true)
+    public function withDelete($withDelete = true): static
     {
         $this->meta['with_delete'] = $withDelete;
 
         return $this;
     }
 
-    public function withEditButton($withEdit = true)
+    public function withEditButton($withEdit = true): static
     {
         $this->meta['with_edit'] = $withEdit;
 
         return $this;
     }
 
-    public function disableDeleteFor(Closure $closure): self
+    public function disableDeleteFor(Closure $closure): static
     {
         $this->disableDeleteFor = $closure;
 
         return $this;
     }
 
-    public function getDisableDeleteFor()
+    public function getDisableDeleteFor(): ?Closure
     {
-        return $this->disableDeleteFor ?? null;
+        return $this->disableDeleteFor;
     }
 
     public function closeModalAfterAction(): static

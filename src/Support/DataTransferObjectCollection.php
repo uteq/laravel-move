@@ -8,6 +8,7 @@ use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use Iterator;
+use Spatie\DataTransferObject\DataTransferObject;
 
 /** @property array $collection */
 abstract class DataTransferObjectCollection implements
@@ -41,11 +42,7 @@ abstract class DataTransferObjectCollection implements
 
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
-            $this->iterator[] = $value;
-        } else {
-            $this->iterator[$offset] = $value;
-        }
+        $this->iterator[$offset] = $value;
     }
 
     public function offsetExists($offset): bool

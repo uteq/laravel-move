@@ -4,6 +4,7 @@ namespace Uteq\Move\File;
 
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -43,8 +44,8 @@ class ResourceFile extends File implements ResourceFileContract
         $dir = dirname($path);
 
         if (! file_exists($dir)) {
-            if (!mkdir($dir, null, true) && !is_dir($dir)) {
-                throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+            if (!mkdir($dir, recursive: true) && !is_dir($dir)) {
+                throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
             }
         }
 
@@ -62,7 +63,7 @@ class ResourceFile extends File implements ResourceFileContract
         return $this->media->mime_type ?: parent::getMimeType();
     }
 
-    public function exists()
+    public function exists(): bool
     {
         return file_exists($this->getPath());
     }
@@ -77,7 +78,7 @@ class ResourceFile extends File implements ResourceFileContract
         return $this->media->file_name;
     }
 
-    public function withVersion($version)
+    public function withVersion($version): static
     {
         $this->version = $version;
 
@@ -94,7 +95,7 @@ class ResourceFile extends File implements ResourceFileContract
         return $this->media->get();
     }
 
-    public function rotate($degrees)
+    public function rotate(int $degrees): void
     {
         $image = Image::make($this->getPath());
         $image->setFileInfoFromPath($this->getPath());

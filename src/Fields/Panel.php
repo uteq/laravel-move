@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Fields;
 
+use Closure;
 use Illuminate\Http\Request;
 use Uteq\Move\Concerns\AuthorizedToSee;
 use Uteq\Move\Concerns\HasDependencies;
@@ -32,7 +33,7 @@ class Panel implements PanelInterface, ElementInterface
     public string $id;
     public ?string $name = null;
     public array $fields;
-    public array $panels;
+    public $panels;
     public string $nameOnCreate;
     public string $nameOnUpdate;
     public array $alert = [];
@@ -56,6 +57,14 @@ class Panel implements PanelInterface, ElementInterface
     public $class = null;
     public $description = null;
 
+    protected $resourceForm;
+
+    public bool $withoutTitle;
+    public string $flow;
+    public Closure|string|null $afterTitle = null;
+    public Closure|string|null $classes = null;
+    protected string $unique;
+
     public function __construct(?string $name = null, array $fields = [])
     {
         $this->name = $name;
@@ -71,26 +80,26 @@ class Panel implements PanelInterface, ElementInterface
         }
     }
 
-    public static function id()
+    public static function id(): string
     {
         return encrypt(static::class);
     }
 
-    public function nameOnCreate(string $nameOnCreate)
+    public function nameOnCreate(string $nameOnCreate): static
     {
         $this->nameOnCreate = $nameOnCreate;
 
         return $this;
     }
 
-    public function nameOnUpdate(string $nameOnUpdate)
+    public function nameOnUpdate(string $nameOnUpdate): static
     {
         $this->nameOnUpdate = $nameOnUpdate;
 
         return $this;
     }
 
-    public function resolveFields($resource)
+    public function resolveFields($resource): static
     {
         if ($this->name) {
             $this->name = isset($resource['id']) ? $this->nameOnUpdate : $this->nameOnCreate;
@@ -108,7 +117,7 @@ class Panel implements PanelInterface, ElementInterface
         return array_merge($this->fields, $this->flatPanelsFields());
     }
 
-    public function flatPanelsFields($panels = null)
+    public function flatPanelsFields($panels = null): array
     {
         $panels ??= $this->panels;
         $fields = [];
@@ -124,12 +133,12 @@ class Panel implements PanelInterface, ElementInterface
         return $fields;
     }
 
-    public function empty()
+    public function empty(): bool
     {
         return ! count($this->fields) && ! count($this->panels);
     }
 
-    public function alert($type, $description)
+    public function alert($type, $description): static
     {
         $this->alert[$type] ??= [];
         $this->alert[$type][] = $description;
@@ -137,7 +146,7 @@ class Panel implements PanelInterface, ElementInterface
         return $this;
     }
 
-    public function render($model)
+    public function render($model): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
     {
         return view($this->folder . $this->component, [
             'panel' => $this,
@@ -161,7 +170,7 @@ class Panel implements PanelInterface, ElementInterface
      *
      * @param string $component
      */
-    public function setComponent(string $component)
+    public function setComponent(string $component): void
     {
         $this->component = $component;
     }
@@ -176,14 +185,16 @@ class Panel implements PanelInterface, ElementInterface
         return $this->component;
     }
 
-    public function applyResourceData($model, $resourceForm = null, $resource = null)
+    public function applyResourceData($model, $resourceForm = null, $resource = null): static
     {
         $this->resourceForm = $resourceForm;
         $this->resource = $resource;
         $this->model = $model;
+
+        return $this;
     }
 
-    public function isVisible($resource, ?string $displayType = null)
+    public function isVisible(array $resource, ?string $displayType = null)
     {
         if (! $this->areDependenciesSatisfied($resource)) {
             return false;
@@ -199,26 +210,26 @@ class Panel implements PanelInterface, ElementInterface
         return $this->isShownOn($type, $resource, request());
     }
 
-    public function panels()
+    public function panels(): array
     {
         return $this->panels;
     }
 
-    public function titleClass($class)
+    public function titleClass($class): static
     {
         $this->class = $class;
 
         return $this;
     }
 
-    public function description($description)
+    public function description($description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function afterTitle(\Closure $afterTitle): static
+    public function afterTitle(Closure $afterTitle): static
     {
         $this->afterTitle = $afterTitle;
 

@@ -16,8 +16,9 @@
         }
     ],
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^8.0",
         "ext-json": "*",
+        "ext-exif": "*",
         "illuminate/contracts": "^8.0",
         "intervention/image": "^2.5",
         "laravel/jetstream": "^2.2.1",

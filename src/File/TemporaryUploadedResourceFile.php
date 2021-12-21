@@ -22,7 +22,10 @@ class TemporaryUploadedResourceFile extends UploadedFile implements ResourceFile
         return $this->media->exists();
     }
 
-    public function getPath()
+    /**
+     * @psalm-suppress ImplementedReturnTypeMismatch
+     */
+    public function getPath(): bool|string
     {
         /** @psalm-suppress FalsableReturnStatement */
         return $this->media->getRealPath();
@@ -38,7 +41,7 @@ class TemporaryUploadedResourceFile extends UploadedFile implements ResourceFile
         return $this->media->getClientOriginalName();
     }
 
-    public function withVersion($version)
+    public function withVersion($version): static
     {
         return $this;
     }

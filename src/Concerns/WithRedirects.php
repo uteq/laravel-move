@@ -6,7 +6,7 @@ trait WithRedirects
 {
     protected $redirects;
 
-    public function redirects($endpoints)
+    public function redirects($endpoints): static
     {
         $this->redirects = $endpoints;
 

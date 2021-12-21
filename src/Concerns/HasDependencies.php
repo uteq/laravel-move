@@ -24,42 +24,42 @@ trait HasDependencies
         return $this;
     }
 
-    public function dependsOnCall(string $field, Closure $callback)
+    public function dependsOnCall(string $field, Closure $callback): static
     {
         $this->dependencies[$field] = ['call' => $callback];
 
         return $this;
     }
 
-    public function dependsOnNot(string $field, $value)
+    public function dependsOnNot(string $field, $value): static
     {
         $this->dependencies[$field] = ['not' => $value];
 
         return $this;
     }
 
-    public function dependsOnNotNull(string $field)
+    public function dependsOnNotNull(string $field): static
     {
         $this->dependencies[$field] = ['not_null' => true];
 
         return $this;
     }
 
-    public function dependsOnEmpty(string $field)
+    public function dependsOnEmpty(string $field): static
     {
         $this->dependencies[$field] = ['empty' => true];
 
         return $this;
     }
 
-    public function dependsOnNullOrZero(string $field)
+    public function dependsOnNullOrZero(string $field): static
     {
         $this->dependencies[$field] = ['nullOrZero' => true];
 
         return $this;
     }
 
-    public function addDependencies($dependencies)
+    public function addDependencies($dependencies): static
     {
         $this->dependencies = collect($this->dependencies)
             ->merge($dependencies)
@@ -68,17 +68,17 @@ trait HasDependencies
         return $this;
     }
 
-    public function areDependenciesSatisfied($data)
+    public function areDependenciesSatisfied($data): bool
     {
         /** @psalm-suppress UnusedClosureParam */
         $rules = [
             'callback' => fn ($value, $result) => $value($result, $this, $data),
             'call' => fn ($value, $result) => app()->call($value, ['result' => $result, 'field' => $this, 'store' => $data]),
-            'value' => fn ($value, $result) => $result == $value,
-            'not' => fn ($value, $result) => $result != $value,
-            'not_null' => fn ($value, $result) => $result !== null,
-            'empty' => fn ($value, $result) => empty($result),
-            'nullOrZero' => fn ($value, $result) => in_array($result, [null, 0, '0']),
+            'value' => fn ($value, $result): bool => $result == $value,
+            'not' => fn ($value, $result): bool => $result != $value,
+            'not_null' => fn ($value, $result): bool => $result !== null,
+            'empty' => fn ($value, $result): bool => empty($result),
+            'nullOrZero' => fn ($value, $result): bool => in_array($result, [null, 0, '0']),
         ];
 
         if (($this->type ?? 'form') !== 'form') {
@@ -86,7 +86,7 @@ trait HasDependencies
         }
 
         $dataWithoutDots = collect($data)
-            ->filter(fn ($value, $key) => ! Str::contains($key, '.'))
+            ->filter(fn ($_value, $key) => ! Str::contains($key, '.'))
             ->toArray();
 
         return $this->areDependenciesSatisfiedWithData($rules, $data)

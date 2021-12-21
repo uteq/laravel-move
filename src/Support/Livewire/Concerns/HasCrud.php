@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Support\Livewire\Concerns;
 
+use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Uteq\Move\Resource;
 
@@ -19,9 +20,16 @@ trait HasCrud
 
     protected static $crudUsesSoftDelete = null;
 
-    public function initializeHasCrud()
+    public function initializeHasCrud(): void
     {
-        $this->crudBaseRoute ??= move()::getPrefix();
+        /** @psalm-suppress TypeDoesNotContainType */
+        if (! property_exists($this, 'crudBaseRoute')) {
+            throw new Exception('Class: '. static::class .' is missing property crudBaseRoute.');
+        }
+
+        /** @psalm-suppress UndefinedThisPropertyAssignment */
+        $this->crudBaseRoute = $this->crudBaseRoute
+            ?: move()::getPrefix();
     }
 
     private function modelById($id)
@@ -55,13 +63,18 @@ trait HasCrud
         );
     }
 
-    public function show($id)
+    public function show($id): void
     {
         $this->redirect($this->showRoute($id));
     }
 
-    public function showRoute($id)
+    public function showRoute($id): string|null
     {
+        /** @psalm-suppress TypeDoesNotContainType */
+        if (! property_exists($this, 'crudBaseRoute')) {
+            throw new Exception('Class: '. static::class .' is missing property crudBaseRoute.');
+        }
+
         $model = $this->modelById($id);
 
         if (! $model) {
@@ -74,13 +87,18 @@ trait HasCrud
         ]);
     }
 
-    public function edit($id)
+    public function edit($id): void
     {
         $this->redirect($this->editRoute($id));
     }
 
-    public function editRoute($id, $resourceRoute = null)
+    public function editRoute($id, $resourceRoute = null): string|null
     {
+        /** @psalm-suppress TypeDoesNotContainType */
+        if (! property_exists($this, 'crudBaseRoute')) {
+            throw new Exception('Class: '. static::class .' is missing property crudBaseRoute.');
+        }
+
         $model = $this->modelById($id);
 
         if (! $model) {
@@ -93,19 +111,32 @@ trait HasCrud
         ]);
     }
 
-    public function add()
+    public function add(): void
     {
         $this->redirect($this->addRoute());
     }
 
-    public function addRoute()
+    public function addRoute(): string
     {
+        /** @psalm-suppress TypeDoesNotContainType */
+        if (! property_exists($this, 'crudBaseRoute')) {
+            throw new Exception('Class: '. static::class .' is missing property crudBaseRoute.');
+        }
+
+        /** @psalm-suppress UndefinedThisPropertyAssignment */
         $this->crudBaseRoute ??= move()::getPrefix();
 
+        /** @var Resource $parent */
         $parent = $this->parent();
         $attributes = [];
         if ($parent && $parent instanceof Resource) {
+            /** @psalm-suppress UndefinedPropertyFetch */
             $attributes['parent_model'] = $parent::$model;
+
+            /**
+             * @psalm-suppress RedundantCondition
+             * @psalm-suppress TypeDoesNotContainType
+             */
             $attributes['parent_id'] = isset($parent->resource) ? $parent->resource->id : null;
         }
 
@@ -114,14 +145,17 @@ trait HasCrud
         ], $attributes));
     }
 
-    public function confirmDestroy($id)
+    public function confirmDestroy($id): void
     {
         $this->dispatchBrowserEvent(static::class . '.confirming-destroy');
 
         $this->confirmingDestroy = [$id];
     }
 
-    public function hideConfirmDestroy()
+    /**
+     * @return false
+     */
+    public function hideConfirmDestroy(): bool
     {
         $this->dispatchBrowserEvent(static::class . '.hide-confirming-destroy');
 
@@ -130,6 +164,11 @@ trait HasCrud
 
     public function destroy($id)
     {
+        /** @psalm-suppress TypeDoesNotContainType */
+        if (! property_exists($this, 'crudBaseRoute')) {
+            throw new Exception('Class: '. static::class .' is missing property crudBaseRoute.');
+        }
+
         $model = $this->resolveModel($id);
 
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();

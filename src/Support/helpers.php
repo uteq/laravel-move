@@ -1,9 +1,14 @@
 <?php
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Str;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 
-function render($string, $__data = [])
+/**
+ * @return false|string
+ */
+function render($string, $__data = []): string|false
 {
     $__data['__env'] = app(\Illuminate\View\Factory::class);
     $__php = Blade::compileString($string);
@@ -31,14 +36,17 @@ function render($string, $__data = [])
     return ob_get_clean();
 }
 
-function move()
+function move(): \Uteq\Move\Facades\Move
 {
     return new \Uteq\Move\Facades\Move();
 }
 
-function move_class_to_label($class)
+function move_class_to_label($class): string
 {
-    return Str::plural(Str::title(Str::snake(class_basename($class), ' ')));
+    return (string) Str::of(class_basename($class))
+        ->snake(',')
+        ->title()
+        ->plural();
 }
 
 /**

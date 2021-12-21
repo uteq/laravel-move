@@ -15,7 +15,7 @@ trait HasFilter
 
     protected bool $filterResetPagination = true;
 
-    public function initHasFilter()
+    public function initHasFilter(): void
     {
         $this->requestQuery = $this->requestQuery();
         $this->filter['limit'] = $this->filter('limit', $this->resource()->defaultPerPage());
@@ -25,17 +25,17 @@ trait HasFilter
         $this->order = request()->query('order', $this->order);
     }
 
-    private function requestQueryKey()
+    private function requestQueryKey(): string
     {
         return static::class . '.'. get_class($this->resource()) . '.requestQuery';
     }
 
-    public function requestQuery()
+    public function requestQuery(): array
     {
         return array_replace(session($this->requestQueryKey(), $this->requestQuery), $this->requestQuery);
     }
 
-    public function sort($field)
+    public function sort($field): void
     {
         $order = $this->order[$field] ?? null;
 
@@ -59,7 +59,7 @@ trait HasFilter
         return $this->filter[$key] ?? $default;
     }
 
-    public function resetFilter()
+    public function resetFilter(): void
     {
         $this->filter = [];
         $this->selected = [];
@@ -92,19 +92,19 @@ trait HasFilter
         $this->setPage(1);
     }
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         $this->requestQuery = request()->query();
 
         $this->maybeKeepRequestQuery();
     }
 
-    public function activeFilters()
+    public function activeFilters(): int
     {
         return collect($this->filter)->filter(fn ($value) => '' !== $value)->count();
     }
 
-    public function maybeKeepRequestQuery()
+    public function maybeKeepRequestQuery(): void
     {
         $this->keepRequestQuery ? session()->put($this->requestQueryKey(), $this->requestQuery) : null;
     }

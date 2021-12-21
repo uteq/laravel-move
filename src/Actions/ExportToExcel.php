@@ -39,17 +39,22 @@ abstract class ExportToExcel extends Action implements FromCollection, WithCusto
         return $this->handle();
     }
 
-    public function registerType()
+    public function registerType(): void
     {
         //
     }
 
-    public function registerHeadings()
+    public function registerHeadings(): void
     {
         //
     }
 
-    public function handle()
+    /**
+     * @return \Closure[]
+     *
+     * @psalm-return array{handle: \Closure(mixed):(BinaryFileResponse|mixed)}
+     */
+    public function handle(): array
     {
         $this->registerType();
         $this->registerHeadings();

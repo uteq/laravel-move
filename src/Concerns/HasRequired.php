@@ -22,9 +22,9 @@ trait HasRequired
         return $this;
     }
 
-    public function requiredOnCreateOnly()
+    public function requiredOnCreateOnly(): \Uteq\Move\Fields\Field
     {
-        $this->requiredCallback = function ($request, $model) {
+        $this->requiredCallback = function ($_request, $model): bool {
             return ! ($model->id ?? false);
         };
 

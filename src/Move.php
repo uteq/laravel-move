@@ -20,7 +20,7 @@ class Move
     protected $prefixes = [];
     public $registeredTable;
 
-    public function registerTable($table)
+    public function registerTable($table): void
     {
         $this->registeredTable = $table;
     }
@@ -30,7 +30,7 @@ class Move
         return $this->registeredTable;
     }
 
-    public function prefix(string $prefix)
+    public function prefix(string $prefix): static
     {
         $this->prefix = $prefix;
 
@@ -46,7 +46,7 @@ class Move
 
     public function getClassNamespace($class): ?string
     {
-        foreach ($this->getPrefixes() as $namespace => $prefix) {
+        foreach ($this->getPrefixes() as $namespace => $_prefix) {
             if (Str::startsWith($class, $namespace)) {
                 return $namespace;
             }
@@ -60,50 +60,50 @@ class Move
         return $this->prefixes;
     }
 
-    public function wrapTableContent($wrapTableContent = true)
+    public function wrapTableContent($wrapTableContent = true): static
     {
         $this->wrapTableContent = $wrapTableContent;
 
         return $this;
     }
 
-    public function getWrapTableContent($wrapTableContent = true)
+    public function getWrapTableContent($wrapTableContent = true): bool|null
     {
         return $this->wrapTableContent;
     }
 
-    public function useTestStore(bool $useTestStore = true)
+    public function useTestStore(bool $useTestStore = true): static
     {
         $this->useTestStore = $useTestStore;
 
         return $this;
     }
 
-    public function usesTestStore()
+    public function usesTestStore(): bool|null
     {
         return $this->useTestStore;
     }
 
-    public function themeColor(string $color)
+    public function themeColor(string $color): static
     {
         $this->themeColor = $color;
 
         return $this;
     }
 
-    public function getThemeColor()
+    public function getThemeColor(): string
     {
         return $this->themeColor;
     }
 
-    public function resource(string $alias, $class)
+    public function resource(string $alias, $class): static
     {
         $this->customResources[$alias] = $class;
 
         return $this;
     }
 
-    public function resources()
+    public function resources(): ResourceCollection
     {
         return new ResourceCollection(
             collect($this->all())
@@ -111,7 +111,7 @@ class Move
         );
     }
 
-    public function resourceRoute(string $alias)
+    public function resourceRoute(string $alias): string
     {
         $resourceName = $this->fullResourceName($this->getByClass($alias));
 
@@ -123,7 +123,7 @@ class Move
         return $this->fullResourceName($this->getByClass($alias));
     }
 
-    public function resourceNamespace(string $namespace, string $prefix = '', $movePrefix = null)
+    public function resourceNamespace(string $namespace, string $prefix = '', $movePrefix = null): static
     {
         $this->customResourceNamespaces[$prefix] = $namespace;
 
@@ -171,17 +171,17 @@ class Move
         return app()->get($resource);
     }
 
-    public function fullResourceName(string $resource)
+    public function fullResourceName(string $resource): string
     {
         return str_replace('/', '.', Str::start($resource, $this->prefix .'.'));
     }
 
-    public function getCustomResources()
+    public function getCustomResources(): array
     {
         return $this->customResources;
     }
 
-    public function getCustomResourceNamespace()
+    public function getCustomResourceNamespace(): array
     {
         return $this->customResourceNamespaces;
     }
@@ -191,12 +191,17 @@ class Move
         return $this->customResources[$alias] ?? null;
     }
 
-    public function getByClass($class)
+    /**
+     * @return (int|string)|null
+     *
+     * @psalm-return array-key|null
+     */
+    public function getByClass(string $class)
     {
         return array_flip($this->all())[$class] ?? null;
     }
 
-    public function all()
+    public function all(): array
     {
         if (! $this->resources) {
             $resources = [];
@@ -219,30 +224,30 @@ class Move
         return $this->resources;
     }
 
-    public function find($resource)
+    public function find($resource): array
     {
-        if (collect($this->all())->first(fn ($value, $key) => $value === $resource)) {
+        if (collect($this->all())->first(fn ($value) => $value === $resource)) {
             return [$resource];
         }
 
         return collect($this->all())
-            ->filter(fn ($class, $name) => Str::contains($name, $resource))
+            ->filter(fn ($_class, $name) => Str::contains($name, $resource))
             ->toArray();
     }
 
-    public function useSidebarGroups(bool $bool = true)
+    public function useSidebarGroups(bool $bool = true): static
     {
         $this->useSidebarGroups = $bool;
 
         return $this;
     }
 
-    public function hasSidebarGroups()
+    public function hasSidebarGroups(): bool
     {
         return $this->useSidebarGroups;
     }
 
-    public function loadResourceRoutes(bool $value = true): self
+    public function loadResourceRoutes(bool $value = true): static
     {
         $this->loadResourceRoutes = $value;
 
@@ -261,7 +266,7 @@ class Move
         return app(ResourceFinder::class)->getClassNames($path);
     }
 
-    public static function generatePathFromNamespace($namespace)
+    public static function generatePathFromNamespace($namespace): string
     {
         $name = Str::replaceFirst(app()->getNamespace(), '', $namespace);
 
@@ -279,7 +284,7 @@ class Move
         return $middlewares;
     }
 
-    public function headerSearch()
+    public function headerSearch(): string
     {
         return 'move::livewire.header-search';
     }
@@ -289,26 +294,26 @@ class Move
         return config('move.layout');
     }
 
-    public function styles()
+    public function styles(): string
     {
         return <<<HTML
 <link rel="stylesheet" type="text/css" href="{$this->cssAssets()}" />
 HTML;
     }
 
-    public function scripts()
+    public function scripts(): string
     {
         return <<<HTML
 <script src="{$this->jsAssets()}" defer></script>
 HTML;
     }
 
-    public function cssAssets()
+    public function cssAssets(): string
     {
         return asset('/move/move.css');
     }
 
-    public function jsAssets()
+    public function jsAssets(): string
     {
         return '/move/move.js';
     }

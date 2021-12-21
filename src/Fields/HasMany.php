@@ -28,14 +28,14 @@ class HasMany extends Select
         );
     }
 
-    public function relation(string $relation)
+    public function relation(string $relation): static
     {
         $this->relation = $relation;
 
         return $this;
     }
 
-    public function handleAfterStore($value, $field, $model, $data): self
+    public function handleAfterStore($value, $field, $model, $data): array
     {
         parent::handleAfterStore($value, $field, $model, $data);
 
@@ -47,6 +47,6 @@ class HasMany extends Select
 
         $model->{$relation}()->sync($ids);
 
-        return $this;
+        return $data;
     }
 }

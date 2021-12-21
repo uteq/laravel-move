@@ -34,12 +34,14 @@ abstract class Field extends FieldElement
     public ?string $placeholder = null;
     public bool $clickable = false;
     public ?bool $wrapContent = null;
+    public ?string $storePrefix = null;
+    public ?string $defaultStorePrefix = null;
 
-    /** @var mixed */
-    public $value;
+    public mixed $value;
 
-    /** @var callable|Closure|null */
-    protected $valueCallback;
+    protected ?Closure $valueCallback;
+
+    protected array $listeners = [];
 
     /**
      * The callback to be used to resolve the field's display value.
@@ -50,6 +52,11 @@ abstract class Field extends FieldElement
      * Indicates if the field is nullable.
      */
     public bool $nullable = false;
+
+    /**
+     * Indicates if the fields display is flexable
+     */
+    public bool $flex = false;
 
     /**
      * Values which will be replaced to null.
@@ -114,7 +121,7 @@ abstract class Field extends FieldElement
     /**
      * Field constructor.
      */
-    public function __construct(string $name, string $attribute = null, callable $valueCallback = null)
+    public function __construct(string $name, string $attribute = null, Closure $valueCallback = null)
     {
         $this->name = $name;
         $this->attribute = $attribute ?? Str::snake(Str::singular($name));
@@ -128,14 +135,14 @@ abstract class Field extends FieldElement
         }
     }
 
-    public function valueCallback(callable $valueCallback = null)
+    public function valueCallback(Closure $valueCallback = null): static
     {
         $this->valueCallback = $valueCallback;
 
         return $this;
     }
 
-    public function isPlaceholder(bool $value = true): self
+    public function isPlaceholder(bool $value = true): static
     {
         $this->isPlaceholder = $value;
 
@@ -147,7 +154,7 @@ abstract class Field extends FieldElement
         return 'store';
     }
 
-    public function formAttribute($formAttribute): self
+    public function formAttribute($formAttribute): static
     {
         $this->formAttribute = $formAttribute;
 
@@ -159,12 +166,12 @@ abstract class Field extends FieldElement
         return $this->name;
     }
 
-    public function attribute(): string
+    public function attribute(): string|null
     {
         return $this->attribute;
     }
 
-    public function type($type): self
+    public function type($type): static
     {
         $this->type = $type;
 
@@ -176,32 +183,28 @@ abstract class Field extends FieldElement
         return $this->formAttribute . '.' . $this->attribute;
     }
 
-    /**
-     * Applies the resource data to the current field
-     *
-     * @param  mixed  $resource
-     * @param  string|null  $attribute
-     */
+    /** Applies the resource data to the current field */
     public function applyResourceData(
-        $resource,
-        $attribute = null
-    ): self {
-        $this->resource = $resource;
+        $model,
+        $resourceForm = null,
+        $resource = null,
+    ): static {
+        $this->resource = $model;
 
         $this->resourceDataCallback
             ? tap(
-                $this->value ?? $this->getResourceAttributeValue($resource, $this->attribute),
+                $this->value ?? $this->getResourceAttributeValue($model, $this->attribute),
                 fn ($value) => $this->value = call_user_func(
                     $this->resourceDataCallback,
                     $value,
-                    $resource,
+                    $model,
                     $this->attribute,
                 )
             )
-            : $this->fillFromResource($resource, $this->attribute);
+            : $this->fillFromResource($model, $this->attribute);
 
         if (! $this->value && $this->valueCallback) {
-            $this->value = ($this->valueCallback)($this->value, $resource, $this->attribute);
+            $this->value = ($this->valueCallback)($this->value, $model, $this->attribute);
         }
 
         return $this;
@@ -232,39 +235,32 @@ abstract class Field extends FieldElement
 
     /**
      * @param $resource
-     * @param $attribute
+     * @param null|string $attribute
+     *
      * @return array|mixed
      */
-    protected function getResourceAttributeValue($resource, $attribute)
+    protected function getResourceAttributeValue($resource, string|null $attribute)
     {
         return Arr::get($resource, str_replace('->', '.', $attribute));
     }
 
     /**
      * Hydrate the given attribute on the model based on the incoming request.
-     *
-     * @param  Request  $request
-     * @param  object  $model
-     * @param  string  $attribute
-     * @param  string|null  $requestAttribute
-     * @return void
      */
-    public function fillInto(Request $request, $model, $attribute, $requestAttribute = null): void
-    {
+    public function fillInto(
+        Request $request,
+        object $model,
+        string $attribute,
+        ?string $requestAttribute = null
+    ): void {
         $this->fillAttribute($request, $requestAttribute ?? $this->attribute, $model, $attribute);
     }
 
-    /**
-     * @param Request $request
-     * @param $requestAttribute
-     * @param $model
-     * @param $attribute
-     */
     protected function fillAttribute(
         Request $request,
-        $requestAttribute,
-        $model,
-        $attribute
+        string|null $requestAttribute,
+        object $model,
+        string $attribute
     ): void {
         $filler = $this->fillCallback;
 
@@ -283,8 +279,12 @@ abstract class Field extends FieldElement
      * @param $model
      * @param $attribute
      */
-    protected function fillAttributeFromRequest(Request $request, $requestAttribute, $model, $attribute): void
-    {
+    protected function fillAttributeFromRequest(
+        Request $request,
+        $requestAttribute,
+        $model,
+        $attribute
+    ): void {
         if (! $request->exists($requestAttribute)) {
             return;
         }
@@ -313,14 +313,14 @@ abstract class Field extends FieldElement
      * @param Closure $fillCallback
      * @return $this
      */
-    public function fillUsing(Closure $fillCallback): self
+    public function fillUsing(Closure $fillCallback): static
     {
         $this->fillCallback = $fillCallback;
 
         return $this;
     }
 
-    public function resourceUrl($resource)
+    public function resourceUrl($resource): string
     {
         $resource = Move::getByClass(is_string($resource) ? $resource : get_class($resource));
 
@@ -337,7 +337,7 @@ abstract class Field extends FieldElement
         ]);
     }
 
-    public function clickable($clickable = true): self
+    public function clickable($clickable = true): static
     {
         $this->clickable = is_callable($clickable) ? $clickable($this) : $clickable;
 
@@ -391,12 +391,12 @@ abstract class Field extends FieldElement
         ], $data));
     }
 
-    public function resourceStore()
+    public function resourceStore(): array
     {
         return array_replace($this->resource->toArray(), $this->resource->store ?? []);
     }
 
-    public function isVisible($resource, ?string $displayType = null): bool
+    public function isVisible(array $resource, ?string $displayType = null): bool
     {
         if (! $this->areDependenciesSatisfied($resource)) {
             return false;
@@ -422,7 +422,12 @@ abstract class Field extends FieldElement
         return $this->view(...func_get_args());
     }
 
-    public function beforeStore(Closure $beforeStore, $key = null): self
+    /**
+     * @param null|string $key
+     *
+     * @psalm-param 'multiple'|null $key
+     */
+    public function beforeStore(Closure $beforeStore, string|null $key = null): static
     {
         $key
             ? $this->beforeStore[$key] = $beforeStore
@@ -431,12 +436,12 @@ abstract class Field extends FieldElement
         return $this;
     }
 
-    public function hasBeforeStore()
+    public function hasBeforeStore(): bool
     {
         return isset($this->beforeStore);
     }
 
-    public function afterStore(Closure $afterStore, $key = null): self
+    public function afterStore(Closure $afterStore, $key = null): static
     {
         $key ? $this->afterStore[$key] = $afterStore
              : $this->afterStore[] = $afterStore;
@@ -444,7 +449,7 @@ abstract class Field extends FieldElement
         return $this;
     }
 
-    public function hasAfterStore()
+    public function hasAfterStore(): bool
     {
         return isset($this->afterStore);
     }
@@ -466,8 +471,7 @@ abstract class Field extends FieldElement
         }
 
         return collect($data)
-            /** @psalm-suppress UnusedClosureParam */
-            ->filter(fn ($value, $field) => $value !== UnsetField::class)
+            ->filter(fn ($value) => $value !== UnsetField::class)
             ->toArray();
     }
 
@@ -488,12 +492,11 @@ abstract class Field extends FieldElement
         }
 
         return collect($data)
-            /** @psalm-suppress UnusedClosureParam */
-            ->filter(fn ($field, $value) => $value !== UnsetField::class)
+            ->filter(fn ($_field, $value) => $value !== UnsetField::class)
             ->toArray();
     }
 
-    public function removeFromModel(\Closure $conditions = null)
+    public function removeFromModel(\Closure $conditions = null): static
     {
         $this->beforeStore[] = function ($value, $field, $model, $data) use ($conditions) {
             if ($conditions
@@ -510,28 +513,31 @@ abstract class Field extends FieldElement
         return $this;
     }
 
-    public function onlyForValidation(\Closure $conditions = null): self
+    public function onlyForValidation(\Closure $conditions = null): static
     {
         $this->removeFromModel($conditions);
 
         return $this;
     }
 
-    public function index($index): self
+    public function index(string|Closure|View $index): static
     {
         $this->index = $index;
 
         return $this;
     }
 
-    public function show($show): self
+    /**
+     * @psalm-param Closure(mixed):string $show
+     */
+    public function show(string|Closure|View $show): static
     {
         $this->show = $show;
 
         return $this;
     }
 
-    public function form($form): self
+    public function form(string|Closure|View $form): static
     {
         $this->form = $form;
 
@@ -546,7 +552,7 @@ abstract class Field extends FieldElement
             return $default;
         }
 
-        $attribute = ($this->storePrefix ?? false)
+        $attribute = $this->storePrefix
             ? Str::after($this->storePrefix . '.' . $this->attribute, 'store.')
             : $this->attribute;
 
@@ -555,38 +561,39 @@ abstract class Field extends FieldElement
             : Arr::get($store, $attribute, $default);
     }
 
-    public function before(Closure $before): self
+    public function before(Closure $before): static
     {
         $this->before = $before;
 
         return $this;
     }
 
-    public function placeholder(string $placeholder): self
+    public function placeholder(string $placeholder): static
     {
         $this->placeholder = $placeholder;
 
         return $this;
     }
 
-    public function getPlaceholder($resource): string
+    public function getPlaceholder($resource): ?string
     {
-        return $this->placeholder ?? __('Add a :label', [
-            'label' => lcfirst($resource->singularLabel()) . ' ' . lcfirst($this->name),
-        ]);
+        return $this->placeholder
+            ?? (string) __('Add a :label', [
+                'label' => lcfirst($resource->singularLabel()) . ' ' . lcfirst($this->name)
+            ]);
     }
 
-    public function forgetComponentMeta($component, $key)
+    public function forgetComponentMeta($component, $key): void
     {
         Arr::forget($component->meta, static::class . '.' . $key);
     }
 
-    public function hasComponentMeta($component, $key)
+    public function hasComponentMeta($component, $key): bool
     {
         return Arr::has($component->meta, static::class . '.' . $key);
     }
 
-    public function setComponentMeta($component, $key, $value)
+    public function setComponentMeta($component, $key, $value): void
     {
         Arr::set($component->meta, static::class . '.' . $key, $value);
     }
@@ -596,21 +603,21 @@ abstract class Field extends FieldElement
         return Arr::get($component->meta, static::class . '.' . $key, $default);
     }
 
-    public function disabled(bool $disabled = true)
+    public function disabled(bool $disabled = true): static
     {
         $this->disabled = $disabled;
 
         return $this;
     }
 
-    public function enabled(bool $enabled = true)
+    public function enabled(bool $enabled = true): static
     {
         $this->disabled = ! $enabled;
 
         return $this;
     }
 
-    public function afterValueCallback(Closure $afterCallback)
+    public function afterValueCallback(Closure $afterCallback): void
     {
         $callback = $this->valueCallback;
 
@@ -632,10 +639,10 @@ abstract class Field extends FieldElement
 
     public function storeValue($key, $default = null)
     {
-        $prefix = $this->storePrefix ?? null;
-        $prefix = $prefix ? $prefix . '.' : '';
+        $prefix = $this->storePrefix;
+        $prefix .= $prefix ? '.' : '';
 
-        $store = move_arr_expand($this->resource?->store ?? []);
+        $store = move_arr_expand($this->resource->store);
 
         $storeKey = Str::after($this->storePrefix . '.' . $key, $this->defaultStorePrefix . '.');
 
@@ -656,11 +663,11 @@ abstract class Field extends FieldElement
         $number = (int) ((string) Str::of($this->storePrefix)->afterLast('.') ?? null);
 
         return Str::of($this->storePrefix)
-            ->before($number)
+            ->before((string) $number)
             ->append($number + 1);
     }
 
-    public function hasBefore()
+    public function hasBefore(): bool
     {
         return (bool) $this->before;
     }

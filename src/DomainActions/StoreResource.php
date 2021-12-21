@@ -43,12 +43,11 @@ class StoreResource
      * @param Model $model
      * @return Model
      */
-    public function modelWithoutMedia(Model $model, $data)
+    public function modelWithoutMedia(Model $model, array $data)
     {
         collect($data)
             ->filter(fn ($attribute) => $attribute instanceof MediaCollection)
-            /** @psalm-suppress UnusedClosureParam */
-            ->each(function ($attribute, $key) use (&$model) {
+            ->each(function ($_attribute, $key) use (&$model) {
                 unset($model[$key]);
             });
 
@@ -68,7 +67,7 @@ class StoreResource
             ->toArray();
     }
 
-    public function afterStore(Model $model, array $data, Resource $resource)
+    public function afterStore(Model $model, array $data, Resource $resource): void
     {
         $afterStoreActions = method_exists($resource, 'afterStore') ? $resource->afterStore() : [];
 
@@ -78,7 +77,7 @@ class StoreResource
         app()->call([$this, 'syncMedia'], ['model' => $model, 'data' => $data]);
     }
 
-    public function syncMedia(SyncMediaAction $syncer, Model $model, array $data)
+    public function syncMedia(SyncMediaAction $syncer, Model $model, array $data): void
     {
         collect($data)
             ->filter(fn ($attribute) => $attribute instanceof MediaCollection)

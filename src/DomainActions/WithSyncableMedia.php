@@ -10,21 +10,23 @@ trait WithSyncableMedia
 {
     protected $mediaPrefix = null;
 
-    public function mediaPrefix($mediaPrefix)
+    public function mediaPrefix($mediaPrefix): SyncMediaAction
     {
         $this->mediaPrefix = $mediaPrefix;
 
         return $this;
     }
 
+    /**
+     * @psalm-return list<mixed>
+     */
     public function syncMedia(
         Model $model,
         MediaCollection $paths,
         $collection,
         $diskName = null,
         $manipulations = [],
-    )
-    {
+    ) {
         $diskName ??= config('filesystems.default');
 
         if (! $model instanceof HasMedia) {
@@ -43,6 +45,7 @@ trait WithSyncableMedia
         $result = [];
 
         foreach ($paths->withoutDelete() as $path) {
+            /** @psalm-suppress UndefinedMethod */
             if ($path->id && config('media-library.media_model')::query()->find($path->id)) {
                 continue;
             }

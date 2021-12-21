@@ -7,9 +7,10 @@ use Uteq\Move\Facades\Move;
 
 trait WithMount
 {
-    public function mount()
+    public function mount(): void
     {
         if (method_exists($this, 'setup')) {
+            /** @psalm-suppress InvalidArgument */
             app()->call([$this, 'setup']);
         }
 
@@ -26,6 +27,7 @@ trait WithMount
         $this->handleAfterMount();
 
         if (method_exists($this, 'init')) {
+            /** @psalm-suppress InvalidArgument */
             app()->call([$this, 'init']);
         }
     }
@@ -37,6 +39,7 @@ trait WithMount
 
     private function mountStore(): void
     {
+        /** @psalm-suppress RedundantPropertyInitializationCheck */
         $this->store ??= [];
 
         foreach ($this->fields() as $field) {

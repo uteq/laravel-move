@@ -270,7 +270,10 @@ class Encoding
         return self::toWin1252($text, $option);
     }
 
-    public static function fixUTF8($text, $option = self::WITHOUT_ICONV)
+    /**
+     * @psalm-param ''|'IGNORE'|'TRANSLIT' $option
+     */
+    public static function fixUTF8(string $text, string $option = self::WITHOUT_ICONV)
     {
         if (is_array($text)) {
             foreach ($text as $k => $v) {
@@ -294,7 +297,7 @@ class Encoding
         return $text;
     }
 
-    public static function UTF8FixWin1252Chars($text)
+    public static function UTF8FixWin1252Chars($text): string
     {
         // If you received an UTF-8 string that was converted from Windows-1252 as it was ISO8859-1
         // (ignoring Windows-1252 chars from 80 to 9F) use this function to fix it.
@@ -312,13 +315,16 @@ class Encoding
         return $str;
     }
 
-    protected static function strlen($text)
+    /**
+     * @psalm-return 0|positive-int
+     */
+    protected static function strlen(string $text): int
     {
         return (function_exists('mb_strlen') && ((int) ini_get('mbstring.func_overload')) & 2) ?
             mb_strlen($text, '8bit') : strlen($text);
     }
 
-    public static function normalizeEncoding($encodingLabel)
+    public static function normalizeEncoding($encodingLabel): string
     {
         $encoding = strtoupper($encodingLabel);
         $encoding = preg_replace('/[^a-zA-Z0-9\s]/', '', $encoding);
@@ -351,7 +357,10 @@ class Encoding
         return self::toUTF8($text);
     }
 
-    protected static function utf8_decode($text, $option = self::WITHOUT_ICONV)
+    /**
+     * @return false|string
+     */
+    protected static function utf8_decode(string $text, $option = self::WITHOUT_ICONV): string|false
     {
         if ($option == self::WITHOUT_ICONV || ! function_exists('iconv')) {
             $o = utf8_decode(

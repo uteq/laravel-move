@@ -32,14 +32,14 @@ trait HasRules
      *
      * @param  callable|array|string  $rules
      */
-    public function rules($rules): self
+    public function rules($rules): static
     {
         $this->rules = ($rules instanceof Rule || is_string($rules)) ? func_get_args() : $rules;
 
         return $this;
     }
 
-    public function addCustomRule($attribute, $rule)
+    public function addCustomRule($attribute, $rule): \Uteq\Move\Fields\Field
     {
         $this->customRules[$attribute] = is_callable($rule)
             ? call_user_func($rule, request())
@@ -48,7 +48,7 @@ trait HasRules
         return $this;
     }
 
-    public function customRules($rules)
+    public function customRules($rules): array
     {
         return $this->customRules = array_replace_recursive(
             $this->customRules,
@@ -101,7 +101,7 @@ trait HasRules
      *
      * @param  callable|array|string  $rules
      */
-    public function creationRules($rules): self
+    public function creationRules($rules): static
     {
         $this->creationRules = ($rules instanceof Rule || is_string($rules)) ? func_get_args() : $rules;
 
@@ -110,14 +110,15 @@ trait HasRules
 
     /**
      * Get the update rules for this field.
-     * @return array
      */
-    public function getUpdateRules(Request $request)
+    public function getUpdateRules(Request $request): array
     {
+        $updateRules = is_callable($this->updateRules)
+            ? call_user_func($this->updateRules, $request)
+            : $this->updateRules;
+
         $rules = [
-            $this->attribute => is_callable($this->updateRules)
-                ? call_user_func($this->updateRules, $request)
-                : $this->updateRules,
+            (string) $this->attribute => $updateRules,
         ];
 
         /** @psalm-suppress InvalidArgument */

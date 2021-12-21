@@ -25,21 +25,21 @@ class ResourceFinder
         $this->appPath = app_path();
     }
 
-    public function setNamespace($namespace)
+    public function setNamespace($namespace): static
     {
         $this->namespace = $namespace;
 
         return $this;
     }
 
-    public function setAppPath($appPath)
+    public function setAppPath($appPath): static
     {
         $this->appPath = $appPath;
 
         return $this;
     }
 
-    public function getClassNames($path)
+    public function getClassNames($path): \Illuminate\Support\Collection
     {
         return collect($this->files->allFiles(Str::start($path, $this->basePath)))
             ->map(function (SplFileInfo $file) {

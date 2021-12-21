@@ -34,14 +34,14 @@ class ResourceShow extends Component
 
     protected $crudBaseRoute = 'move';
 
-    public function mount($resource)
+    public function mount($resource): void
     {
         $this->resolveResourceModel();
 
         $this->resource()->authorizeTo('view');
     }
 
-    public function panels()
+    public function panels(): Collection
     {
         return collect($this->panels);
     }

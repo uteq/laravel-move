@@ -6,7 +6,7 @@ use Uteq\Move\Fields\Field;
 
 trait WithStackableFields
 {
-    public function stackFields()
+    public function stackFields(): void
     {
         foreach ($this->fields as &$field) {
             if (! $field instanceof Field) {

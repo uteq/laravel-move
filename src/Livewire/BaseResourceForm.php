@@ -32,6 +32,7 @@ abstract class BaseResourceForm extends FormComponent
     public $showingAddResource = [];
     public $baseRoute = 'move';
     public $showForm = false;
+    public $fields;
     public array $meta = [];
     public array $dirtyFields = [];
 
@@ -59,7 +60,7 @@ abstract class BaseResourceForm extends FormComponent
      */
     public array $store;
 
-    public function addListener($key, $method)
+    public function addListener($key, $method): void
     {
         if (isset($this->listeners[$key])) {
             throw new \Exception(sprintf(
@@ -72,7 +73,7 @@ abstract class BaseResourceForm extends FormComponent
         $this->listeners = array_replace([$key => $method], $this->listeners ?? []);
     }
 
-    public function addQueryString($key)
+    public function addQueryString($key): void
     {
         if (isset($this->queryString[$key])) {
             throw new \Exception(sprintf(
@@ -85,7 +86,7 @@ abstract class BaseResourceForm extends FormComponent
         array_push($this->queryString, $key);
     }
 
-    public function refreshFields()
+    public function refreshFields(): void
     {
         $this->model->refresh();
 
@@ -97,11 +98,14 @@ abstract class BaseResourceForm extends FormComponent
         );
     }
 
-    public function closeModal()
+    public function closeModal(): void
     {
         $this->showModal = null;
     }
 
+    /**
+     * @return void
+     */
     public function handleAfterSaveActions()
     {
         if ($this->inModal) {
@@ -121,7 +125,7 @@ abstract class BaseResourceForm extends FormComponent
         $this->render();
     }
 
-    public function showAddResource($id)
+    public function showAddResource($id): void
     {
         $this->showForm = true;
 
@@ -140,14 +144,14 @@ abstract class BaseResourceForm extends FormComponent
         return $this->resource()->singularLabel();
     }
 
-    public function title()
+    public function title(): string
     {
         return $this->resource()->singularLabel() . ' ' . (
             $this->model ? 'edit' : 'create'
         );
     }
 
-    public function updatedStore($defaultKey, $defaultValue)
+    public function updatedStore($defaultKey, $defaultValue): void
     {
         $store = $this->storeAsArray();
 
@@ -164,7 +168,7 @@ abstract class BaseResourceForm extends FormComponent
         $this->dirtyFields[$defaultKey] = true;
     }
 
-    protected function storeAsArray()
+    protected function storeAsArray(): array
     {
         $store = [];
         foreach ($this->store as $key => $value) {
@@ -189,12 +193,12 @@ abstract class BaseResourceForm extends FormComponent
             ->each(fn ($panel) => $panel->id ??= Str::random(20));
     }
 
-    public function panels()
+    public function panels(): Collection
     {
         return collect($this->panels);
     }
 
-    public function set($attribute, $value)
+    public function set($attribute, $value): void
     {
         $attribute = Str::before($attribute, '.');
         $attributePath = Str::after($attribute, '.');
@@ -202,7 +206,7 @@ abstract class BaseResourceForm extends FormComponent
         Arr::set($this->{$attribute}, $attributePath, $value);
     }
 
-    public function panelAction(string $panelId, string $method, ...$args)
+    public function panelAction(string $panelId, string $method, ...$args): void
     {
         $this->panels()
             ->filter(fn ($panel) => get_class($panel) === decrypt($panelId))
@@ -218,7 +222,7 @@ abstract class BaseResourceForm extends FormComponent
      * @param $value
      * @return $this
      */
-    public function updateFieldValue($field, $value): self
+    public function updateFieldValue($field, $value): static
     {
         $this->store[$field->attribute] = is_callable($value)
             ? $value($this->store[$field->attribute], $this)

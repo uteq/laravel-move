@@ -2,20 +2,16 @@
 
 namespace Uteq\Move\Fields;
 
+use Closure;
+
 class Id extends Field
 {
     public string $component = 'text-field';
 
-    /**
-     * Id constructor.
-     * @param string $name
-     * @param string $attribute
-     * @param callable|null $valueCallback
-     */
     public function __construct(
         string $name = 'Id',
         string $attribute = 'id',
-        callable $valueCallback = null
+        Closure $valueCallback = null
     ) {
         parent::__construct($name, $attribute, $valueCallback);
 
@@ -28,7 +24,7 @@ class Id extends Field
      */
     public function asBigInt()
     {
-        $this->valueCallback = fn ($id) => (string) $id;
+        $this->valueCallback = fn ($id): string => (string) $id;
 
         return $this;
     }

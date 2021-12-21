@@ -33,6 +33,9 @@ class MediaCollection extends DataTransferObjectCollection implements MediaColle
         );
     }
 
+    /**
+     * @return \Illuminate\Support\Collection
+     */
     public function onlyDelete()
     {
         return collect($this->collection)
@@ -40,6 +43,9 @@ class MediaCollection extends DataTransferObjectCollection implements MediaColle
             ->filter(fn (MediaData $item) => $item->action === 'delete');
     }
 
+    /**
+     * @return \Illuminate\Support\Collection
+     */
     public function withoutDelete()
     {
         return collect($this->collection)

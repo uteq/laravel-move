@@ -51,7 +51,7 @@ trait ShowsConditionally
     public function hideFromIndex($callback = true)
     {
         $this->showOnIndex = is_callable($callback)
-            ? fn () => ! call_user_func_array($callback, func_get_args())
+            ? fn (): bool => ! call_user_func_array($callback, func_get_args())
             : ! $callback;
 
         return $this;
@@ -66,20 +66,20 @@ trait ShowsConditionally
     public function hideFromDetail($callback = true)
     {
         $this->showOnDetail = is_callable($callback)
-            ? fn () => ! call_user_func_array($callback, func_get_args())
+            ? fn (): bool => ! call_user_func_array($callback, func_get_args())
             : ! $callback;
 
         return $this;
     }
 
-    public function hideFromForm($callback = true)
+    public function hideFromForm($callback = true): static
     {
         $this->showOnCreation = is_callable($callback)
-            ? fn () => ! call_user_func_array($callback, func_get_args())
+            ? fn (): bool => ! call_user_func_array($callback, func_get_args())
             : ! $callback;
 
         $this->showOnUpdate = is_callable($callback)
-            ? fn () => ! call_user_func_array($callback, func_get_args())
+            ? fn (): bool => ! call_user_func_array($callback, func_get_args())
             : ! $callback;
 
         return $this;
@@ -94,7 +94,7 @@ trait ShowsConditionally
     public function hideWhenCreating($callback = true)
     {
         $this->showOnCreation = is_callable($callback)
-            ? fn () => ! call_user_func_array($callback, func_get_args())
+            ? fn (): bool => ! call_user_func_array($callback, func_get_args())
             : ! $callback;
 
         return $this;
@@ -109,7 +109,7 @@ trait ShowsConditionally
     public function hideWhenUpdating($callback = true)
     {
         $this->showOnUpdate = is_callable($callback)
-            ? fn () => ! call_user_func_array($callback, func_get_args())
+            ? fn (): bool => ! call_user_func_array($callback, func_get_args())
             : ! $callback;
 
         return $this;
@@ -167,7 +167,7 @@ trait ShowsConditionally
         return $this;
     }
 
-    public function showOnForm($callback = true)
+    public function showOnForm($callback = true): static
     {
         $this->showOnUpdate = $callback;
         $this->showOnCreation = $callback;
@@ -286,7 +286,7 @@ trait ShowsConditionally
         return $this;
     }
 
-    public function hide(bool $value = true)
+    public function hide(bool $value = true): static
     {
         $this->showOnIndex = ! $value;
         $this->showOnDetail = ! $value;
@@ -311,15 +311,15 @@ trait ShowsConditionally
         return $this;
     }
 
-    public function isShownOn($action, $resource = null, $request = null)
+    public function isShownOn($action, $resource = null, $request = null): bool
     {
         $request = $request ?: request();
 
         $handler = [
-            'create' => fn() => $this->isShownOnCreation($request),
-            'update' => fn() => $this->isShownOnUpdate($request, $resource),
-            'index' => fn() => $this->isShownOnIndex($request, $resource),
-            'show' => fn() => $this->isShownOnDetail($request, $resource),
+            'create' => fn(): bool => $this->isShownOnCreation($request),
+            'update' => fn(): bool => $this->isShownOnUpdate($request, $resource),
+            'index' => fn(): bool => $this->isShownOnIndex($request, $resource),
+            'show' => fn(): bool => $this->isShownOnDetail($request, $resource),
         ][$action] ?? false;
 
         return $handler ? $handler() : false;

@@ -14,7 +14,7 @@ trait WithAuthorization
         return Gate::getPolicyFor(static::newModel());
     }
 
-    public static function policyMethodExists($ability, $model = null)
+    public static function policyMethodExists($ability, $model = null): bool
     {
         return method_exists($model ?? static::policy(), $ability);
     }
@@ -29,12 +29,12 @@ trait WithAuthorization
         return null !== static::policy();
     }
 
-    public function authorizeTo($ability, $model = null, $arguments = [])
+    public function authorizeTo($ability, $model = null, $arguments = []): void
     {
         throw_unless($this->can($ability, $model, $arguments), AuthorizationException::class);
     }
 
-    public function can($ability, $model = null, $arguments = [])
+    public function can($ability, $model = null, $arguments = []): bool
     {
         if (! static::canAuthorize()) {
             return true;

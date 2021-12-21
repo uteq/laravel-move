@@ -7,12 +7,12 @@ use Uteq\Move\Resource;
 
 class ResourceCollection extends Collection
 {
-    public function authorized()
+    public function authorized(): static
     {
         return new static($this->filter(fn (Resource $item) => $item->can('viewAny')));
     }
 
-    public function grouped()
+    public function grouped(): array
     {
         $resources = $this->filter(fn ($item) => $item::$group)
             ->mapToGroups(function ($item) {

@@ -13,7 +13,7 @@ abstract class Filter
     use Makeable;
     use Metable;
 
-    abstract public function apply($query, $value, $request): Builder;
+    abstract public function apply(Builder $query, $value, $request): Builder;
 
     public function __invoke($request, Builder $query): Builder
     {
@@ -50,6 +50,6 @@ abstract class Filter
 
     public function default()
     {
-        return;
+        return null;
     }
 }

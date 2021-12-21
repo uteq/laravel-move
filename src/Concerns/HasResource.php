@@ -20,7 +20,9 @@ trait HasResource
     public $model = null;
     public $modelId = null;
 
-    public function initializeHasResource()
+    public $fields;
+
+    public function initializeHasResource(): void
     {
         $this->initializeHasMountActions();
 
@@ -47,7 +49,7 @@ trait HasResource
         return $resource->model();
     }
 
-    public function mountHasResource()
+    public function mountHasResource(): void
     {
         if ($this->modelId) {
             $this->resource()->resource = $this->model;
@@ -59,7 +61,7 @@ trait HasResource
         return $this->resolvedResource;
     }
 
-    public function getResolvedResourceProperty()
+    public function getResolvedResourceProperty(): \Uteq\Move\Resource
     {
         return Move::resolveResource($this->resource);
     }
@@ -90,10 +92,10 @@ trait HasResource
         return $this->mapFields($fields, $store);
     }
 
-    public function mapFields(array $resolvedFields, $store)
+    public function mapFields(array $resolvedFields, $store): array
     {
         $store = collect($store)
-            ->filter(fn ($value, $key) => ! str_contains($key, '.'))
+            ->filter(fn ($_value, $key) => ! str_contains($key, '.'))
             ->toArray();
 
         $fields = collect($resolvedFields)
@@ -146,11 +148,11 @@ trait HasResource
     public function getFieldRule($key): array
     {
         return collect($this->rules($this->{$this->property}))
-            ->filter(fn ($rules, $field) => $field === $key)
+            ->filter(fn ($_rules, $field) => $field === $key)
             ->toArray();
     }
 
-    public function handleResourceAction($type, $fields, $args = [])
+    public function handleResourceAction($type, $fields, $args = []): void
     {
         $this->resource()->handleAction(
             $type,
@@ -167,7 +169,7 @@ trait HasResource
         $this->emit('saved', $this->{$this->property});
     }
 
-    public function getFieldsProperty()
+    public function getFieldsProperty(): \Illuminate\Support\Collection
     {
         return collect(
             $this->model
@@ -201,7 +203,7 @@ trait HasResource
         return $this->cachedCollection;
     }
 
-    public function getCachedCollectionProperty()
+    public function getCachedCollectionProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return $this->query()
             ->paginate($this->filter('limit', $this->resource()->defaultPerPage()));

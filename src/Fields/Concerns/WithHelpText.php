@@ -6,14 +6,14 @@ trait WithHelpText
 {
     public ?string $helpText = null;
 
-    public function helpText($helpText)
+    public function helpText($helpText): \Uteq\Move\Fields\Panel
     {
         $this->helpText = $helpText;
 
         return $this;
     }
 
-    public function getHelpText()
+    public function getHelpText(): string|null
     {
         return $this->helpText;
     }

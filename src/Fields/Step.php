@@ -30,14 +30,14 @@ class Step extends Panel
         parent::__construct($name, $fields);
     }
 
-    public function disabled()
+    public function disabled(): bool
     {
         return ! $this->active()
             && ! $this->isComplete()
             && ! $this->isAvailable();
     }
 
-    public function active()
+    public function active(): bool
     {
         if (! isset($this->resourceForm)) {
             return false;
@@ -46,24 +46,27 @@ class Step extends Panel
         return $this->attribute === $this->resourceForm->activeStep();
     }
 
-    public function isComplete()
+    public function isComplete(): bool
     {
-        return in_array($this->attribute, $this->resourceForm->completedSteps);
+        return in_array(
+            $this->attribute,
+            $this->resourceForm->completedSteps
+        );
     }
 
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         return in_array($this->attribute, $this->resourceForm->availableSteps);
     }
 
-    public function showTitle($show = true)
+    public function showTitle($show = true): static
     {
         $this->hideTitle = ! $show;
 
         return $this;
     }
 
-    public function next(string $next, ?string $text = null, $showOnEdit = false)
+    public function next(string $next, ?string $text = null, $showOnEdit = false): static
     {
         $this->next = $next;
         $this->showNextOnEdit = $showOnEdit;
@@ -72,14 +75,14 @@ class Step extends Panel
         return $this;
     }
 
-    public function cancelRoute($cancelRoute)
+    public function cancelRoute($cancelRoute): static
     {
         $this->cancelRoute = $cancelRoute;
 
         return $this;
     }
 
-    public function hideCancel($hideCancel = true)
+    public function hideCancel($hideCancel = true): static
     {
         $this->hideCancel = $hideCancel;
 

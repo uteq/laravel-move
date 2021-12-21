@@ -14,7 +14,7 @@ trait LoadableFiles
 
     public function loadFiles(Field $field, $withDeleted = false)
     {
-        $this->hasMultipleFiles[$field->attribute] = $field->isMultiple;
+        $this->hasMultipleFiles[$field->attribute] = $field->isMultiple ?? false;
 
         $field->applyResourceData($this->model);
 
