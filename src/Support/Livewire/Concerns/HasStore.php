@@ -55,7 +55,6 @@ trait HasStore
 
     public function save()
     {
-
         $this->hasStoreRefreshModel();
 
         $store = move_arr_expand($this->store);

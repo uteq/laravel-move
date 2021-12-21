@@ -17,7 +17,10 @@ use Uteq\Move\Resource;
 
 class Select extends Field
 {
-    use WithModal, WithListeners, WithClosures, WithRedirects;
+    use WithModal;
+    use WithListeners;
+    use WithClosures;
+    use WithRedirects;
 
     public string $component = 'select-field';
 

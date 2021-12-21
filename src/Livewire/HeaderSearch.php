@@ -51,7 +51,7 @@ class HeaderSearch extends Component
             ->filter(function ($resource) {
                 $resourceModel = $resource::$model;
 
-                return Schema::hasTable((new $resourceModel)->getTable());
+                return Schema::hasTable((new $resourceModel())->getTable());
             })
             ->map(function ($resource, $key) {
                 $resourceModel = $resource::$model;

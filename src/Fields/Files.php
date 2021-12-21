@@ -3,7 +3,6 @@
 namespace Uteq\Move\Fields;
 
 use Closure;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\RequiredIf;
 

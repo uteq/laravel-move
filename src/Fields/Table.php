@@ -5,7 +5,6 @@ namespace Uteq\Move\Fields;
 use Closure;
 use Uteq\Move\Actions\LivewireCloseModal;
 use Uteq\Move\Facades\Move;
-use Uteq\Move\Fields\Concerns\WithStackableFields;
 
 class Table extends Panel
 {
@@ -23,8 +22,7 @@ class Table extends Panel
         $name,
         public string $resourceClass,
         array $fields = null
-    )
-    {
+    ) {
         $this->id = static::class . md5($resourceClass);
 
         $this->withMeta([
@@ -120,7 +118,7 @@ class Table extends Panel
 
         return collect($fields)
             ->filter(fn ($field) => in_array($field->attribute, $this->showFields, true))
-            ->filter(fn ($field) => !in_array($field->attribute, $this->hideFields, true))
+            ->filter(fn ($field) => ! in_array($field->attribute, $this->hideFields, true))
             ->each(function ($field) {
                 $field->storePrefix = $field->defaultStorePrefix . '.' . $this->id();
                 $field->hideName();

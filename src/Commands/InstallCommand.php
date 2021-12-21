@@ -52,7 +52,7 @@ class InstallCommand extends Command
         $this->installMoveServiceProvider();
 
         // Layouts...
-        (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/resources/views/layouts', resource_path('views/layouts'));
+        (new Filesystem())->copyDirectory(__DIR__.'/../../stubs/resources/views/layouts', resource_path('views/layouts'));
 
         // Assets...
         copy(__DIR__.'/../../stubs/public/css/app.css', public_path('css/app.css'));

@@ -86,7 +86,7 @@ abstract class Resource
     {
         $model = isset(static::$model) ? static::$model : null;
 
-        return $model ? new $model : null;
+        return $model ? new $model() : null;
     }
 
     public static function singularLabel(): string
@@ -233,8 +233,7 @@ abstract class Resource
     public function handler(string $key, array $args = [])
     {
         return app()->make($this->actionHandlers[$key]
-            ?? (static::$defaultActionHandlers[$key] ?? null)
-        , $args);
+            ?? (static::$defaultActionHandlers[$key] ?? null), $args);
     }
 
     public function handleAction(string $key, Model $model, array $fields, string $from, array $args = [])
@@ -470,7 +469,6 @@ abstract class Resource
 
     public function fullRoute($action): void
     {
-
     }
 
     public function icon()

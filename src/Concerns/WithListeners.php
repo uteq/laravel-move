@@ -16,7 +16,6 @@ trait WithListeners
         if (is_array($key)) {
             $this->listeners = array_replace($key, $this->listeners);
         } else {
-
             if (isset($this->listeners[$key])) {
                 throw new Exception(sprintf(
                     '%s: The given listener `%s` already exists',

@@ -316,10 +316,10 @@ trait ShowsConditionally
         $request = $request ?: request();
 
         $handler = [
-            'create' => fn(): bool => $this->isShownOnCreation($request),
-            'update' => fn(): bool => $this->isShownOnUpdate($request, $resource),
-            'index' => fn(): bool => $this->isShownOnIndex($request, $resource),
-            'show' => fn(): bool => $this->isShownOnDetail($request, $resource),
+            'create' => fn (): bool => $this->isShownOnCreation($request),
+            'update' => fn (): bool => $this->isShownOnUpdate($request, $resource),
+            'index' => fn (): bool => $this->isShownOnIndex($request, $resource),
+            'show' => fn (): bool => $this->isShownOnDetail($request, $resource),
         ][$action] ?? false;
 
         return $handler ? $handler() : false;

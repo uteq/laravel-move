@@ -3,7 +3,6 @@
 namespace Uteq\Move\Fields;
 
 use Uteq\Move\Fields\Concerns\HasResource;
-use Uteq\Move\Resource;
 
 class HasOne extends Select
 {
@@ -14,7 +13,7 @@ class HasOne extends Select
         $this->resourceName = $this->findResourceName($name, $resource);
 
         /** @psalm-suppress UnusedClosureParam */
-        $valueCallback ??= function($value) use ($resource) {
+        $valueCallback ??= function ($value) use ($resource) {
             /** @psalm-suppress InvalidPropertyFetch */
             $model = $resource::$model;
 

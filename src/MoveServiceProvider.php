@@ -216,7 +216,7 @@ class MoveServiceProvider extends ServiceProvider
     public function registerComponentAutoDiscovery(): void
     {
         $this->app->singleton(ResourceFinder::class, function () {
-            return new ResourceFinder(new Filesystem, base_path() . DIRECTORY_SEPARATOR);
+            return new ResourceFinder(new Filesystem(), base_path() . DIRECTORY_SEPARATOR);
         });
     }
 

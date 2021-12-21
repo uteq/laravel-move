@@ -65,10 +65,12 @@ function move_class_to_label($class): string
  * @param array $array
  * @return array
  */
-function move_arr_expand(array $array) {
+function move_arr_expand(array $array)
+{
     $valueSet = [];
     foreach ($array as $key => $item) {
         Arr::set($valueSet, $key, $item);
     }
+
     return $valueSet;
 }

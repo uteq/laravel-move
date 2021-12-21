@@ -76,7 +76,7 @@ trait WithMount
 
     private function mountSteps(): void
     {
-        if ((!$this->activeStep || !$this->model->id) && $step = $this->steps()->first()) {
+        if ((! $this->activeStep || ! $this->model->id) && $step = $this->steps()->first()) {
             $this->activeStep = $step->attribute;
             $this->availableSteps[] = $this->activeStep;
         }

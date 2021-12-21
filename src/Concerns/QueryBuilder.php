@@ -47,7 +47,7 @@ trait QueryBuilder
     protected static function applySoftTrashedConstraint(Builder $query, $trashedStatus)
     {
         return static::usesSoftDeletes()
-            ? (new ApplyTrashedConstraint)->__invoke($query, $trashedStatus)
+            ? (new ApplyTrashedConstraint())->__invoke($query, $trashedStatus)
             : $query;
     }
 

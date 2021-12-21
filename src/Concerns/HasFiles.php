@@ -3,7 +3,6 @@
 namespace Uteq\Move\Concerns;
 
 use Illuminate\Support\Facades\URL;
-use Intervention\Image\Facades\Image;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\File\File;
 use Uteq\Move\DataTransferObjects\MediaCollection;
@@ -87,7 +86,6 @@ trait HasFiles
 
         $urls = $this->loadFiles($field, true)
             ->map(function (ResourceFileContract $file, $key) use ($field) {
-
                 $inDelete = isset($this->deletedFiles[$field->attribute][$key]);
 
                 // Only add Resource file to deleted if it already exists

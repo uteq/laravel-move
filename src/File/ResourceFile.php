@@ -44,7 +44,7 @@ class ResourceFile extends File implements ResourceFileContract
         $dir = dirname($path);
 
         if (! file_exists($dir)) {
-            if (!mkdir($dir, recursive: true) && !is_dir($dir)) {
+            if (! mkdir($dir, recursive: true) && ! is_dir($dir)) {
                 throw new RuntimeException(sprintf('Directory "%s" was not created', $dir));
             }
         }

@@ -20,7 +20,7 @@ trait WithClosures
             return;
         }
 
-        $this->beforeMount(fn() => $this->serializeClosures());
+        $this->beforeMount(fn () => $this->serializeClosures());
     }
 
     /**

@@ -579,7 +579,7 @@ abstract class Field extends FieldElement
     {
         return $this->placeholder
             ?? (string) __('Add a :label', [
-                'label' => lcfirst($resource->singularLabel()) . ' ' . lcfirst($this->name)
+                'label' => lcfirst($resource->singularLabel()) . ' ' . lcfirst($this->name),
             ]);
     }
 
@@ -622,7 +622,7 @@ abstract class Field extends FieldElement
         $callback = $this->valueCallback;
 
         $this->valueCallback = $callback
-            ? fn($value, ...$args) => $afterCallback($callback($value, ...$args))
+            ? fn ($value, ...$args) => $afterCallback($callback($value, ...$args))
             : $afterCallback;
     }
 
