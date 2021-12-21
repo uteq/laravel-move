@@ -12,7 +12,7 @@
 
     <!-- Styles -->
     @moveStyles()
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" href="{{ ! empty(config('app.name')) ? mix('css/app.css') : asset('css/app.css') }}">
 
     <livewire:styles>
 
