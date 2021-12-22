@@ -33,7 +33,6 @@ class InstallCommand extends Command
             echo Artisan::output();
         }
 
-
         $this->line('Installing Move');
 
         // NPM Packages...
