@@ -1,6 +1,7 @@
 @props([
     'id',
     'theme' => 'snow',
+    'version' => 1,
     'name' => optional($attributes->wire('model'))->value(),
     'value' => null,
     'disableTab' => false,
@@ -12,19 +13,25 @@
         [[ 'align' => [] ]],
         ['clean']
     ],
-    'rows' => 5
+    'rows' => 5,
 ])
 
-<div wire:ignore>
+@php
+    $value = is_array($value)
+        ? Arr::get($value, Str::after($name, '.'))
+        : $value;
+@endphp
+
+<div wire:ignore wire:key="{{ md5($version) }}" class="ql-editor-{{ $id }}-container">
     <div class="mt-2 bg-white">
         <div
-            wire:key="quill-editor-{{ $id }}"
+            id="quillEditor{{ $id }}"
             x-data
             x-ref="quillEditor{{ $id }}"
             x-init="
                 quill{{ $id }} = new Quill($refs.quillEditor{{ $id }}, {
                     theme: '{{ $theme }}',
-                    bounds: document.body,
+                    placeholder: 'Typ je tekst hier...',
                     modules: {
                         toolbar: {{ json_encode($toolbar) }}
                     }
@@ -32,7 +39,9 @@
 
                 quill{{ $id }}.on('text-change', (delta, oldDelta, source) => {
                     // Get HTML content
-                    $wire.set('{{ $name }}', unescape(encodeURIComponent(quill{{ $id }}.root.innerHTML)));
+                    $wire.set('{{ $name }}', unescape(encodeURIComponent(
+                        $refs.quillEditor{{ $id }}.firstChild.innerHTML
+                    )));
                 });
 
                 @if ($disableTab)
@@ -42,13 +51,29 @@
             style="min-height: {{ $rows * 3 }}em; min-width: 100%;"
             class="w-full border rounded-b"
         >
-            <div class="ql-editor" tabindex="1">{!! (\Illuminate\Support\Arr::get($value, \Illuminate\Support\Str::after($name, '.'))) !!}</div>
+            {!! $value !!}
         </div>
     </div>
     <style>
-        .ql-editor-{{ $id }}{
+        .ql-editor-{{ $id }}-container .ql-editor {
             min-height: {{ $rows * 3 }}em;
+        }
+
+        @if (empty($toolbar))
+            .ql-editor-{{ $id }}-container .ql-toolbar {
+            display: none;
+        }
+
+        .ql-editor-{{ $id }}-container .ql-container {
+            border-top: 1px solid #ccc !important;
+            border-radius: 0.25rem;
+        }
+        @endif
+
+        .ql-editor-{{ $id }}-container:hover .ql-container {
+            border: 1px solid var(--tw-ring-color) !important;
+            border-radius: 0.25rem;
         }
     </style>
 </div>
-<div class="hidden" ></div>
+<div class="hidden"></div>

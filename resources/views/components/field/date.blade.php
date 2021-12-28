@@ -1,15 +1,27 @@
-@props(['disabled' => false, 'model' => $attributes->wire('model')->value(), 'config' => []])
+@props([
+    'disabled' => false,
+    'model' => $attributes->wire('model')->value(),
+    'key' => $attributes->wire('key')->value() ?? null,
+    'config' => []
+])
 
-<div class="relative w-full flex flatpickr" wire:ignore wire:key="{{ $model }}">
-    <input {{ $disabled ? 'disabled' : '' }}
-           id="{{ $model }}"
-           wire:model.lazy="{{ $model }}"
-           wire:dirty.class="loading"
-           autocomplete="{{ $model }}"
-           placeholder="{{ $placeholder ?? 'Kies een datum' }}"
-           x-data
-           x-ref="input"
-           x-init="window.flatpickr($refs.input, {{ json_encode($config) }})"
+@php $key = $key ?: $model @endphp
+
+<div class="relative w-full flex flatpickr" wire:ignore wire:key="{{ $key }}">
+    <input
+        {{ $disabled ? 'disabled' : '' }}
+        id="{{ $model }}"
+        wire:model.lazy="{{ $model }}"
+        wire:dirty.class="loading"
+        autocomplete="{{ $model }}"
+        placeholder="{{ $placeholder ?? 'Kies een datum' }}"
+        x-data="{
+            destroy() { console.log('destroy', $el) },
+        }"
+        x-ref="input"
+        x-init="
+            window.flatpickr($refs.input, {{ json_encode($config) }})
+        "
         {!! $attributes->merge(['class' => 'flex-1 form-input block w-full min-w-0 rounded-none rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5 border-gray-300 rounded']) !!}
     />
 
