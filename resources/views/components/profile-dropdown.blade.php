@@ -1,4 +1,4 @@
-<x-move-dropdown align="left" width="48" orientation="{{ ($orientation ?? 'right') ? 'right' : 'left' }}">
+<x-move-dropdown align="left" width="48" orientation="{{ $orientation ?? 'left' }}">
     <x-slot name="trigger">
         <button {{ $attributes->merge(['class' => 'flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out']) }}>
             @if (optional(Auth::user())->profile_photo_url)
