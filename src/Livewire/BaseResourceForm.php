@@ -5,7 +5,6 @@ namespace Uteq\Move\Livewire;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Illuminate\Support\Traits\Macroable;
 use Livewire\WithFileUploads;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
@@ -157,7 +156,7 @@ abstract class BaseResourceForm extends FormComponent
     public function updatedStore($defaultKey, $defaultValue): void
     {
         $defaultKey = is_array($defaultKey)
-            ? ( $defaultKey[0] ?? null )
+            ? ($defaultKey[0] ?? null)
             : $defaultKey;
 
         $store = $this->storeAsArray();

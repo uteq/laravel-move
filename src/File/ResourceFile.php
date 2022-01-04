@@ -7,7 +7,6 @@ use Intervention\Image\Facades\Image;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\File\File;
-use Uteq\Move\Concerns\CanPretendToBeAFile;
 
 class ResourceFile extends File implements ResourceFileContract
 {
