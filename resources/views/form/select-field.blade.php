@@ -17,6 +17,7 @@
             :options="$field->getOptions()"
             :settings="$field->settings"
             :multiple="$field->multiple"
+            :tags="$field->tags"
         ></x-move-field.select>
 
         @if ($field->meta['with_add_button'])

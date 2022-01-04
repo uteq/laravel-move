@@ -19,6 +19,7 @@
         "imask": "^6.2.2",
         "jquery": "^3.6.0",
         "laravel-mix": "^6.0.31",
+        "livewire-sortable": "^0.2.2",
         "lodash": "^4.17.21",
         "postcss": "^8.3.8",
         "postcss-cli": "^8.3.1",

@@ -7,6 +7,7 @@
     :flex="false"
     :meta="$field->meta"
     :stacked="$field->stacked"
+    :placeholder="$field->placeholder"
 >
     <x-move-field.editor
         id="{{ $field->unique }}"

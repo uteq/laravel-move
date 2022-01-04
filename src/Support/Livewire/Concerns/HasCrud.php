@@ -81,8 +81,11 @@ trait HasCrud
             return null;
         }
 
+        $resource = str_replace('.', '/', $this->resource);
+        $resource = str_replace($this->crudBaseRoute .'/', '', $resource);
+
         return route($this->crudBaseRoute . '.show', [
-            'resource' => str_replace('.', '/', $this->resource),
+            'resource' => $resource,
             'model' => $model,
         ]);
     }
@@ -105,8 +108,11 @@ trait HasCrud
             return null;
         }
 
+        $resource = str_replace('.', '/', $resourceRoute ?: $this->resource);
+        $resource = str_replace($this->crudBaseRoute .'/', '', $resource);
+
         return route($this->crudBaseRoute . '.edit', [
-            'resource' => str_replace('.', '/', $resourceRoute ?: $this->resource),
+            'resource' => $resource,
             'model' => $this->modelById($id),
         ]);
     }

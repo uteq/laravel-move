@@ -11,16 +11,31 @@
         ['blockquote', 'code-block'],
         [[ 'list' => 'ordered'], [ 'list' => 'bullet' ]],
         [[ 'align' => [] ]],
+        [ 'link', 'image', 'video', 'formula' ],
         ['clean']
     ],
     'rows' => 5,
+    'placeholder' => __('Typ je tekst hier...'),
+    'settings' => [],
 ])
 
 @php
     $value = is_array($value)
         ? Arr::get($value, Str::after($name, '.'))
         : $value;
+
+    $settings = array_replace_recursive($settings, [
+        'theme' => $theme,
+        'placeholder' => $placeholder,
+        'modules' => [
+            'toolbar' => $toolbar,
+        ],
+    ]);
 @endphp
+
+{{--<pre>--}}
+{{--    {{ print_r($toolbar) }}--}}
+{{--</pre>--}}
 
 <div wire:ignore wire:key="{{ md5($version) }}" class="ql-editor-{{ $id }}-container">
     <div class="mt-2 bg-white">
@@ -29,19 +44,14 @@
             x-data
             x-ref="quillEditor{{ $id }}"
             x-init="
-                quill{{ $id }} = new Quill($refs.quillEditor{{ $id }}, {
-                    theme: '{{ $theme }}',
-                    placeholder: 'Typ je tekst hier...',
-                    modules: {
-                        toolbar: {{ json_encode($toolbar) }}
-                    }
-                });
+                quill{{ $id }} = new Quill(
+                    $refs.quillEditor{{ $id }},
+                    {{ json_encode($settings) }}
+                );
 
                 quill{{ $id }}.on('text-change', (delta, oldDelta, source) => {
                     // Get HTML content
-                    $wire.set('{{ $name }}', unescape(encodeURIComponent(
-                        $refs.quillEditor{{ $id }}.firstChild.innerHTML
-                    )));
+                    $wire.set('{{ $name }}', $refs.quillEditor{{ $id }}.firstChild.innerHTML);
                 });
 
                 @if ($disableTab)
@@ -59,6 +69,14 @@
             min-height: {{ $rows * 3 }}em;
         }
 
+        .ql-editor-{{ $id }}-container p {
+            padding-bottom: 20px;
+        }
+
+        .ql-editor-{{ $id }}-container p:last-child {
+            padding-bottom: 0;
+        }
+
         @if (empty($toolbar))
             .ql-editor-{{ $id }}-container .ql-toolbar {
             display: none;
@@ -68,12 +86,12 @@
             border-top: 1px solid #ccc !important;
             border-radius: 0.25rem;
         }
-        @endif
 
         .ql-editor-{{ $id }}-container:hover .ql-container {
             border: 1px solid var(--tw-ring-color) !important;
             border-radius: 0.25rem;
         }
+        @endif
     </style>
 </div>
 <div class="hidden"></div>

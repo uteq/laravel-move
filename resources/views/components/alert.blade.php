@@ -1,20 +1,49 @@
 @props(['title' => null, 'borderPosition' => 'top', 'color' => 'teal', 'hideIcon' => false, 'withoutPadding' => false, 'borderColor' => null])
 
 @php
+    $classes = [];
+    $classes[] = [
+        'primary' => 'bg-primary-100 border-primary-500 text-primary-900',
+        'white' => 'bg-white border-white text-white',
+        'blue' => 'bg-blue-100 border-blue-500 text-blue-900',
+        'red' => 'bg-red-100 border-red-500 text-red-900',
+        'green' => 'bg-green-100 border-green-500 text-green-900',
+        'yellow' => 'bg-yellow-100 border-yellow-500 text-yellow-900',
+        'rose' => 'bg-rose-100 border-rose-500 text-rose-900',
+        'pink' => 'bg-pink-100 border-pink-500 text-pink-900',
+        'fuchsia' => 'bg-fuchsia-100 border-fuchsia-500 text-fuchsia-900',
+        'purple' => 'bg-purple-100 border-purple-500 text-purple-900',
+        'violet' => 'bg-violet-100 border-violet-500 text-violet-900',
+        'indigo' => 'bg-indigo-100 border-indigo-500 text-indigo-900',
+        'sky' => 'bg-sky-100 border-sky-500 text-sky-900',
+        'cyan' => 'bg-cyan-100 border-cyan-500 text-cyan-900',
+        'teal' => 'bg-teal-100 border-teal-500 text-teal-900',
+        'emerald' => 'bg-emerald-100 border-emerald-500 text-emerald-900',
+        'lime' => 'bg-lime-100 border-lime-500 text-lime-900',
+        'amber' => 'bg-amber-100 border-amber-500 text-amber-900',
+        'orange' => 'bg-orange-100 border-orange-500 text-orange-900',
+        'warmGray' => 'bg-warmGray-100 border-warmGray-500 text-warmGray-900',
+        'trueGray' => 'bg-trueGray-100 border-trueGray-500 text-trueGray-900',
+        'gray' => 'bg-gray-100 border-gray-500 text-gray-900',
+        'coolGray' => 'bg-coolGray-100 border-coolGray-500 text-coolGray-900',
+        'blueGray' => 'bg-blueGray-100 border-blueGray-500 text-blueGray-900',
+    ][$color];
 
-    $borderClass = [
-        'top' => 'border-t-4',
-        'left' => 'border-l-4',
-        'right' => 'border-r-4',
-        'bottom' => 'border-b-4',
-    ][$borderPosition];
+
+        $borderClass = [
+            'top' => 'border-t-4',
+            'left' => 'border-l-4',
+            'right' => 'border-r-4',
+            'bottom' => 'border-b-4',
+        ][$borderPosition];
 
 @endphp
 
-<div {{ $attributes->merge([
-        'class' => 'bg-' . $color .'-100 '. $borderClass . ' ' . ($borderColor ?: 'border-' . $color .'-500') . ' rounded-b text-' . $color .'-900 '. ($withoutPadding ? null : 'px-4 py-3') .' shadow-md'
-     ]) }}
-     role="alert"
+<div
+    {{ $attributes->merge([
+        'class' => implode(' ', $classes) . ' '. $borderClass .' px-4 py-3 shadow-md',
+    ]) }}
+    role="alert"
 >
     <div class="{{ $hideIcon ?: 'flex' }}">
         @if (! $hideIcon)

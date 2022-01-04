@@ -60,10 +60,13 @@ class Panel implements PanelInterface, ElementInterface
     protected $resourceForm;
 
     public bool $withoutTitle;
+    public bool $overflowHidden = true;
     public string $flow;
     public Closure|string|null $afterTitle = null;
     public Closure|string|null $classes = null;
     protected string $unique;
+
+    public int $order = 0;
 
     public function __construct(?string $name = null, array $fields = [])
     {
@@ -296,6 +299,20 @@ class Panel implements PanelInterface, ElementInterface
     public function setFolder($folder): static
     {
         $this->folder = $folder;
+
+        return $this;
+    }
+
+    public function overflowHidden($overflowHidden = true): static
+    {
+        $this->overflowHidden = $overflowHidden;
+
+        return $this;
+    }
+
+    public function order(int $order): static
+    {
+        $this->order = $order;
 
         return $this;
     }

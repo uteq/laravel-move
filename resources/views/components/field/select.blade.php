@@ -1,4 +1,12 @@
-@props(['model', 'options' => [], 'placeholder' => null, 'settings' => ['placeholder' => __('Select your option')], 'values' => null, 'multiple' => false])
+@props([
+    'model',
+    'options' => [],
+    'placeholder' => null,
+    'settings' => ['placeholder' => __('Select your option')],
+    'values' => null,
+    'multiple' => false,
+    'tags' => false,
+])
 
 @php $index = \Str::slug(str_replace('.', '-', $model)); @endphp
 
@@ -8,6 +16,7 @@
         id="{{ $model }}"
         {{ $attributes->merge(['class' => 'select2-'. $index .' form-select rounded border-none shadow w-full']) }}
         @if ($multiple) multiple="multiple" @endif
+        @if ($tags) tags="tags" @endif
         style="width: 100%"
     >
         @forelse($options as $key => $label)
@@ -70,8 +79,6 @@
             $element.on('open', function() {
                 self.$search.attr('tabindex', 0);
                 setTimeout(function () { self.$search.focus(); }, 10);
-
-                console.log(self);
             })
         };
     }
@@ -79,13 +86,17 @@
     let select2Loader{{str_replace("-","_", $index)}} = () => {
         let element = '.select2-{{ $index }}';
         let val = @php echo json_encode($values && count($values) ? $values : null) @endphp ?? {};
-        let settings = {!! json_encode(array_replace(['placeholder' => $placeholder], $settings)) !!} ?? {};
+        let settings = {!! json_encode(array_replace([
+            'placeholder' => $placeholder,
+            'tags' => $tags,
+        ], $settings)) !!} ?? {};
 
         loadSelect2(element, val, settings, {
             isMultiple: @php echo json_encode($multiple ?? false) @endphp,
         }, function (e) {
             let elementName = $(this).attr('id');
             var data = $(this).select2("val");
+
             @this.set(elementName, data);
         });
     };

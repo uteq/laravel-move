@@ -70,14 +70,14 @@ class Files extends Field
 
     public function showRotate($showRotate = true): static
     {
-        $this->showRotate = true;
+        $this->showRotate = $showRotate;
 
         return $this;
     }
 
     public function hideRotate($showRotate = false): static
     {
-        $this->showRotate = false;
+        $this->showRotate($showRotate);
 
         return $this;
     }

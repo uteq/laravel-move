@@ -5,11 +5,13 @@ namespace Uteq\Move\Livewire;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 use Livewire\WithFileUploads;
 use Uteq\Move\Concerns\HasFiles;
 use Uteq\Move\Concerns\HasMountActions;
 use Uteq\Move\Concerns\HasResource;
 use Uteq\Move\Concerns\WithActionableFields;
+use Uteq\Move\Concerns\WithSortable;
 use Uteq\Move\Concerns\WithSteps;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Support\Livewire\Concerns\HasStore;
@@ -24,6 +26,7 @@ abstract class BaseResourceForm extends FormComponent
     use WithFileUploads;
     use WithActionableFields;
     use WithSteps;
+    use WithSortable;
 
     protected static $viewType = 'edit';
 
@@ -153,6 +156,10 @@ abstract class BaseResourceForm extends FormComponent
 
     public function updatedStore($defaultKey, $defaultValue): void
     {
+        $defaultKey = is_array($defaultKey)
+            ? ( $defaultKey[0] ?? null )
+            : $defaultKey;
+
         $store = $this->storeAsArray();
 
         foreach ($this->fields() as $field) {

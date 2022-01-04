@@ -405,6 +405,7 @@ abstract class Resource
         }
 
         $panels = $this->recursivePanels($panels, $resourceForm, $resource, $displayType);
+        $panels->sortBy(fn ($panel) => $panel->order);
 
         return $panels;
     }
@@ -436,6 +437,7 @@ abstract class Resource
             $panel->panels = collect($elements)
                 ->filter(fn ($field) => $field instanceof PanelInterface)
                 ->filter(fn (Panel $panel) => $panel->isVisible($store, $displayType))
+                ->sortBy(fn ($panel) => $panel->order)
                 ->toArray();
 
             if (count($panel->panels)) {

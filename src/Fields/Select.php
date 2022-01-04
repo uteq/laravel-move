@@ -48,6 +48,8 @@ class Select extends Field
 
     public string $createForm;
 
+    public bool $tags = false;
+
     protected static $resourceCache = [];
 
     protected array $closures = [
@@ -201,7 +203,7 @@ class Select extends Field
 
     public function getOptions(): array
     {
-        $options = $this->closure('options');
+        $options = $this->options;
 
         $options = is_callable($options)
             ? $options($this ?? null)
@@ -340,7 +342,7 @@ class Select extends Field
 
     public function getVersion()
     {
-        $version = $this->version instanceof Closure ? $this->closure('version') : $this->version;
+        $version = $this->version;
 
         return is_callable($version)
             ? $version($this)
@@ -369,6 +371,13 @@ class Select extends Field
                 'delete' => LivewireCloseModal::make(),
             ]);
         }
+
+        return $this;
+    }
+
+    public function tags($tags = true): static
+    {
+        $this->tags = $tags;
 
         return $this;
     }

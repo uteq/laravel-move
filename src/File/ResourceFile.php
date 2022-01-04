@@ -7,6 +7,7 @@ use Intervention\Image\Facades\Image;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\File\File;
+use Uteq\Move\Concerns\CanPretendToBeAFile;
 
 class ResourceFile extends File implements ResourceFileContract
 {
@@ -87,7 +88,18 @@ class ResourceFile extends File implements ResourceFileContract
 
     public function getUrl(): string
     {
-        return $this->media->getFullUrl() . ($this->version !== null ? '?v=' . $this->version : '');
+        $file = $this->media->getFullUrl() . ($this->version !== null ? '?v=' . $this->version : '');
+
+        if (file_exists($file)) {
+            return $file;
+        }
+
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        return url()->temporarySignedRoute(
+            name: move()::getPrefix() . '.preview-file',
+            expiration: now()->addMinutes(60),
+            parameters: $this->media->id,
+        );
     }
 
     public function get()

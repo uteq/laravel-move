@@ -118,6 +118,8 @@ abstract class Field extends FieldElement
 
     public bool $dirty = false;
 
+    protected array $sortableCallbacks = [];
+
     /**
      * Field constructor.
      */
@@ -674,6 +676,20 @@ abstract class Field extends FieldElement
 
     public function getBefore(...$args)
     {
-        return is_callable($this->before) ? ($this->before)($this, ...$args) : $this->before;
+        return is_callable($this->before)
+            ? ($this->before)($this, ...$args)
+            : $this->before;
+    }
+
+    public function sortableCallback(\Closure $sortableCallback): static
+    {
+        $this->sortableCallbacks[] = $sortableCallback;
+
+        return $this;
+    }
+
+    public function getSortableCallbacks(): array
+    {
+        return $this->sortableCallbacks;
     }
 }

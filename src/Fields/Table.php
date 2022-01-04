@@ -3,6 +3,7 @@
 namespace Uteq\Move\Fields;
 
 use Closure;
+use Illuminate\Support\Collection;
 use Uteq\Move\Actions\LivewireCloseModal;
 use Uteq\Move\Facades\Move;
 
@@ -110,7 +111,7 @@ class Table extends Panel
         return $this;
     }
 
-    public function fields(): \Illuminate\Support\Collection
+    public function fields(): Collection
     {
         $fields = ! empty($this->fields)
                 ? $this->fields

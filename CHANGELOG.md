@@ -2,6 +2,16 @@
 
 All notable changes to `laravel-move` will be documented in this file
 
+## 0.3.2 - 2022-01-04
+
+- Now supports sort behavior for fields
+- Updates for npm packages
+- Editor field now uses another way to set field value
+- Fixes for CRUD on Table field
+- Fixed file preview for images from outside public path
+- Select fields are now taggable (create options on the fly, see select2)
+- Fixed select versions
+
 ## 0.3.0 - 2021-12-21
 
 Only upgrade to 0.3.0 if you are willing to debug a lot.

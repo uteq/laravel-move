@@ -357,9 +357,9 @@ use Uteq\Move\Resource;
 public function register()
 {
     Resource::$defaultActionHandlers = [
-        'update' => StoreSystemWide::class,
-        'create' => StoreSystemWide::class,
-        'delete' => DestroySystemWide::class,
+        'update' => StoreResource::class,
+        'create' => StoreResource::class,
+        'delete' => DeleteResource::class,
     ];
 }
 ````
@@ -368,13 +368,14 @@ public function register()
 Simply add the $actionHandlers to your resource:
 ```php
 use Uteq\Move\Resource;
+use App\Actions\CustomResource;
 
 class CustomResource extends Resource
 {
     public array $actionHandlers = [
-        'update' => StoreCustomResource::class,
-        'create' => StoreCustomResource::class,
-        'delete' => DestroyCustomResource::class,
+        'create' => CustomResource\Create::class,
+        'update' => CustomResource\Update::class,
+        'delete' => CustomResource\Delete::class,
     ];
 }
 ```  
