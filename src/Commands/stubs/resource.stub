@@ -3,7 +3,7 @@
 namespace {{ namespace }};
 
 use Uteq\Move\Resource;
-use Uteq\Move\Fields\ID;
+use Uteq\Move\Fields\Id;
 use Uteq\Move\TableActions\ExportToExcelAction;
 
 class {{ class }} extends Resource
@@ -19,7 +19,7 @@ class {{ class }} extends Resource
     public function fields()
     {
         return [
-            ID::make()->sortable(),
+            Id::make()->sortable(),
         ];
     }
 
