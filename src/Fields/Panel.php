@@ -136,7 +136,10 @@ class Panel implements PanelInterface, ElementInterface
         return $fields;
     }
 
-    public function empty(): bool
+    /**
+     * @return bool
+     */
+    public function empty()
     {
         return ! count($this->fields) && ! count($this->panels);
     }
@@ -149,7 +152,11 @@ class Panel implements PanelInterface, ElementInterface
         return $this;
     }
 
-    public function render($model): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+    /**
+     * @param $model
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function render($model)
     {
         return view($this->folder . $this->component, [
             'panel' => $this,

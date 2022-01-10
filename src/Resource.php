@@ -72,7 +72,10 @@ abstract class Resource
 
     public static string $group = 'Resources';
 
-    public function __construct(Model $resource)
+    public function __construct(
+        Model $resource,
+        public mixed $component = null,
+    )
     {
         $this->resource = $resource;
 
@@ -80,6 +83,11 @@ abstract class Resource
             /** @psalm-suppress InvalidArgument */
             app()->call([$this, 'initialize']);
         }
+    }
+
+    public function setComponent($component)
+    {
+        $this->component = $component;
     }
 
     public static function newModel(): ?Model

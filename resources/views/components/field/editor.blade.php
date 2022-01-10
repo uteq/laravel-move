@@ -33,10 +33,6 @@
     ]);
 @endphp
 
-{{--<pre>--}}
-{{--    {{ print_r($toolbar) }}--}}
-{{--</pre>--}}
-
 <div wire:ignore wire:key="{{ md5($version) }}" class="ql-editor-{{ $id }}-container">
     <div class="mt-2 bg-white">
         <div

@@ -63,7 +63,7 @@ trait HasResource
 
     public function getResolvedResourceProperty(): \Uteq\Move\Resource
     {
-        return Move::resolveResource($this->resource);
+        return Move::resolveResource($this->resource, $this);
     }
 
     public function getResourceProperty()

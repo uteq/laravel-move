@@ -148,7 +148,7 @@ class Move
         return $activeResource::$group;
     }
 
-    public function resolveResource(string $resource = null)
+    public function resolveResource(string $resource = null, mixed $component = null)
     {
         if (! $resource) {
             return null;
@@ -168,7 +168,10 @@ class Move
             ));
         }
 
-        return app()->get($resource);
+        $resource = app()->get($resource);
+        $resource->component = $component;
+
+        return $resource;
     }
 
     public function fullResourceName(string $resource): string
