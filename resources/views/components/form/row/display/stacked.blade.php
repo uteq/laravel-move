@@ -3,7 +3,7 @@
         <x-move-form.label
             :help-text="$helpText && ($meta['help_text_location'] ?? 'below') == 'hidden' ? $helpText : null"
             :required="$required"
-            class="mb-2"
+            class="mb-2 {{ $meta['label_classes'] ?? null }}"
             for="{{ $model }}"
             value="{{ $labelValue }}"
         ></x-move-form.label>
