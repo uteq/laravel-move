@@ -1,4 +1,4 @@
-@props(['id', 'maxWidth', 'button' => null, 'value' => null, 'show' => true, 'showType' => '==', 'closeOnClickAway' => true])
+@props(['id', 'maxWidth', 'button' => null, 'value' => null, 'show' => true, 'showType' => '==', 'closeOnClickAway' => true, 'closeBehavior' => 'alpine'])
 
 @php
 $model = $attributes->wire('model');
@@ -75,6 +75,10 @@ switch ($maxWidth ?? '2xl') {
         prevFocusableIndex() { return Math.max(0, this.focusables().indexOf(document.activeElement)) -1 },
     }"
     {{ $attributes->wire('key') }}
+    <?php if ($closeOnClickAway): ?>
+    x-on:close.stop="show = null"
+    x-on:keydown.escape.window="show = null"
+    <?php endif; ?>
 >
 
     @if ($button)
@@ -90,13 +94,14 @@ switch ($maxWidth ?? '2xl') {
     @endif
 
     <div x-show="show {{ $showType }} {{ $show }}"
-         x-on:close.stop="show = null"
-         x-on:keydown.escape.window="show = null"
          class="fixed top-0 inset-x-0 px-4 py-6 sm:px-0 sm:flex sm:items-top sm:justify-center z-50 max-h-screen overflow-y-auto"
          style="display: none;"
     >
         <div class="fixed inset-0 transform transition-all"
-             <?php if ($closeOnClickAway): ?> x-on:click="show = null" <?php endif; ?>
+             <?php if ($closeOnClickAway): ?>
+                 <?php if ($closeBehavior === 'alpine'): ?> x-on:click="show = null" <?php endif; ?>
+                 <?php if ($closeBehavior === 'livewire'): ?> wire:click="closeModal" <?php endif; ?>
+            <?php endif; ?>
              x-transition:enter="ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"

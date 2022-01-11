@@ -45,6 +45,7 @@ abstract class BaseResourceForm extends FormComponent
     public $showingAddResource = [];
     public $baseRoute = 'move';
     public $showForm = false;
+    public ?string $action = null;
     public array $meta = [];
     public array $dirtyFields = [];
 
@@ -92,6 +93,10 @@ abstract class BaseResourceForm extends FormComponent
             ));
         }
 
+        if (in_array($key, $this->queryString)) {
+            return;
+        }
+
         $this->queryString[] = $key;
     }
 
@@ -102,7 +107,9 @@ abstract class BaseResourceForm extends FormComponent
         $this->store = array_replace_recursive(
             $this->store,
             $this->fields()
-                ->mapWithKeys(fn ($field) => [$field->attribute => $field->value])
+                ->mapWithKeys(fn ($field) => [
+                    $field->attribute => $field->value
+                ])
                 ->toArray()
         );
     }
@@ -164,7 +171,9 @@ abstract class BaseResourceForm extends FormComponent
 
     public function updatedStore($defaultValue, $defaultKey)
     {
-        $store = $this->storeAsArray();
+        $store = $this->store;
+
+        $this->model->store = $store;
 
         foreach ($this->fields() as $field) {
             $store = $field->applyAfterUpdatedStore($store, $defaultValue, $defaultKey, $this);
@@ -177,22 +186,6 @@ abstract class BaseResourceForm extends FormComponent
         $this->store = $store;
 
         $this->dirtyFields[$defaultKey] = true;
-    }
-
-    protected function storeAsArray()
-    {
-        $store = [];
-        foreach ($this->store as $key => $value) {
-            if (str_contains($key, '.')) {
-                if (isset($this->store[Str::before($key, '.')])) {
-                    continue;
-                }
-            }
-
-            Arr::set($store, $key, $value);
-        }
-
-        return $store;
     }
 
     public function getPanelsProperty(): Collection
@@ -226,12 +219,8 @@ abstract class BaseResourceForm extends FormComponent
 
     /**
      * Updates the current fields value/store. This makes
-     * it easy to change the components field
+     * it easy to change the components' field
      * data from outside the component
-     *
-     * @param $field
-     * @param $value
-     * @return $this
      */
     public function updateFieldValue($field, $value): self
     {

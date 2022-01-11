@@ -1,6 +1,6 @@
 @props(['disabled' => false, 'model' => $attributes->wire('model')->value(), 'config' => [], 'hasError' => false, 'placeholder' => 'Kies een datum'])
 
-<div class="relative w-full flex flatpickr" wire:ignore wire:key="{{ $model }}">
+<div class="relative w-full flex flatpickr" wire:ignore>
     <input {{ $disabled ? 'disabled' : '' }}
            type="text"
            id="{{ $model }}"
@@ -13,7 +13,7 @@
            x-ref="input"
            x-init="window.flatpickr($refs.input, {{ json_encode($config) }})"
         {!! $attributes->merge([
-            'class' => 'flex-1 form-input block w-full min-w-0 rounded-none rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5 rounded ' . ( $hasError ? 'border-red-500' : 'border-gray-300' ),
+            'class' => 'flex-1 form-input block w-full min-w-0 transition duration-150 ease-in-out sm:text-sm sm:leading-5 rounded ' . ( $hasError ? 'border-red-500' : 'border-gray-300' ),
         ]) !!}
     />
 

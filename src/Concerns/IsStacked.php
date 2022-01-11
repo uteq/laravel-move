@@ -4,16 +4,10 @@ namespace Uteq\Move\Concerns;
 
 trait IsStacked
 {
-    /**
-     * Indicates if the field label and form element should sit on top of each other.
-     *
-     * @var bool
-     */
+    /** Indicates if the field label and form element should sit on top of each other. */
     public bool $stacked = false;
 
-    /**
-     * Stacks the label above the field.
-     */
+    /** Stacks the label above the field. */
     public function stacked($stacked = true): static
     {
         if (is_string($stacked)) {

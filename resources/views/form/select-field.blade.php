@@ -23,13 +23,13 @@
 
         @if ($field->meta['with_add_button'])
             <x-move-secondary-button wire:click="$set('showModal', '{{ \Str::slug($field->resourceName) }}')" class="mt-2">
-                {{ __('Create :resource', ['resource' => $field->resourceName()]) }}
+                {{ __('Form :resource', ['resource' => $field->resourceName()]) }}
             </x-move-secondary-button>
 
             @if ($this->showModal === \Str::slug($field->resourceName))
                 <x-move-dialog-modal
                     wire:model="showModal.{{ \Str::slug($field->resourceName) }}"
-                    title="{{ __('Create :resource', ['resource' => $field->resourceName()]) }}"
+                    title="{{ __('Form :resource', ['resource' => $field->resourceName()]) }}"
                 >
                     <livewire:livewire.resource-form
                         wire:key="modal-form-{{ \Str::slug($field->resourceName) }}"
@@ -47,7 +47,7 @@
                             </x-move-secondary-button>
 
                             <x-move-button form="modal-form-{{ \Str::slug($field->resourceName) }}">
-                                {{ __('Create :resource', ['resource' => $field->resourceName()]) }}
+                                {{ __('Form :resource', ['resource' => $field->resourceName()]) }}
                             </x-move-button>
                         </div>
                     </x-slot>

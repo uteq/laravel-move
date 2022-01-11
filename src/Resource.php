@@ -234,7 +234,7 @@ abstract class Resource
 
     public function handler($key, array $args = [])
     {
-        return app()->make($this->actionHandlers[$key]
+        return app()->make($this->getActionHandler($key)
             ?? (static::$defaultActionHandlers[$key] ?? null)
         , $args);
     }
@@ -358,6 +358,7 @@ abstract class Resource
 
         return collect($this->getFields())
             ->filter(fn (ElementInterface $element) => $element->isShownOn($type, $model, request()))
+            ->filter(fn (ElementInterface $element) => ! ($element->isPlaceholder ?? false))
             ->toArray();
     }
 
@@ -420,7 +421,10 @@ abstract class Resource
             ->toArray();
 
         if (count($fields)) {
-            $panels->prepend($this->mainPanel()->setFields($fields));
+            $panels->prepend(
+                $this->mainPanel()
+                    ->setFields($fields)
+            );
         }
 
         $panels = $this->recursivePanels($panels, $resourceForm, $resource, $displayType);
@@ -542,5 +546,15 @@ abstract class Resource
         $this->fields = $fields;
 
         return $this;
+    }
+
+    public function getActionHandler($key)
+    {
+        return $this->getActionHandlers()[$key];
+    }
+
+    public function getActionHandlers()
+    {
+        return $this->actionHandlers ?? static::$defaultActionHandlers;
     }
 }

@@ -95,6 +95,10 @@ class Panel implements PanelInterface, ElementInterface
     {
         $this->fields = $fields;
 
+        if ($this->meta('is_stacked') === true) {
+            $this->stackFields();
+        }
+
         return $this;
     }
 
@@ -307,6 +311,7 @@ class Panel implements PanelInterface, ElementInterface
         $this->stackFields();
 
         $this->withMeta([
+            'is_stacked' => true,
             'help_text_location' => 'hidden',
         ]);
 

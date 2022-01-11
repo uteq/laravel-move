@@ -1,7 +1,6 @@
-
 <x-move-dialog-modal
     wire:model="showModal.{{ \Str::slug($this->resourceClass) }}"
-    title="{{ __('Create :resource', ['resource' => $this->resourceClass::singularLabel()]) }}"
+    title="{{ __('Form :resource', ['resource' => $this->resourceClass::singularLabel()]) }}"
 >
     <livewire:livewire.resource-form
         wire:key="modal-form-{{ $showModal }}"
@@ -10,6 +9,7 @@
         :model="$this->model"
         :redirects="$this->redirects"
         hide-actions
+        action="create"
     />
 
     <x-slot name="footer">

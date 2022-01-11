@@ -11,16 +11,15 @@ use Uteq\Move\Actions\LivewireCloseModal;
 use Uteq\Move\Concerns\WithClosures;
 use Uteq\Move\Concerns\WithListeners;
 use Uteq\Move\Concerns\WithModal;
+use Uteq\Move\Concerns\WithVersion;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
 class Select extends Field
 {
-    use WithModal, WithListeners, WithClosures;
+    use WithModal, WithListeners, WithClosures, WithVersion;
 
     public string $component = 'select-field';
-
-    protected $version = 1;
 
     protected $options;
 
@@ -110,12 +109,12 @@ class Select extends Field
             ? $this->cachedResource($this->resourceName, $this->value, $model)
             : null;
 
-        if (! $model) {
-            return $this->resourceName::singularLabel();
-        }
-
         if (! $this->resourceName) {
             return null;
+        }
+
+        if (! $model) {
+            return $this->resourceName::singularLabel();
         }
 
         if ($this->customIndexName) {
@@ -192,7 +191,7 @@ class Select extends Field
 
     public function getOptions(): array
     {
-        $options = $this->closure('options');
+        $options = $this->options;
 
         $options = is_callable($options)
             ? $options($this ?? null)
@@ -297,7 +296,7 @@ class Select extends Field
         $storeAttribute = Str::replace($this->defaultStorePrefix . '.', '', $this->store);
 
         if (! $store && ! Arr::get($form->store, $storeAttribute)) {
-            $value = $this->valueCallback ? ($this->valueCallback)(null, $this->resource, $this->attribute) : null;
+            $value = $this->valueCallback ? ($this->valueCallback)(null, $this->resource, $this->attribute, $this) : null;
             $values = $value ? [$value] : null;
 
             $form->store[$this->attribute] = $value;
@@ -320,24 +319,6 @@ class Select extends Field
     public function fieldStore()
     {
         return is_array($this->store()) ? $this->store() : [$this->store() => true];
-    }
-
-    public function version($version)
-    {
-        $this->version = $version;
-
-        return $this;
-    }
-
-    public function getVersion()
-    {
-//        $version = $this->version instanceof \Closure ? $this->closure('version') : $this->version;
-
-        $version = $this->version;
-
-        return is_callable($version)
-            ? $version($this)
-            : $version;
     }
 
     public function createResource(string $resource, string $form)

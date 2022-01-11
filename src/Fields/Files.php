@@ -5,8 +5,9 @@ namespace Uteq\Move\Fields;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\RequiredIf;
+use Uteq\Move\Contracts\FilesContract;
 
-class Files extends Field
+class Files extends Field implements FilesContract
 {
     public string $component = 'files-field';
 

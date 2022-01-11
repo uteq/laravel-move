@@ -10,7 +10,7 @@ class ResourceCommand extends GeneratorCommand
 {
     public $signature = 'move:resource {name} {--model=}';
 
-    public $description = 'Create a new resource class';
+    public $description = 'Form a new resource class';
 
     protected $type = 'Resource';
 

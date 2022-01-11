@@ -35,7 +35,7 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
           coverage: none
 
-      - name: Create database
+      - name: Form database
         run: |
           sudo /etc/init.d/mysql start
           mysql -u root -proot -e 'CREATE DATABASE IF NOT EXISTS laravel_move;'

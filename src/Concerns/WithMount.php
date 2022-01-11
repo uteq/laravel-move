@@ -35,7 +35,7 @@ trait WithMount
         $this->baseRoute = move()::getPrefix();
     }
 
-    private function mountStore(): void
+    protected function mountStore(): void
     {
         $this->store ??= [];
 
@@ -47,10 +47,7 @@ trait WithMount
 
         $this->meta = $this->resource()->meta();
 
-        $undotedStore = [];
-        foreach ($this->store as $key => $value) {
-            Arr::set($undotedStore, $key, $value);
-        }
+        $undotedStore = move_undot($this->store);
 
         $this->model->store = $undotedStore;
     }

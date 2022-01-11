@@ -64,6 +64,7 @@ class Json extends Field
         ], $this->customMeta(), $this->meta));
         $panel->withoutCard();
         $panel->removeRow = fn (...$args) => $this->removeRow(...$args);
+        $panel->inline();
 
         collect($panel->fields)
             ->each(function ($field) use ($panelKey) {

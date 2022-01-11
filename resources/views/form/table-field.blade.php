@@ -17,12 +17,17 @@
         @forelse ($rows as $i => $row)
             <tr class="hover:bg-gray-50 bg-white shadow" wire:key="table-row-{{ $table->page ?? 0 }}-{{ $row['model']->id }}" wire:sortable.item="{{ $row['model']->id }}">
                 @foreach ($row['fields'] as $field)
-                    <x-move-td class="{{ Move::getWrapTableContent() && $field->wrapContent ? 'whitespace-wrap' : 'whitespace-nowrap' }}">
+                    @if ($field->isPlaceholder)
+                        @continue
+                    @endif
+
+                    <x-move-td valign="top" class="{{ $field->shouldWrap() ? 'whitespace-wrap' : 'whitespace-nowrap' }}">
                         @if ($table->resource()::title($row['model']) === $field->attribute)
-                            <button wire:click="edit({{ $row['model']->id }})"
-                                    class="text-primary-500 cursor-pointer"
-                                    wire:loading.attr="disabled"
-                                    wire:loading.class="text-gray-500"
+                            <button
+                                wire:click="edit({{ $row['model']->id }})"
+                                class="text-primary-500 cursor-pointer"
+                                wire:loading.attr="disabled"
+                                wire:loading.class="text-gray-500"
                             >
                                 {!! $field->render('index') !!}
                             </button>
@@ -31,15 +36,22 @@
                         @endif
                     </x-move-td>
                 @endforeach
-                <x-move-td class="text-right">
-                    @if ($meta['with_delete'] && ! $this->closure('disableDeleteFor', false, $row['model'], $row['fields'], $this))
-                        @include('move::components.table.actions.delete', [
-                            'table' => $this,
-                            'id' => $row['model']->id,
-                            'title' => $row['model']->{$table->resource()::$title},
-                            'description' => $table->resource()->label(),
-                        ])
-                    @endif
+                <x-move-td valign="top">
+                    <div class="flex gap-1">
+                        @if ($meta['with_delete'] && ! $this->closure('disableDeleteFor', false, $row['model'], $row['fields'], $this))
+                            @include('move::components.table.actions.delete', [
+                                'table' => $this,
+                                'id' => $row['model']->id,
+                                'title' => $row['model']->{$table->resource()::$title},
+                                'description' => $table->resource()->label(),
+                            ])
+                        @endif
+                        @if ($meta['with_edit'] ?? true)
+                            @include('move::form.partials.table-field-edit-modal', [
+                                'model' => $row['model'],
+                            ])
+                        @endif
+                    </div>
                 </x-move-td>
             </tr>
         @empty
@@ -53,7 +65,7 @@
                             wire:click="$set('showModal', '{{ \Str::slug($this->resourceClass) }}')"
                             class="underline text-primary-500"
                         >
-                            @lang('Create first :resource', ['resource' => $table->resource()->singularLabel()])
+                            @lang('Form first :resource', ['resource' => $table->resource()->singularLabel()])
                         </button>
                         @endif
                     </div>

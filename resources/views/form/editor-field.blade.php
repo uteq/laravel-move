@@ -12,8 +12,9 @@
         id="{{ \Illuminate\Support\Str::replace('.', '', $field->storePrefix ?? null . '.' . $field->unique) }}"
         wire:model="{{ $field->store }}"
         :theme="$field->theme"
-        :value="$this->unpackedStore()"
+        :value="$field->value"
         :toolbar="$field->toolbar"
         :rows="$field->rows"
+        :version="$field->getVersion()"
     />
 </x-move-form.row>

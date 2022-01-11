@@ -2,10 +2,15 @@
 
 namespace Uteq\Move\Fields;
 
+use Uteq\Move\Concerns\WithVersion;
 use Uteq\Move\Support\Encoding;
 
 class Editor extends Textarea
 {
+    use WithVersion;
+
+    protected $version = 1;
+
     public string $component = 'editor-field';
 
     public string $theme = 'snow';

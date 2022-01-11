@@ -39,7 +39,7 @@
 
         @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
             <x-move-dropdown-link href="/teams/create">
-                @lang('Create New Team')
+                @lang('Form New Team')
             </x-move-dropdown-link>
         @endcan
 

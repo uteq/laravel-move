@@ -2,8 +2,8 @@
     <x-move-form-section
         submit="save"
         class="mt-5"
+        wire:key="{{ $this->name ?: 'resource-form-section-' . $this->model->getKey() ?? rand(0, 99) }}"
         :sidebar-enabled="$isSidebarEnabled"
-        wire:key="{{ $this->name ?: 'resource-form-' . $this->model->getKey() ?? rand(0, 99) }}"
         wire:loading.class="opacity-50"
         wire:target="save"
         id="{{ $this->name ?: $this->id ?: \Illuminate\Support\Str::slug(get_class($this)) }}"
@@ -102,7 +102,6 @@
                     </div>
                 </x-move-action-message>
 
-
                 <x-move-a href="{{ $this->cancelRoute() }}" class="justify-self-left pl-0 ml-0">
                     @if ($this->buttonCancelText ?? null)
                         {{ $this->buttonCancelText }}
@@ -117,7 +116,7 @@
                     @elseif ($model->id)
                         @lang('Edit :resource', ['resource' => $this->label()])
                     @else
-                        @lang('Create :resource', ['resource' => $this->label()])
+                        @lang('Form :resource', ['resource' => $this->label()])
                     @endif
                 </x-move-button>
             </x-slot>

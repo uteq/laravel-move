@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Fields;
 
+use App\Admin\Move\Fields\Paragraph;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -45,8 +46,13 @@ abstract class Field extends FieldElement
     /** @var mixed */
     public $value;
 
-    /** @var callable|Closure|null */
+    /** @var ?Closure */
     protected $valueCallback;
+
+    /** @var ?Closure */
+    protected $defaultValueCallback;
+
+    protected static array $cachedValue = [];
 
     /**
      * The callback to be used to resolve the field's display value.
@@ -173,9 +179,9 @@ abstract class Field extends FieldElement
 
     public function default($value)
     {
-        $this->valueCallback = $value instanceof Closure
-            ? fn ($currentValue, $model, $attribute) => $currentValue ?: $value($currentValue, $model, $attribute)
-            : fn ($currentValue, $model, $attribute) => $currentValue ?: $value;
+        $this->defaultValueCallback = $value instanceof Closure
+            ? $value
+            : fn ($currentValue, $model, $attribute, $field) => $currentValue ?: $value;
 
         return $this;
     }
@@ -245,17 +251,88 @@ abstract class Field extends FieldElement
         $resource,
         $attribute = null
     ): self {
+        $index = $this->attribute . '.' . md5($resource);
 
         $this->resource = $resource;
 
-        if (! $this->value && ! Arr::has($resource, $this->attribute)) {
+        // Makes sure the value is only checked once.
+        //  Because this is a very expensive check.
+        if (isset(static::$cachedValue[$index])) {
+
+            $this->value = static::$cachedValue[$index];
+
+            return $this;
+        }
+
+//        if ($this->attribute === 'type') {
+//            ray(new \Exception());
+//        }
+
+        $value = (function () {
+            // Value is already set
+            if ($this->value) {
+                return $this->value;
+            }
+
+            $data = $this->resource->toArray();
+
+            // From store
+            if ($value = $this->getResourceStoreValue($data, $this->attribute)) {
+                return $value;
+            }
+
+            // From resource
+            if ($value = $this->getResourceAttributeValue($data, $this->attribute)) {
+                return $value;
+            }
+
+            if (! $this->defaultValueCallback) {
+                return null;
+            }
+
+            // Default value
+            return ($this->defaultValueCallback)(
+                null,
+                $this->resource,
+                $this->attribute,
+                $this
+            );
+        })();
+
+        $this->value = $this->valueCallback
+             ? ($this->valueCallback)($value, $resource, $attribute, $this)
+             : $value;
+
+        static::$cachedValue[$index] = $this->value;
+
+        return $this;
+
+        $this->fillFromResource($resource, $defaultValue ?? null);
+
+        return $this;
+
+        dd($resource);
+
+
+        if (! $this->value
+            && ! Arr::has($resource->toArray(), $this->attribute)
+        ) {
             $this->value = $this->applyValueCallback($resource);
 
             return $this;
         }
 
-        if (! empty($this->value)) {
+        $defaultValue = $this->applyValueCallback($resource);
 
+        // TODO fix that when version switches the description switches too
+        //  http://nathan.digipz.test/company/onboarding?filter[limit]=10
+//        if ($defaultValue) {
+//            $this->value = $defaultValue;
+//
+//            return $this;
+//        }
+
+        if (! empty($this->value)) {
             $this->fillFromResource($resource, $defaultValue ?? null);
 
             return $this;
@@ -267,15 +344,18 @@ abstract class Field extends FieldElement
 
         $this->resourceDataCallback
             ? tap(
-                $this->value ?? $this->getResourceAttributeValue($resource, $this->attribute),
-                fn ($value) => $this->value = call_user_func(
-                    $this->resourceDataCallback,
-                    $value,
-                    $resource,
-                    $this->attribute,
-                )
+            $this->value ?? $this->getResourceAttributeValue($resource, $this->attribute),
+            fn ($value) => $this->value = call_user_func(
+                $this->resourceDataCallback,
+                $value,
+                $resource,
+                $this->attribute,
             )
-            : $this->fillFromResource($resource, $defaultValue ?? null);
+        ) : $this->fillFromResource($resource, $defaultValue ?? null);
+
+        if ($this->attribute === 'description') {
+            dd($this->value);
+        }
 
         return $this;
     }
@@ -293,12 +373,17 @@ abstract class Field extends FieldElement
 
         $value = $this->getResourceAttributeValue($resource, $this->attribute) ?: $defaultValue;
 
+        if ($this->attribute === 'description') {
+            dd($value);
+        }
+
         $this->value = $this->valueCallback
             ? tap($value, fn ($value) => call_user_func(
                 $this->valueCallback,
                 $value,
                 $resource,
-                $this->attribute
+                $this->attribute,
+                $this,
             ))
             : $value;
     }
@@ -306,7 +391,7 @@ abstract class Field extends FieldElement
     protected function applyValueCallback($resource, $value = null)
     {
         $this->value = $this->valueCallback
-            ? ($this->valueCallback)($value, $resource, $this->attribute)
+            ? ($this->valueCallback)($value, $resource, $this->attribute, $this)
             : $value;
 
         if (! $this->value) {
@@ -315,6 +400,7 @@ abstract class Field extends FieldElement
                 $value,
                 $resource,
                 $this->attribute,
+                $this,
             )) : $value;
         }
 
@@ -326,13 +412,29 @@ abstract class Field extends FieldElement
      * @param $attribute
      * @return array|mixed
      */
+    protected function getResourceStoreValue($resource, $attribute)
+    {
+        $attribute = $this->storePrefix() . '.' . $attribute;
+
+        return $this->getResourceAttributeValue($resource, $attribute);
+    }
+
+    /**
+     * @param $resource
+     * @param $attribute
+     * @return array|mixed
+     */
     protected function getResourceAttributeValue($resource, $attribute)
     {
-        if ($value = data_get($resource, str_replace('->', '.', $attribute))) {
+        $resource = is_array($resource) ? $resource : $resource->toArray();
+
+        $attribute = str_replace('->', '.', $attribute);
+
+        if ($value = data_get($resource, $attribute)) {
             return $value;
         }
 
-        return Arr::get($resource, str_replace('->', '.', $attribute));
+        return Arr::get($resource, $attribute);
     }
 
     /**
@@ -464,6 +566,10 @@ abstract class Field extends FieldElement
 
     public function view(string $displayTypeKey, array $data = [])
     {
+        if ($this->isPlaceholder) {
+            return null;
+        }
+
         $this->type = $displayTypeKey;
 
         $displayType = $this->displayTypes[$displayTypeKey] ?? 'index';
@@ -745,16 +851,13 @@ abstract class Field extends FieldElement
 
     public function storeValue($key, $default = null)
     {
-        $prefix = $this->storePrefix ?? null;
-        $prefix = $prefix ? $prefix . '.' : '';
+        $storeKey = $this->storePrefix ?? $this->defaultStorePrefix;
 
-        $store = move_arr_expand($this->resource?->store ?? []);
+        $prefix = $storeKey ? $storeKey . '.' : '';
 
-        $storeKey = Str::after($this->storePrefix . '.' . $key, $this->defaultStorePrefix . '.');
+        $store = $this->resource->toArray();
 
-        return $this->dirty
-            ? Arr::get($store, $storeKey, $default)
-            : Arr::get($this->resource, $prefix . $key, $default);
+        return Arr::get($store, $prefix . $key);
     }
 
     /**
@@ -771,5 +874,25 @@ abstract class Field extends FieldElement
         return Str::of($this->storePrefix)
             ->before($number)
             ->append($number + 1);
+    }
+
+    public function wrap($wrap = true): static
+    {
+        $this->wrapContent = $wrap;
+
+        return $this;
+    }
+
+    public function shouldWrap(): bool
+    {
+        if ($this->wrapContent) {
+            return true;
+        }
+
+        if (Move::getWrapTableContent()) {
+            return true;
+        }
+
+        return false;
     }
 }

@@ -1,7 +1,7 @@
 <div>
     <x-move-table.header add-action="{!! $this->addRoute() !!}"
                          add-is-route
-                         :add-text="__('Create :resource', ['resource' => $this->resource()->singularLabel()])"
+                         :add-text="__('Form :resource', ['resource' => $this->resource()->singularLabel()])"
                          search
     >
         @foreach ($headerSlots as $name => $value)
@@ -114,7 +114,7 @@
                     <div class="p-10">
                         <p class="mb-3">@lang('No items available')</p>
                         <a href="{{ $table->addRoute() }}" class="underline text-primary-500">
-                            @lang('Create first :resource', ['resource' => $table->resource()->singularLabel()])
+                            @lang('Form first :resource', ['resource' => $table->resource()->singularLabel()])
                         </a>
                     </div>
                 </x-move-td>

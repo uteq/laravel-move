@@ -32,17 +32,17 @@
     ][$color];
 
     $borderClass = [
-        'top' => 'border-t-4',
-        'left' => 'border-l-4',
-        'right' => 'border-r-4',
-        'bottom' => 'border-b-4',
+        'top' => 'border-t-4 rounded-b',
+        'left' => 'border-l-4 rounded-r',
+        'right' => 'border-r-4 rounded-l',
+        'bottom' => 'border-b-4 rounded-t',
     ][$borderPosition];
 @endphp
 
-<div {{ $attributes->merge([
-            'class' => implode(' ', $classes) . ' '. $borderClass .' rounded-b px-4 py-3 shadow-md',
-        ])
-     }}
+<div
+    {{ $attributes->merge([
+        'class' => implode(' ', $classes) . ' '. $borderClass .' px-4 py-3 shadow-md',
+    ]) }}
      role="alert"
 >
     <div class="flex">

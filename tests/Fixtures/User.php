@@ -58,7 +58,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Create a new factory instance for the model.
+     * Form a new factory instance for the model.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */

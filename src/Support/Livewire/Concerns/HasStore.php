@@ -77,11 +77,9 @@ trait HasStore
     public function validateStore()
     {
         $data = $this->storePrepareSaveData();
+        $rules = ($data['rules'] ?? []) ?: $this->rules($this->{$this->property});
 
-        $this->customValidate(
-            $data['fields'],
-            (($data['rules'] ?? []) ?: $this->rules($this->{$this->property}))
-        );
+        $this->customValidate($data['fields'], $rules);
 
         return $data;
     }

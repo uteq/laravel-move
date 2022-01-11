@@ -73,7 +73,9 @@ trait WithSteps
         $resolvedFields = $this->resolvedStepFields($step);
 
         $rules = collect($resolvedFields)
-            ->filter(fn ($field) => $field->isVisible($this->store, $this->model->id ? 'update' : 'create'))
+            ->filter(fn ($field) =>
+                $field->isVisible($this->store, $this->model->id ? 'update' : 'create')
+            )
             ->mapWithKeys(fn ($field) => [
                 $field->attribute => $field->rules,
             ])
@@ -120,14 +122,20 @@ trait WithSteps
         $step = $this->step($step);
         $fields = $step->allFields();
 
-        return $this->resolveFields($this->model, $keepPlaceholder, $fields);
+        return $this->resolveFields(
+            $this->model,
+            $keepPlaceholder,
+            $fields
+        );
     }
 
     public function allStepsAvailable()
     {
         $steps = $this->steps();
 
-        $count = $steps->filter(fn ($step) => in_array($step->attribute, $this->availableSteps))->count();
+        $count = $steps
+            ->filter(fn ($step) => in_array($step->attribute, $this->availableSteps))
+            ->count();
 
         return $count === $steps->count();
     }

@@ -32,6 +32,7 @@
 <!-- Static sidebar for desktop -->
 <div class="hidden md:flex md:flex-shrink-0"
      x-show="sidebarMenuOpen"
+
 >
     <div class="flex flex-col w-64">
         <!-- Sidebar component, swap this element with another sidebar if you like -->

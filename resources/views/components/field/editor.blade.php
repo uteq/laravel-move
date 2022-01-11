@@ -1,6 +1,7 @@
 @props([
     'id',
     'theme' => 'snow',
+    'version' => 1,
     'name' => optional($attributes->wire('model'))->value(),
     'value' => null,
     'disableTab' => false,
@@ -15,7 +16,14 @@
     'rows' => 5
 ])
 
-<div wire:ignore>
+@php
+    use Illuminate\Support\Arr;
+    use Illuminate\Support\Str;
+
+    $value = is_array($value) ? Arr::get($value, Str::after($name, '.')) : $value;
+@endphp
+
+<div wire:ignore wire:key="{{ md5($version) }}" class="ql-editor-{{ $id }}-container">
     <div class="mt-2 bg-white">
         <div
             x-data
@@ -31,7 +39,7 @@
 
                 quill{{ $id }}.on('text-change', (delta, oldDelta, source) => {
                     // Get HTML content
-                    $wire.set('{{ $name }}', unescape(encodeURIComponent(quill{{ $id }}.root.innerHTML)));
+                    $wire.set('{{ $name }}', $refs.quillEditor{{ $id }}.firstChild.innerHTML);
                 });
 
                 @if ($disableTab)
@@ -41,13 +49,26 @@
             style="min-height: {{ $rows * 3 }}em; min-width: 100%;"
             class="w-full border rounded-b"
         >
-            <div class="ql-editor-{{ $id }}" tabindex="1">{!! (\Illuminate\Support\Arr::get($value, \Illuminate\Support\Str::after($name, '.'))) !!}</div>
+            <div class="ql-editor-{{ $id }}"
+                 tabindex="1"
+            >{!! $value !!}</div>
         </div>
     </div>
     <style>
-        .ql-editor-{{ $id }}{
+        .ql-editor-{{ $id }}-container .ql-editor {
             min-height: {{ $rows * 3 }}em;
         }
+
+        @if (empty($toolbar))
+            .ql-editor-{{ $id }}-container .ql-toolbar {
+                display: none;
+            }
+
+            .ql-editor-{{ $id }}-container .ql-container {
+                border-top: 1px solid #ccc !important;
+                border-radius: 0.25rem !important;
+            }
+        @endif
     </style>
 </div>
 <div class="hidden" ></div>

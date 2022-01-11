@@ -3,6 +3,8 @@
 namespace Uteq\Move;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -129,12 +131,13 @@ class MoveServiceProvider extends ServiceProvider
     public function configureNamespaces()
     {
         foreach (Move::all() as $alias => $class) {
-            if (! isset($class::$model)) {
+            if (! isset($class::$model) && ! $class::$skipModelCheck) {
                 throw new \Exception(sprintf(
-                    '%s: The $model attribute is required for resource `%s` / `%s`',
+                    '%s: The $model attribute is required for resource `%s` / `%s`. You can disable it by setting %s. That way you can manually overwrite the model',
                     __METHOD__,
                     $alias,
-                    $class
+                    $class,
+                    'public static $skipModelCheck = true'
                 ));
             }
 
@@ -219,9 +222,18 @@ class MoveServiceProvider extends ServiceProvider
 
         $this->app->singleton('move', \Uteq\Move\Move::class);
 
+        $this->registerMacros();
+
         $this->registerComponentAutoDiscovery();
 
         $this->configureLivewire();
+    }
+
+    public function registerMacros()
+    {
+        Collection::macro('set', function($key, $value) {
+            Arr::set($this->items, $key, $value);
+        });
     }
 
     public function registerComponentAutoDiscovery()

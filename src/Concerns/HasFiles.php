@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\URL;
 use Intervention\Image\Facades\Image;
 use Livewire\WithFileUploads;
 use Symfony\Component\HttpFoundation\File\File;
+use Uteq\Move\Contracts\FilesContract;
 use Uteq\Move\DataTransferObjects\MediaCollection;
 use Uteq\Move\DataTransferObjects\MediaData;
 use Uteq\Move\Fields\Field;
@@ -69,8 +70,8 @@ trait HasFiles
 
     public function beforeStore(array $store)
     {
-        $this->fields
-            ->filter(fn ($field) => $field instanceof Files)
+        $this->fields()
+            ->filter(fn ($field) => $field instanceof FilesContract)
             ->each(function (Files $field) use (&$store) {
                 $key = $field->attribute;
 

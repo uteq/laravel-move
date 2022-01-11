@@ -53,7 +53,9 @@
 
     <script defer>
         document.addEventListener("livewire:load", function() {
-            $('#search-dropdown ul').first().focus();
+            $(function() {
+                $('#search-dropdown ul').first().focus();
+            });
         });
 
         document.addEventListener("keyup", event => {

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Uteq\Move\Facades\Move;
+use Uteq\Move\Livewire\ResourceForm;
 
 /**
  * Trait HasResource
@@ -65,12 +66,22 @@ trait HasResource
 
     public function resource()
     {
-        return $this->resolvedResource ?? $this->getResolvedResourceProperty();
+        $resource = $this->resolvedResource ?? $this->getResolvedResourceProperty();
+
+        if ($resource->resource?->id && ($this->action ?? null) === 'create') {
+            $resource->resource = new ($resource->resource::class)();
+            $this->model = $resource->resource;
+            $this->store = [];
+        }
+
+        return $resource;
     }
 
     public function getResolvedResourceProperty()
     {
-        $resource = Move::resolveResource($this->resource);
+        $resource = class_exists($this->resource)
+            ? new $this->resource($this->model)
+            : Move::resolveResource($this->resource);
 
         if (method_exists($this, 'resourceFields')) {
             $this->resourceFields = $this->resourceFields();
@@ -111,7 +122,9 @@ trait HasResource
 
     public function resolveFields(Model $model = null, $keepPlaceholder = false, array $fields = null)
     {
-        $type = ! $model ? 'create' : ($model->id ? 'update' : 'create');
+        $type = ! $model
+            ? 'create'
+            : ($model->id ? 'update' : 'create');
 
         return $this->resource()->resolveFields($model, $type, $keepPlaceholder, $fields);
     }
@@ -166,13 +179,16 @@ trait HasResource
 
     public function resolveAndMapFieldToFields($key): array
     {
+        $attribute = $field->attribute ?? $field['attribute'] ?? null;
+
         $fields = $this->fields()
-            ->filter(fn ($field) => str_starts_with($key, $field->attribute ?? $field['attribute'] ?? null))
+            ->filter(fn ($field) => str_starts_with($key, $attribute))
             ->toArray();
 
-        $store = Arr::dot($this->store);
-
-        return $this->mapFields($this->resolveFields(null, null, $fields), $store);
+        return $this->mapFields(
+            $this->resolveFields(null, null, $fields),
+            $this->store
+        );
     }
 
     public function getFieldRule($key): array
