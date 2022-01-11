@@ -67,8 +67,9 @@ trait HasResource
     public function resource()
     {
         $resource = $this->resolvedResource ?? $this->getResolvedResourceProperty();
+        $action = isset($this->action) && $this->action ?? null;
 
-        if ($resource->resource?->id && ($this->action ?? null) === 'create') {
+        if ($resource->resource?->id && $action === 'create') {
             $resource->resource = new ($resource->resource::class)();
             $this->model = $resource->resource;
             $this->store = [];
