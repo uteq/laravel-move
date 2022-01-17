@@ -70,7 +70,7 @@
         </x-slot>
 
         <tbody wire:target="edit" wire:loading.remove @if ($sortable) wire:sortable="updateOrder" @endif>
-        @forelse ($rows as $i => $row)
+        @forelse ($rows ?? [] as $i => $row)
             <tr class="hover:bg-gray-50 bg-white shadow" wire:key="table-row-{{ $table->page ?? 0 }}-{{ $row['model']->id }}" wire:sortable.item="{{ $row['model']->id }}">
                 @if ($sortable)
                     <x-move-td wire:sortable.handle>

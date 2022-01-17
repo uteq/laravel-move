@@ -40,8 +40,8 @@ trait HasCrud
             $resourceModel = $resourceModel->withTrashed();
         }
 
-        if ($this->rows ?? null) {
-            return collect($this->rows)
+        if (isset($this->rows) && $this->rows ?? null) {
+            return collect($this->rows ?? [])
                 ->filter(fn ($row) => (int)  $row['model']['id'] === (int) $id)
                 ->filter(fn ($row) => $row['model']::class === $resourceModel::class)
                 ->map(fn ($row) => $row['model'])
