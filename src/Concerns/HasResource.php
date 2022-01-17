@@ -27,20 +27,32 @@ trait HasResource
         $this->initializeHasMountActions();
 
         $this->beforeMount(function () {
-            $this->model ??= $this->resolveResourceModel();
+            $this->model = $this->resolveResourceModel();
             $this->modelId = optional($this->model)->{$this->model->getKey()};
-
             $this->fields = collect($this->getFieldsProperty());
         });
     }
 
     public function resolveResourceModel()
     {
+        if (is_string($this->model)) {
+            return $this->model::find($this->modelId)
+                ?: new ($this->model)();
+        }
+
         if ($this->model !== null) {
             return $this->model;
         }
 
-        $resource = Move::resolveResource(request()->route()->parameter('resource') ?? null ?: $this->resource);
+        return $this->resolveMoveResourceModel();
+    }
+
+    public function resolveMoveResourceModel()
+    {
+        $resource = Move::resolveResource(
+            request()->route()->parameter('resource')
+            ?? $this->resource
+        );
 
         if (! $resource) {
             return null;
@@ -63,7 +75,7 @@ trait HasResource
 
     public function getResolvedResourceProperty(): \Uteq\Move\Resource
     {
-        return Move::resolveResource($this->resource, $this);
+        return Move::resolveResource($this->resource);
     }
 
     public function getResourceProperty()
