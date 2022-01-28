@@ -31,7 +31,7 @@ trait HasResource
 
             $this->model ??= $this->resolveResourceModel();
 
-            $this->modelId = optional($this->model)->{$this->model->getKey()};
+            $this->modelId = $this->model->{$this->model->getKey()};
 
             $this->fields = collect($this->getFieldsProperty());
 
@@ -44,9 +44,20 @@ trait HasResource
             return $this->model;
         }
 
+        $model = $this->doResolveResourceModel();
+
+        if ($this->action === 'create') {
+            return $model ? new ($model::class)() : null;
+        }
+
+        return $model;
+    }
+
+    protected function doResolveResourceModel()
+    {
         $resource = Move::resolveResource(
             request()->route()->parameter('resource')
-                ?? null
+            ?? null
                 ?: $this->resource
         );
 
@@ -60,6 +71,10 @@ trait HasResource
     public function mountHasResource()
     {
         if ($this->modelId) {
+            $this->resource()->resource = $this->model;
+        }
+
+        if ($this->action === 'create') {
             $this->resource()->resource = $this->model;
         }
     }
@@ -219,9 +234,12 @@ trait HasResource
     public function getFieldsProperty()
     {
         return collect(
-            $this->model
-                ? $this->resolveFields($this->model)
-                : $this->resource()->resolveFields($this->resource()->model())
+            $this->action === 'create'
+                ? $this->resource()->resolveFields($this->resource()->model())
+                : $this->resolveFields($this->model)
+//            $this->model
+//                ? $this->resolveFields($this->model)
+//                : $this->resource()->resolveFields($this->resource()->model())
         );
     }
 
