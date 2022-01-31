@@ -18,7 +18,7 @@
             {{ __('Loading...') }}
         </div>
 
-        @if (strlen($search))
+        @if ($search && strlen($search))
             <div id="search-dropdown"
                  class="border w-full rounded-bottom bg-white"
                  wire:target="search"

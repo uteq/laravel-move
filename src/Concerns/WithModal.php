@@ -13,8 +13,15 @@ trait WithModal
         ], $this->listeners);
     }
 
-    public function closeModal(): void
+    public function closeModal(
+        string $message = null,
+        string $messageKey = 'message'
+    ): void
     {
         $this->showModal = null;
+
+        if ($message) {
+            session()->flash($messageKey, $message);
+        }
     }
 }

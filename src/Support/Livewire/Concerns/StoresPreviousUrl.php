@@ -7,9 +7,14 @@ use Illuminate\Support\Facades\Session;
 trait StoresPreviousUrl
 {
     public $previous;
+    public $storesPrevious = true;
 
     public function initializeStoresPreviousUrl(): void
     {
+        if (! $this->storesPrevious) {
+            return;
+        }
+
         if (request()->method() !== 'POST') {
             $this->previous = url()->previous();
 
