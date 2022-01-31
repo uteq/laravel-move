@@ -16,8 +16,7 @@ trait WithModal
     public function closeModal(
         string $message = null,
         string $messageKey = 'message'
-    ): void
-    {
+    ): void {
         $this->showModal = null;
 
         if ($message) {

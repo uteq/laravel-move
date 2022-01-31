@@ -75,8 +75,7 @@ abstract class Resource
     public function __construct(
         Model $resource,
         public mixed $component = null,
-    )
-    {
+    ) {
         $this->resource = $resource;
 
         if (method_exists($this, 'initialize')) {
