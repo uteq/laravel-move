@@ -93,6 +93,10 @@ class ResourceFile extends File implements ResourceFileContract
             return $file;
         }
 
+        if (! str_contains(@get_headers($file)[0] ?? '', '404')) {
+            return $file;
+        }
+
         /** @psalm-suppress UndefinedInterfaceMethod */
         return url()->temporarySignedRoute(
             name: move()::getPrefix() . '.preview-file',
