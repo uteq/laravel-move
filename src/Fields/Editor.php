@@ -21,7 +21,7 @@ class Editor extends Textarea
         ['blockquote', 'code-block'],
         [[ 'list' => 'ordered'], [ 'list' => 'bullet' ]],
         [[ 'align' => [] ]],
-        ['clean']
+        ['clean'],
     ];
 
     public array $settings = [];
