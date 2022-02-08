@@ -251,11 +251,23 @@ abstract class BaseResourceForm extends FormComponent
             ->actionEnabled($this->getCurrentAction());
     }
 
+    public function booted()
+    {
+        if (! $this->isCurrentActionEnabled()) {
+            if ($this->model->exists()) {
+                return redirect(route(move()::getPrefix() . '.show', [
+                    'resource' => $this->resource,
+                    'model' => $this->model,
+                ]));
+            }
+
+            return redirect(route(move()::getPrefix() . '.index', $this->resource));
+        }
+    }
+
     public function render()
     {
-        if ($this->isCurrentActionEnabled()) {
-            abort(403);
-        }
+
 
         /** @psalm-suppress UndefinedInterfaceMethod */
         return view('move::livewire.resource-form')
