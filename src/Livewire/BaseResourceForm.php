@@ -237,8 +237,26 @@ abstract class BaseResourceForm extends FormComponent
         return $this;
     }
 
+    public function getCurrentAction()
+    {
+        return $this->model->exists()
+            ? 'update'
+            : 'create';
+    }
+
+    public function isCurrentActionEnabled()
+    {
+        return $this
+            ->resource()
+            ->actionEnabled($this->getCurrentAction());
+    }
+
     public function render()
     {
+        if ($this->isCurrentActionEnabled()) {
+            abort(403);
+        }
+
         /** @psalm-suppress UndefinedInterfaceMethod */
         return view('move::livewire.resource-form')
             ->layout($this->resource()::$layout ?? Move::layout(), [

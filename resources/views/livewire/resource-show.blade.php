@@ -7,7 +7,7 @@
 
     @if (! $hideActions)
         <div class="sm:absolute top-8 right:6 sm:right-8 md:right-10">
-            @if ($this->resource()->can('update'))
+            @if ($this->resource()->can('update') && $this->resource()->actionEnabled('update'))
                 <a href="{{ $this->editRoute($model->id) }}" class="inline-flex cursor-pointer">
                     <!-- heroicon-s-pencil -->
                     <svg class="text-gray-400 hover:text-gray-600 h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -16,7 +16,7 @@
                 </a>
             @endif
 
-            @if ($this->resource()->can('delete'))
+            @if ($this->resource()->can('delete') && $this->resource()->actionEnabled('delete'))
                 <a class="inline-flex cursor-pointer">
                     <x-move-dialog-modal wire:model="confirmingDestroy" wire:key="confirm.destroy">
                         <x-slot name="button">
