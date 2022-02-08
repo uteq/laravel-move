@@ -31,12 +31,12 @@ class TemporaryUploadedResourceFile extends UploadedFile implements ResourceFile
         return $this->media->getRealPath();
     }
 
-    public function guessExtension()
+    public function guessExtension(): string
     {
         return $this->media->guessExtension();
     }
 
-    public function getClientOriginalName()
+    public function getClientOriginalName(): string
     {
         return $this->media->getClientOriginalName();
     }

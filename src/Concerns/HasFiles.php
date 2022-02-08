@@ -119,8 +119,10 @@ trait HasFiles
 
     public function getTemporaryUrl(File $file): string
     {
-        return URL::temporarySignedRoute(move()::getPrefix() . '.preview-file', now()->addMinutes(30), [
-            'filename' => $file->getFilename(),
-        ]);
+        return URL::temporarySignedRoute(
+            name: move()::getPrefix() . '.preview-file',
+            expiration: now()->addMinutes(30),
+            parameters: ['filename' => $file->getFilename()]
+        );
     }
 }

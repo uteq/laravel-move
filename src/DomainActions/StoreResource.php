@@ -17,7 +17,6 @@ class StoreResource
             //  because this action will store the media separate in the after store.
             ...$this->withoutMedia($model, $data),
         );
-
         $model->save();
 
         $this->afterStore($model, $data, $resource);

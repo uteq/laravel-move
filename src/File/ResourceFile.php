@@ -58,7 +58,7 @@ class ResourceFile extends File implements ResourceFileContract
         return $path;
     }
 
-    public function getMimeType()
+    public function getMimeType(): string
     {
         return $this->media->mime_type ?: parent::getMimeType();
     }
