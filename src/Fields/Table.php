@@ -38,7 +38,7 @@ class Table extends Panel
         ]);
 
         $fields ??= [
-            Placeholder::make(uniqid()),
+            Placeholder::make(),
         ];
 
         $this->resource($resourceClass);

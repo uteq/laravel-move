@@ -29,7 +29,7 @@ class Alert extends Panel
         $this->text = $text;
 
         parent::__construct(uniqid(), [
-            Placeholder::make(uniqid()),
+            Placeholder::make(),
         ]);
     }
 
