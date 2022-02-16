@@ -8,7 +8,7 @@ trait WithStackableFields
 {
     public function stackFields()
     {
-        foreach ($this->fields as &$field) {
+        foreach ($this->getFields() as &$field) {
             if (! $field instanceof Field) {
                 continue;
             }

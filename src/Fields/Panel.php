@@ -122,7 +122,7 @@ class Panel implements PanelInterface, ElementInterface
             $this->name = isset($resource['id']) ? $this->nameOnUpdate : $this->nameOnCreate;
         }
 
-        collect($this->fields)
+        collect($this->getFields())
             ->each(fn (ElementInterface $element) =>
                 $element->addDependencies($this->dependencies)
                     ->applyResourceData($resource)
@@ -136,7 +136,7 @@ class Panel implements PanelInterface, ElementInterface
 
     public function allFields(): array
     {
-        return array_merge($this->fields, $this->flatPanelsFields());
+        return array_merge($this->getFields(), $this->flatPanelsFields());
     }
 
     public function flatPanelsFields($panels = null): array
@@ -157,7 +157,7 @@ class Panel implements PanelInterface, ElementInterface
 
     public function empty(): bool
     {
-        return ! count($this->fields) && ! count($this->panels);
+        return ! count($this->getFields()) && ! count($this->panels);
     }
 
     public function alert($type, $description): static
@@ -323,5 +323,10 @@ class Panel implements PanelInterface, ElementInterface
         $this->folder = $folder;
 
         return $this;
+    }
+
+    public function getFields()
+    {
+        return $this->fields;
     }
 }

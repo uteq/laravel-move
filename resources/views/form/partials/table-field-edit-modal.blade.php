@@ -14,7 +14,8 @@
         name="modal-form-{{ $showModal }}-{{ $model['id'] }}"
         :resource="$this->resource"
         :redirects="$this->redirects"
-        :model="$model"
+        :model="$model::class"
+        :modelId="$model['id']"
         hide-actions
         action="edit"
     />
