@@ -15,6 +15,7 @@ class StoreResource
 
     public function __invoke(Model $model, array $data, Resource $resource)
     {
+        dd('sfd');
         $model = $this->fill($model, $data, $resource, $this->withoutMedia($model, $data));
         $model->save();
 
