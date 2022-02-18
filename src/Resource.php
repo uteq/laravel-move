@@ -439,7 +439,7 @@ abstract class Resource
                 continue;
             }
 
-            $elements = $panel->fields;
+            $elements = $panel->getFields();
 
             $panel->applyResourceData($this->resource, $resourceForm, $this);
             $panel->resolveFields($resource);
