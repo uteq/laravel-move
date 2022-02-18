@@ -67,6 +67,10 @@ class Files extends Field implements FilesContract
             ? data_get($this->resource, Str::beforeLast($this->attribute, '.'))
             : $this->resource;
 
+        // TODO: Find out why, in some cases, $model is an array
+        if(is_array($model)){
+            return null;
+        }
         return $model?->getMedia(Str::afterLast($this->attribute, '.'));
     }
 
