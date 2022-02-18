@@ -1,4 +1,4 @@
-@props(['model', 'version' => 1, 'options' => [], 'placeholder' => null, 'settings' => ['placeholder' => __('Select your option')], 'values' => null, 'multiple' => false])
+@props(['model', 'version' => 1, 'options' => [], 'placeholder' => null, 'settings' => ['placeholder' => __('Select your option')], 'values', 'multiple' => false])
 
 @php $index = \Str::slug(str_replace('.', '-', $model)); @endphp
 
@@ -8,7 +8,7 @@
         name="{{ $model }}"
         id="{{ $index }}"
         wire:model="{{ $model }}"
-        {{ $attributes->merge(['class' => 'select2-'. $index .' form-select rounded border-none shadow w-full']) }}
+        {{ $attributes->class('select2-'. $index .' form-select rounded border-none shadow w-full') }}
         @if ($multiple) multiple="multiple" @endif
         style="width: 100%"
     >

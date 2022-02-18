@@ -264,10 +264,6 @@ abstract class Field extends FieldElement
             return $this;
         }
 
-//        if ($this->attribute === 'type') {
-//            ray(new \Exception());
-//        }
-
         $value = (function () {
             // Value is already set
             if ($this->value) {
@@ -275,6 +271,7 @@ abstract class Field extends FieldElement
             }
 
             $data = $this->resource->toArray();
+
 
             // From store
             if ($value = $this->getResourceStoreValue($data, $this->attribute)) {

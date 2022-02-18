@@ -15,7 +15,13 @@ class Date extends Field
 
     public function init()
     {
-        $this->valueCallback = fn ($date) => optional($date)->format('d-m-Y');
+        $this->valueCallback = function ($date) {
+            if (is_string($date)) {
+                return $date;
+            }
+
+            return optional($date)->format('d-m-Y');
+        };
 
         // Makes sure it also handles values like 19-08-1990T23:00:00.000000Z
         $this->beforeStore[] = fn ($date) => str_contains($date, 'T')
@@ -26,6 +32,13 @@ class Date extends Field
     public function format(string $format)
     {
         $this->dateConfig['dateFormat'] = $format;
+
+        return $this;
+    }
+
+    public function altFormat(string $format)
+    {
+        $this->dateConfig['altFormat'] = $format;
 
         return $this;
     }

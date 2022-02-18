@@ -354,11 +354,11 @@ trait HasStore
 
     public function flattenStore($keepArrays = false)
     {
-        $this->store = Arr::dot(
-            collect($this->store)
-                ->when(! $keepArrays, fn ($store) => $store->filter(fn ($value) => ! is_array($value)))
-                ->toArray()
-        );
+//        $this->store = Arr::dot(
+//            collect($this->store)
+//                ->when(! $keepArrays, fn ($store) => $store->filter(fn ($value) => ! is_array($value)))
+//                ->toArray()
+//        );
 
         $this->model->store = $this->store;
 

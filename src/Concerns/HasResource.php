@@ -29,9 +29,9 @@ trait HasResource
 
         $this->beforeMount(function () {
 
-            $this->model ??= $this->resolveResourceModel();
+            $this->model = $this->resolveResourceModel();
 
-            $this->modelId = $this->model->{$this->model->getKey()};
+            $this->modelId ??= $this->model->getKey();
 
             $this->fields = collect($this->getFieldsProperty());
 
@@ -40,6 +40,11 @@ trait HasResource
 
     public function resolveResourceModel()
     {
+        if (is_string($this->model)) {
+            return $this->model::find($this->modelId)
+                ?: new ($this->model)();
+        }
+
         if ($this->model !== null) {
             return $this->model;
         }

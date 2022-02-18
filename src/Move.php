@@ -161,11 +161,17 @@ class Move
         $resource = $this->fullResourceName($resource);
 
         if (! app()->has($resource)) {
-            throw new UnknownResourceException(sprintf(
+            $message = sprintf(
                 '%s: The requested resource %s does not exist or has not been added',
                 __METHOD__,
                 str_replace('.', '/', $resource),
-            ));
+            );
+
+            if (config('move.soft_resource_not_found')) {
+                abort(404, $message);
+            } else {
+                throw new UnknownResourceException($message);
+            }
         }
 
         return app()->get($resource);
