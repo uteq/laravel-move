@@ -1,20 +1,18 @@
-@props(['orientation' => 'left'])
+@props(['orientation' => 'left', 'withMargin' => true, 'top' => 'top-7'])
 
-<div>
-    <div x-data="{ open: false }"
-         {{ $attributes->merge(['class' => 'relative']) }}
+<div x-data="{ open: false }"
+    {{ $attributes->merge(['class' => 'relative']) }}
+>
+    <div x-on:click="open = true" {{ $trigger->attributes }}>
+        {{ $trigger }}
+    </div>
+
+    <div :class="{'block': open, 'hidden': ! open}"
+         class="absolute z-50 {{ $withMargin ? 'mt-2' : null }} {{ $top }} w-48 rounded-md shadow-lg origin-top-right {{ $orientation === 'left' ? 'left-0' : 'right-0' }} hidden"
+         @click.away="open = false"
     >
-        <div x-on:click="open = true">
-            {{ $trigger }}
-        </div>
-
-        <div :class="{'block': open, 'hidden': ! open}"
-             class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right top-7 {{ $orientation === 'left' ? 'left-0' : 'right-0' }} hidden"
-             @click.away="open = false"
-        >
-            <div class="rounded-md shadow-xs py-1 bg-white">
-                {{ $slot }}
-            </div>
+        <div class="rounded-md shadow-xs py-1 bg-white">
+            {{ $slot }}
         </div>
     </div>
 </div>

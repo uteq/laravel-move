@@ -1,11 +1,12 @@
 <div>
-    <x-move-table.header add-action="{!! $this->addRoute() !!}"
-                         add-is-route
-                         :add-text="__('Form :resource', ['resource' => $this->resource()->singularLabel()])"
-                         search
+    <x-move-table.header
+        add-action="{!! $this->addRoute() !!}"
+        add-is-route
+        :add-text="__('Form :resource', ['resource' => $this->resource()->singularLabel()])"
+        search
     >
         @foreach ($headerSlots as $name => $value)
-        <x-slot :name="$name">{!! $value !!}</x-slot>
+            <x-slot :name="$name">{!! $value !!}</x-slot>
         @endforeach
     </x-move-table.header>
 

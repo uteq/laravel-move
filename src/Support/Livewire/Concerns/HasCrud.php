@@ -100,7 +100,7 @@ trait HasCrud
         $model = $this->resolveModel($id);
 
         $destroyer = $this->resource()->handler('delete') ?: fn ($item) => $item->delete();
-        $destroyer($model);
+        $destroyer($model, [], $this->resource());
 
         $endpoint = false;
 

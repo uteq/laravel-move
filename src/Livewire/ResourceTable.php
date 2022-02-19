@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Livewire;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\WithPagination;
@@ -52,6 +53,7 @@ class ResourceTable extends TableComponent
     public array $route = [];
     public array $showFields = [];
     public array $hideFields = [];
+    public array $customCollection = [];
     public string|null $showModal = null;
     public $disableDeleteFor;
     public $redirects;
@@ -133,7 +135,9 @@ class ResourceTable extends TableComponent
 
     public function handleDelete()
     {
-        $handler = $this->resource()->handler('delete')
+        $handler = $this
+            ->resource()
+            ->handler('delete')
             ?: fn ($item) => $item->delete();
 
         $this->selectedCollection()->each($handler);
@@ -226,9 +230,27 @@ class ResourceTable extends TableComponent
 
     protected function rows()
     {
+        $resourceClass = get_class($this->resource());
+
+        if ($this->customCollection) {
+            $data = Arr::get(
+                $this->parent()->model()->toArray(),
+                $this->customCollection['key'],
+                []
+            );
+
+            $model = $this->resource()->model()->setRows($data);
+
+            ray($data);
+
+            $collection = $model::query()->get();
+
+        }
+
         $rows = [];
-        foreach ($this->collection() as $item) {
-            $resourceClass = get_class($this->resource());
+        $collection ??= $this->collection();
+
+        foreach ($collection as $item) {
             $resource = new $resourceClass($item);
 
             $rows[] = [

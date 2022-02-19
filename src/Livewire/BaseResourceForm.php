@@ -173,6 +173,10 @@ abstract class BaseResourceForm extends FormComponent
     {
         $store = $this->store;
 
+        if (str_contains($defaultKey, '.')) {
+            unset($store[$defaultKey]);
+        }
+
         $this->model->store = $store;
 
         foreach ($this->fields() as $field) {

@@ -314,7 +314,7 @@ abstract class Resource
 
     public function handleDelete($handler, $model)
     {
-        return $handler($model);
+        return $handler($model, null, $this);
     }
 
     public function resolveFields(Model $model = null, $type = null, $keepPlaceholder = false, array $fields = null)
@@ -356,10 +356,16 @@ abstract class Resource
 
         $type = $type ?: (isset($model->id) ? 'edit' : 'create');
 
-        return collect($this->getFields())
+        $fields = collect($this->getFields())
             ->filter(fn (ElementInterface $element) => $element->isShownOn($type, $model, request()))
             ->filter(fn (ElementInterface $element) => ! ($element->isPlaceholder ?? false))
             ->toArray();
+
+        if (method_exists($this, 'indexHeader')) {
+            return $this->indexHeader($fields);
+        }
+
+        return $fields;
     }
 
     public function fieldsFromRecursive($fields)
@@ -439,7 +445,7 @@ abstract class Resource
                 continue;
             }
 
-            $elements = $panel->getFields();
+            $elements = $panel->fields;
 
             $panel->applyResourceData($this->resource, $resourceForm, $this);
             $panel->resolveFields($resource);

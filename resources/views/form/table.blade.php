@@ -13,6 +13,7 @@
             :wire:key="'move-'. \Illuminate\Support\Str::slug($panel->tableResource) .'-' . $this->model->getKey()"
             :parent-model="$this->model"
             :parent-resource-class="$this->resource()::class"
+            :custom-collection="$panel->getCustomCollection()"
             :meta="$panel->meta"
             :disable-delete-for="$panel->getDisableDeleteFor()"
             :redirects="$panel->getRedirects()"

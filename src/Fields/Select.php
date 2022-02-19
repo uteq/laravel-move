@@ -197,6 +197,10 @@ class Select extends Field
             ? $options($this ?? null)
             : $options;
 
+        if (is_string($options)) {
+            $options = json_decode($options, true);
+        }
+
         if (count($options ??= [])) {
             return $options;
         }

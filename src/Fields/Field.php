@@ -37,6 +37,7 @@ abstract class Field extends FieldElement
     use WithRedirects;
 
     public string $name;
+    public ?string $indexName = null;
     public ?string $attribute;
     public ?string $type;
     public ?string $placeholder = null;
@@ -221,6 +222,10 @@ abstract class Field extends FieldElement
 
     public function name(): string
     {
+        if ($this->indexName) {
+            return $this->indexName;
+        }
+
         return $this->name;
     }
 
@@ -612,7 +617,14 @@ abstract class Field extends FieldElement
 
     public function resourceStore()
     {
-        return array_replace($this->resource->toArray(), $this->resource->store ?? []);
+        if (! ($this->resource ?? null)) {
+            return [];
+        }
+
+        return array_replace(
+            $this->resource->toArray(),
+            $this->resource->store ?? []
+        );
     }
 
     public function isVisible($resource, ?string $displayType = null): bool
@@ -730,6 +742,13 @@ abstract class Field extends FieldElement
         return $this;
     }
 
+    public function customIndexName($index): self
+    {
+        $this->indexName = $index;
+
+        return $this;
+    }
+
     public function show($show): self
     {
         $this->show = $show;
@@ -843,7 +862,15 @@ abstract class Field extends FieldElement
 
     public function getName()
     {
-        return $this->hideName ? null : $this->name;
+        if ($this->hideName) {
+            return null;
+        }
+
+//        if ($this->indexName) {
+//            return $this->indexName;
+//        }
+
+        return $this->name;
     }
 
     public function storeValue($key, $default = null)

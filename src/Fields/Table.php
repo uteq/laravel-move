@@ -3,6 +3,7 @@
 namespace Uteq\Move\Fields;
 
 use Closure;
+use Domain\Employee\Models\Employee;
 use Uteq\Move\Actions\LivewireCloseModal;
 use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Concerns\WithStackableFields;
@@ -18,6 +19,8 @@ class Table extends Panel
     public array $hideFields = [];
 
     protected Closure $disableDeleteFor;
+
+    public array $customCollection = [];
 
     public function __construct(
         $name,
@@ -138,6 +141,20 @@ class Table extends Panel
     public function getDisableDeleteFor()
     {
         return $this->disableDeleteFor ?? null;
+    }
+
+    public function customCollection(string $key): static
+    {
+        $this->customCollection = [
+            'key' => $key,
+        ];
+
+        return $this;
+    }
+
+    public function getCustomCollection(): array
+    {
+        return $this->customCollection;
     }
 
     public function closeModalAfterAction(): static
