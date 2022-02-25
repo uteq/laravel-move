@@ -11,7 +11,7 @@
          class="absolute z-50 {{ $withMargin ? 'mt-2' : null }} {{ $top }} w-48 rounded-md shadow-lg origin-top-right {{ $orientation === 'left' ? 'left-0' : 'right-0' }} hidden"
          @click.away="open = false"
     >
-        <div class="rounded-md shadow-xs py-1 bg-white">
+        <div class="rounded-md shadow py-1 bg-white">
             {{ $slot }}
         </div>
     </div>

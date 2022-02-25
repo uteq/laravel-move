@@ -277,7 +277,6 @@ abstract class Field extends FieldElement
 
             $data = $this->resource->toArray();
 
-
             // From store
             if ($value = $this->getResourceStoreValue($data, $this->attribute)) {
                 return $value;
