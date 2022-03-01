@@ -388,4 +388,22 @@ class Select extends Field
 
         return $this;
     }
+    
+    public function optionsBy(string $key, string $value, string $resource = null)
+    {
+        $resource ??= $this->resource::class;
+
+        return $this
+            ->shouldMapTags(false)
+            ->index(fn ($field) => implode(', ', $resource::query()
+                ->whereIn($key, $field->value)
+                ->pluck($value)
+                ->toArray()
+            ))
+            ->options(
+                $resource::all()
+                    ->mapWithKeys(fn ($item) => [$item->{$key} => $item->{$value}])
+                    ->toArray()
+            );
+    }
 }
