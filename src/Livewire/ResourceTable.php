@@ -241,10 +241,7 @@ class ResourceTable extends TableComponent
 
             $model = $this->resource()->model()->setRows($data);
 
-            ray($data);
-
             $collection = $model::query()->get();
-
         }
 
         $rows = [];

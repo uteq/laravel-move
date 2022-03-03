@@ -30,6 +30,8 @@ class ResourceShow extends Component
     public $hideCard = false;
     public $class = null;
 
+    public string $action;
+
     public $store;
 
     protected $crudBaseRoute = 'move';
@@ -39,6 +41,8 @@ class ResourceShow extends Component
         $this->resolveResourceModel();
 
         $this->resource()->authorizeTo('view');
+
+        $this->action ??= $this->model->id ? 'update' : 'create';
     }
 
     public function panels()

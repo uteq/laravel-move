@@ -19,6 +19,7 @@ use Uteq\Move\Facades\Move;
 use Uteq\Move\Fields\Field;
 use Uteq\Move\Fields\Panel;
 use Uteq\Move\Fields\Step;
+use Uteq\Move\Livewire\ResourceTable;
 
 abstract class Resource
 {
@@ -74,6 +75,7 @@ abstract class Resource
 
     protected static $flatFields;
     protected static $allFields;
+    private static $parent = null;
 
     public function __construct(Model $resource)
     {
@@ -161,6 +163,22 @@ abstract class Resource
         );
     }
 
+    public static function parent()
+    {
+        if (static::$parent) {
+            return static::$parent;
+        }
+
+        $resourcePath = Move::getByClass(static::class);
+        $parent = session(ResourceTable::class . '.' . $resourcePath .'.parent');
+
+        if (! $parent) {
+            return null;
+        }
+
+        return static::$parent = $parent['model']::find($parent['id']);
+    }
+
     public function id()
     {
         return optional($this->resource)->getPrimaryKey();
@@ -246,6 +264,7 @@ abstract class Resource
         $dtoMethod = 'from' . ucfirst(strtolower($from));
 
         if (method_exists($this, 'handle' . ucfirst($key))) {
+
             $fields = $this->handleFieldsBeforeStore($model, $fields, $this);
 
             $result = app()->call(
@@ -274,7 +293,7 @@ abstract class Resource
     public function handleFieldsBeforeStore(Model $model, array $data, Resource $resource)
     {
         $beforeStoreFields = collect($resource->getFields())
-            ->filter(fn ($item) => isset($item->beforeStore));
+            ->filter(fn ($item) => count($item->getBeforeStore()));
 
         foreach ($beforeStoreFields as $beforeStoreField) {
             $value = $data[$beforeStoreField->attribute] ?? null;

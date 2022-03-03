@@ -652,6 +652,11 @@ abstract class Field extends FieldElement
         return $this->view(...func_get_args());
     }
 
+    public function getBeforeStore(): array
+    {
+        return $this->beforeStore;
+    }
+
     public function beforeStore(Closure $beforeStore, $key = null): self
     {
         $key ? $this->beforeStore[$key] = $beforeStore

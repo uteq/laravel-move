@@ -6,6 +6,7 @@
     'button' => null,
     'show' => true,
     'withoutFooter' => false,
+    'withoutPadding' => false,
     'close' => false,
     'closeable' => false,
     'flexFooter' => true,
@@ -46,7 +47,7 @@
     </div>
 
     <div class="text-left break-words whitespace-wrap overflow-y-auto" style="max-height: calc(100vh - 220px)">
-        <div class="p-6">
+        <div class="{{ $withoutPadding ?: 'p-6' }}">
             {!! $content ?? $slot !!}
         </div>
     </div>

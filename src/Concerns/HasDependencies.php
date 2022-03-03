@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Concerns;
 
+use App\Livewire\Model;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -97,7 +98,11 @@ trait HasDependencies
     {
         foreach ($this->dependencies as $field => $condition) {
             foreach ($condition as $type => $value) {
-                if (! $rules[$type]($value, $data[$field] ?? $data->{$field} ?? Arr::get($data, $field, false))) {
+                $fieldData = $data[$field]
+                    ?? $data->{$field}
+                    ?? Arr::get($data, $field, false);
+
+                if (! $rules[$type]($value, $fieldData, $data)) {
                     return false;
                 }
             }
