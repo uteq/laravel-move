@@ -1,4 +1,9 @@
-<div class="px-4 pt-4 pb-2 last:pb-4 sm:p-6 bg-white w-full border-b {{ ($meta['with_grid'] ?? true) ? 'grid grid-cols-6 gap-6' : null }} last:border-b-0 border-gray-100" wire:key="move-form-row-{{ $model }}">
+<div class="
+        px-4 pt-4 pb-2 last:pb-4 sm:p-6 bg-white w-full border-b last:border-b-0 border-gray-100
+        {{ ($meta['with_grid'] ?? true) ? 'grid grid-cols-6 gap-6' : null }}
+    "
+     wire:key="move-form-row-{{ $model }}"
+>
 
     @if ($meta['full_colspan'] ?? false === true)
 
@@ -7,7 +12,7 @@
                 <div class="col-span-2">
                     @include('move::components.form.row.label')
 
-                    @include('move::components.form.row.helptext-hidden')
+{{--                    @include('move::components.form.row.helptext-hidden')--}}
                 </div>
             @endif
 

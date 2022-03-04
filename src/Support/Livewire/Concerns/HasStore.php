@@ -2,6 +2,7 @@
 
 namespace Uteq\Move\Support\Livewire\Concerns;
 
+use App\Company\Move\Rules\DateOutsideExistingContracts;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
@@ -189,15 +190,28 @@ trait HasStore
 
         $rules = collect($rules)
             ->map(fn ($rule) => is_string($rule) ? explode('|', $rule) : $rule)
-            ->mapWithKeys(function ($value, $field) use ($fields) {
-                // If the field exists as array, no need to change the rule
-                if (isset($fields[Str::before(Str::after($field, 'store.'), '.')]) && $value) {
-                    $value = count($value) > 1 ? $value : ($value[0] ?? []);
+            ->mapWithKeys(function ($conditions, $field) use ($fields) {
 
-                    return [$field => $value];
+                // Allows custom condition classes
+                // Example: DateOutsideExistingContracts::class => ['value'],
+                // This will construct the condition with the values.
+                foreach ($conditions as $key => $condition) {
+                    if (! is_array($condition)) {
+                        continue;
+                    }
+
+                    unset($conditions[$key]);
+                    $conditions[] = new $key(...$condition);
                 }
 
-                return [$field => $value ?: []];
+                // If the field exists as array, no need to change the rule
+                if (isset($fields[Str::before(Str::after($field, 'store.'), '.')]) && $conditions) {
+                    $conditions = count($conditions) > 1 ? $conditions : ($conditions[0] ?? []);
+
+                    return [$field => $conditions];
+                }
+
+                return [$field => $conditions ?: []];
             })
             ->toArray();
 

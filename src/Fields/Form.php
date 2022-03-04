@@ -16,6 +16,7 @@ class Form extends Panel
 
         $this->withMeta([
             'help_text_location' => 'hidden',
+            'wide' => true,
         ]);
 
         $this->stackFields();

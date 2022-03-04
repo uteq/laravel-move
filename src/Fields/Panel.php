@@ -71,6 +71,13 @@ class Panel implements PanelInterface, ElementInterface
         $this->fields = $fields;
         $this->unique = (string) Str::random(20);
 
+        if (config('move.panels_full_width') === true) {
+            $this->withMeta([
+                'full_colspan' => true,
+                'with_grid' => false,
+            ]);
+        }
+
         $this->withMeta([
             'without_bg' => false,
             'without_padding' => false
@@ -328,5 +335,14 @@ class Panel implements PanelInterface, ElementInterface
     public function getFields()
     {
         return $this->fields;
+    }
+
+    public function fullWidth()
+    {
+        return $this
+            ->withMeta([
+                'full_colspan' => true,
+                'with_grid' => false
+            ]);
     }
 }
