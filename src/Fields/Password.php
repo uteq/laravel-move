@@ -20,11 +20,9 @@ class Password extends Field
                 return $value;
             }
 
-            if ($value) {
-                return bcrypt($value);
-            } else {
-                return UnsetField::class;
-            }
+            return $value
+                ? bcrypt($value)
+                : UnsetField::class;
         });
     }
 

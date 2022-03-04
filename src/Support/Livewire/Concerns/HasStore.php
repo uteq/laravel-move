@@ -200,6 +200,10 @@ trait HasStore
                         continue;
                     }
 
+                    if (! class_exists($key)) {
+                        continue;
+                    }
+
                     unset($conditions[$key]);
                     $conditions[] = new $key(...$condition);
                 }
