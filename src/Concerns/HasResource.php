@@ -131,7 +131,8 @@ trait HasResource
 
     public function resolveModel($id)
     {
-        return $this->resource()->newModel()->newQuery()->find($id);
+        return $this->resource()->newModel()->newQuery()->find($id)
+            ?: $this->collection()->firstWhere($this->resource()->model()->getKeyName(), $id);
     }
 
     public function resolvedFields($model = null)
@@ -279,7 +280,24 @@ trait HasResource
 
     public function getCachedCollectionProperty()
     {
+        if ($this->customCollection) {
+            return $this->getCustomCollection();
+        }
+
         return $this->query()
             ->paginate($this->filter('limit', $this->resource()->defaultPerPage()));
+    }
+
+    public function getCustomCollection()
+    {
+        $data = Arr::get(
+            $this->parent()->model()->toArray(),
+            $this->customCollection['key'],
+            []
+        );
+
+        $model = $this->resource()->model()->setRows($data);
+
+        return $model::query()->get();
     }
 }

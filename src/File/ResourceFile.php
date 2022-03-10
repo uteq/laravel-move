@@ -34,6 +34,11 @@ class ResourceFile extends File implements ResourceFileContract
                 if (! file_exists($dir)) {
                     mkdir($dir, null, true);
                 }
+
+                if (! $this->media->getFullUrl()) {
+                    return null;
+                }
+
                 file_put_contents($path, file_get_contents($this->media->getFullUrl()));
             }
 

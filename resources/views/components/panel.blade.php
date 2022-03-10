@@ -1,10 +1,15 @@
 @props(['title' => null, 'description' => null, 'panel' => null, 'afterTitle' => null, 'classes' => null])
 
-<div class="{{ (string)$classes }}">
+<div class="{{ (string) $classes }}">
     @if ($title || $description || optional($panel)->description)
         <div class="flex items-center justify-between">
             <div>
-            @if ($title) <h2 class="{{ ($panel->class ?? null) ?: 'text-2xl font-semibold text-gray-900 mt-5 mb-2' }}">{{ $title }}</h2> @endif
+            @if ($title)
+                <h2 class="{{ ($panel->class ?? null) ?: 'text-2xl font-semibold text-gray-900 mt-5 mb-2' }}">
+                    {{ $title }}
+                </h2>
+            @endif
+
             @if ($description || ($panel && $panel->description))
                 <p class="mb-5 text-lg">{{ $description ?: $panel->description ?? null }}</p>
             @endif
@@ -17,8 +22,10 @@
     @endif
 
     @if (! (optional($panel)->withoutCard ?? false))
-    <div {{ $attributes->merge(['class' => 'shadow overflow-hidden sm:rounded-md']) }}>
-
+    <div {{ $attributes->class([
+        'shadow overflow-hidden',
+        'rounded sm:rounded-md' => $panel->meta('rounded')
+    ]) }}>
         <div class="bg-white">
     @endif
 

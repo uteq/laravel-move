@@ -1,7 +1,7 @@
 <a class="inline-flex cursor-pointer" wire:key="a-confirming.destroy.{{ $id }}">
 
     <!-- Logout Other Devices Confirmation Modal -->
-    <x-move-dialog-modal wire:model="confirmingDestroy.{{ $id }}" wire:key="confirming.destroy.{{ $id }}" close>
+    <x-move-dialog-modal class="whitespace-wrap" wire:model="confirmingDestroy.{{ $id }}" wire:key="confirming.destroy.{{ $id }}" close>
         <x-slot name="button">
             <!-- heroicon-o-trash -->
             <svg class="text-gray-400 hover:text-gray-600 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

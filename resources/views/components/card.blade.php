@@ -21,14 +21,14 @@
 
 @php
     $conditionalAttributes = $withLoader ? [
-        'wire:loading.class' => 'relative overflow-hidden',
+        'wire:loading.class' => 'relative',
         'wire:target' => $loaderTarget,
     ] : [];
 @endphp
 
 <div
     {{ $attributes->merge(array_replace([
-        'class' => 'relative '. ($closed ?: 'border-b') .' border-t border-gray-200 bg-white sm:border overflow-hidden sm:rounded-lg mb-6 ' . ($heading ? '' : $padding) .' shadow-' . $shadow
+        'class' => ''. ($closed ?: 'border-b') .' border-t border-gray-200 bg-white sm:border sm:rounded-lg mb-6 ' . ($heading ? '' : $padding) .' shadow-' . $shadow
     ], $conditionalAttributes)) }}
     x-data="{ open : '{{ $open }}' }"
 >

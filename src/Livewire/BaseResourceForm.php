@@ -52,6 +52,8 @@ abstract class BaseResourceForm extends FormComponent
     public bool $hideStepsMenu = false;
     public bool $hideActions = false;
 
+    public bool $disableEnter = false;
+
     public $queryString = ['activeStep'];
 
     public ?string $buttonSaveText = null;

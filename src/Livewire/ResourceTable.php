@@ -232,22 +232,9 @@ class ResourceTable extends TableComponent
     {
         $resourceClass = get_class($this->resource());
 
-        if ($this->customCollection) {
-            $data = Arr::get(
-                $this->parent()->model()->toArray(),
-                $this->customCollection['key'],
-                []
-            );
-
-            $model = $this->resource()->model()->setRows($data);
-
-            $collection = $model::query()->get();
-        }
-
         $rows = [];
-        $collection ??= $this->collection();
 
-        foreach ($collection as $item) {
+        foreach ($this->collection() as $item) {
             $resource = new $resourceClass($item);
 
             $rows[] = [

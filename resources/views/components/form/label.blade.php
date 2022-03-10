@@ -17,6 +17,6 @@
     </div>
 
     <div class="text-xs mt-4" x-cloak x-show="open">
-        {{ $helpText }}
+        {!! $helpText !!}
     </div>
 </div>

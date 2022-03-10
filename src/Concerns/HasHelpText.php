@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Livewire\CreateBladeView;
+use phpDocumentor\Reflection\Types\False_;
 
 trait HasHelpText
 {
@@ -97,11 +98,15 @@ trait HasHelpText
 
     public function alertWhen(Closure $condition, $color, $text, $attributes = [])
     {
-        $this->helpText = fn ($store) => $condition($store, $this)
-            ? <<<'blade'
-                <x-move-alert color="{{ $color }}">{{ $text }}</x-move-alert>
-              blade
-            : null;
+        $this->helpText = null;
+
+        if (fn ($store) => $condition($store, $this)) {
+            $this->helpText = ($attributes['hide_alert'] ?? false)
+                ? $text
+                : <<<'blade'
+                    <x-move-alert color="{{ $color }}">{{ $text }}</x-move-alert>
+                  blade;
+        }
 
         $this->helpTextAttributes = array_replace_recursive([
             'text' => $text,

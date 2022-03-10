@@ -270,11 +270,6 @@ abstract class Field extends FieldElement
         }
 
         $value = (function () {
-            // Value is already set
-            if ($this->value) {
-                return $this->value;
-            }
-
             $data = $this->resource->toArray();
 
             // From store
@@ -305,58 +300,6 @@ abstract class Field extends FieldElement
              : $value;
 
         static::$cachedValue[$index] = $this->value;
-
-        return $this;
-
-        $this->fillFromResource($resource, $defaultValue ?? null);
-
-        return $this;
-
-        dd($resource);
-
-
-        if (! $this->value
-            && ! Arr::has($resource->toArray(), $this->attribute)
-        ) {
-            $this->value = $this->applyValueCallback($resource);
-
-            return $this;
-        }
-
-        $defaultValue = $this->applyValueCallback($resource);
-
-        // TODO fix that when version switches the description switches too
-        //  http://nathan.digipz.test/company/onboarding?filter[limit]=10
-//        if ($defaultValue) {
-//            $this->value = $defaultValue;
-//
-//            return $this;
-//        }
-
-        if (! empty($this->value)) {
-            $this->fillFromResource($resource, $defaultValue ?? null);
-
-            return $this;
-        }
-
-        $resourceValue = $this->getResourceAttributeValue($resource, $this->attribute);
-
-        $value = $this->value = $resourceValue ?: $defaultValue ?? null;
-
-        $this->resourceDataCallback
-            ? tap(
-            $this->value ?? $this->getResourceAttributeValue($resource, $this->attribute),
-            fn ($value) => $this->value = call_user_func(
-                $this->resourceDataCallback,
-                $value,
-                $resource,
-                $this->attribute,
-            )
-        ) : $this->fillFromResource($resource, $defaultValue ?? null);
-
-        if ($this->attribute === 'description') {
-            dd($this->value);
-        }
 
         return $this;
     }

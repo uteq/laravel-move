@@ -11,7 +11,7 @@
             view="move::form.table-field"
             resource="{{ $panel->tableResource }}"
             :wire:key="'move-'. \Illuminate\Support\Str::slug($panel->tableResource) .'-' . $this->model->getKey()"
-            :parent-model="$this->model"
+            :parent-model="$panel->getParentModel()"
             :parent-resource-class="$this->resource()::class"
             :custom-collection="$panel->getCustomCollection()"
             :meta="$panel->meta"

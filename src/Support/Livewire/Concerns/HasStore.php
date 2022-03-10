@@ -195,7 +195,7 @@ trait HasStore
                 // Allows custom condition classes
                 // Example: DateOutsideExistingContracts::class => ['value'],
                 // This will construct the condition with the values.
-                foreach ($conditions as $key => $condition) {
+                foreach ($conditions ?? [] as $key => $condition) {
                     if (! is_array($condition)) {
                         continue;
                     }

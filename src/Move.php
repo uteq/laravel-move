@@ -16,6 +16,7 @@ class Move
     public ?bool $loadResourceRoutes = null;
     public ?bool $useTestStore = false;
     public ?bool $wrapTableContent = false;
+    public ?bool $hasRoundedPanels = true;
     public string $themeColor = 'green';
     protected $prefixes = [];
     public $registeredTable;
@@ -67,9 +68,21 @@ class Move
         return $this;
     }
 
-    public function getWrapTableContent($wrapTableContent = true)
+    public function getWrapTableContent()
     {
         return $this->wrapTableContent;
+    }
+
+    public function withRoundedPanels($hasRoundedPanels = true): static
+    {
+        $this->hasRoundedPanels = $hasRoundedPanels;
+
+        return $this;
+    }
+
+    public function hasRoundedPanels(): bool
+    {
+        return $this->hasRoundedPanels;
     }
 
     public function useTestStore(bool $useTestStore = true)

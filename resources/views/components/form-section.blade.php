@@ -1,12 +1,20 @@
-@props(['submit', 'id' => time(), 'sidebarEnabled' => false, 'sidebar' => null, 'actions' => null])
+@props([
+    'submit',
+    'id' => time(),
+    'sidebarEnabled' => false,
+    'disableEnter' => false,
+    'sidebar' => null,
+    'actions' => null,
+])
 
 <div {{ $attributes->merge(['class' => '']) }}>
     <div class="mt-5 md:mt-0 md:col-span-2">
 
-        <!-- Temp. fix to make sure the form is rendered -->
-        <form></form>
-
-        <form id="{{ $id ?? time() }}" wire:submit.prevent="{{ $submit }}">
+        <form
+            id="{{ $id ?? time() }}"
+            wire:submit.prevent="{{ $submit }}"
+            <?php if ($disableEnter): ?> onkeydown="return event.key != 'Enter';" <?php endif; ?>
+        >
 
             {!! $head ?? null !!}
 

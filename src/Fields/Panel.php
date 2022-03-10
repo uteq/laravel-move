@@ -20,6 +20,7 @@ use Uteq\Move\Contracts\PanelInterface;
 use Uteq\Move\Fields\Concerns\ShowsConditionally;
 use Uteq\Move\Fields\Concerns\WithHelpText;
 use Uteq\Move\Fields\Concerns\WithStackableFields;
+use Uteq\Move\Move;
 
 class Panel implements PanelInterface, ElementInterface
 {
@@ -65,6 +66,8 @@ class Panel implements PanelInterface, ElementInterface
     public $afterTitle = null;
     protected string $unique;
 
+    public static ?bool $rounded = null;
+
     public function __construct(?string $name = null, array $fields = [])
     {
         $this->name = $name;
@@ -80,7 +83,8 @@ class Panel implements PanelInterface, ElementInterface
 
         $this->withMeta([
             'without_bg' => false,
-            'without_padding' => false
+            'without_padding' => false,
+            'rounded' => static::$rounded ?: \Uteq\Move\Facades\Move::hasRoundedPanels(),
         ]);
 
         if ($name) {
@@ -344,5 +348,10 @@ class Panel implements PanelInterface, ElementInterface
                 'full_colspan' => true,
                 'with_grid' => false
             ]);
+    }
+
+    public function getParentModel()
+    {
+        return $this->model;
     }
 }

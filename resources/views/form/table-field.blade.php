@@ -15,11 +15,16 @@
 
         <tbody wire:target="edit" wire:loading.remove>
         @forelse ($rows as $i => $row)
-            <tr class="hover:bg-gray-50 bg-white shadow" wire:key="table-row-{{ $table->page ?? 0 }}-{{ $row['model']->id }}" wire:sortable.item="{{ $row['model']->id }}">
+            <tr class="hover:bg-gray-50 bg-white shadow"
+                wire:key="table-row-{{ $table->page ?? 0 }}-{{ $row['model']->id }}"
+                wire:sortable.item="{{ $row['model']->id }}"
+            >
                 @foreach ($row['fields'] as $field)
                     @if ($field->isPlaceholder)
                         @continue
                     @endif
+
+                    @php $field->applyResourceData($row['model']) @endphp
 
                     <x-move-td valign="top" class="{{ $field->shouldWrap() ? 'whitespace-wrap' : 'whitespace-nowrap' }}">
                         @if ($table->resource()::title($row['model']) === $field->attribute)

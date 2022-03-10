@@ -12,8 +12,6 @@ class Table extends Panel
 {
     public string $component = 'form.table';
 
-    public string $tableResource;
-
     public array $showFields = [];
 
     public array $hideFields = [];

@@ -18,7 +18,7 @@
                 class="
                     {{ $loop->first ? 'rounded-l-lg' : ' -ml-px' }}
                     {{ $loop->last ? 'rounded-r-lg' : '' }}
-                    {{ $field->value === $value ? 'bg-white border-primary-500' : 'shadow-inner hover:shadow-none bg-white text-gray-500 opacity-60 hover:border-primary-400 hover:opacity-100' }}
+                    {{ $field->value === $value ? 'bg-white border-primary-500 drop-shadow' : 'shadow-inner hover:shadow-none bg-white text-gray-500 opacity-60 hover:border-primary-400 hover:opacity-100' }}
                     transition relative inline-flex items-center block border border-gray-300 shadow-sm px-4 py-1.5 cursor-pointer sm:flex sm:justify-between focus:z-10 focus:outline-none focus:ring-1 focus-within:ring-primary-900 focus:border-primary-900
                 "
                 <?php if ($field->value !== $value): ?> :class="{ 'shadow border-primary-500 shadow-none opacity-100 text-primary-500': active }" <?php endif; ?>

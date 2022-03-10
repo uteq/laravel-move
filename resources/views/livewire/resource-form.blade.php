@@ -4,6 +4,7 @@
         class="mt-5"
         wire:key="{{ $this->name ?: 'resource-form-section-' . $this->model->getKey() ?? rand(0, 99) }}"
         :sidebar-enabled="$isSidebarEnabled"
+        :disable-enter="$disableEnter ?? false"
         wire:loading.class="opacity-50"
         wire:target="save"
         id="{{ $this->name ?: $this->id ?: \Illuminate\Support\Str::slug(get_class($this)) }}"
