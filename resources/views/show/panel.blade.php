@@ -5,7 +5,7 @@
     :classes="$panel->classes ?? null"
 >
     @foreach ($panel->fields as $key => $field)
-    <x-move-row name="{{ $field->name() }}" class="px-4">
+    <x-move-row name="{{ $field->name() }}" class="px-6">
         {{ $field->render('show') }}
     </x-move-row>
     @endforeach

@@ -44,7 +44,9 @@
 
     <x-move-form.input-error for="{{ $model }}" class="mt-2"></x-move-form.input-error>
 
-        @if ($helpText && in_array($meta['help_text_location'] ?? 'below', ['below', 'bottom']))
+    @if ($helpText
+        && in_array($meta['help_text_location'] ?? 'below', ['below', 'bottom'])
+    )
         <div class="mb-2 border-l pl-2 text-xs">
             @include('move::components.form.row.helptext', [
                 'textSize' => 'text-xs',

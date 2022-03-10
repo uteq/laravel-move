@@ -19,6 +19,8 @@ trait HasHelpText
 
     public $helpTextAttributes = [];
 
+    public $hideHelpAtPositions = [];
+
     /**
      * The width of the help text tooltip.
      *
@@ -31,7 +33,7 @@ trait HasHelpText
      *
      * @return $this
      */
-    public function help($text, $position = 'below')
+    public function help($text, $position = 'below'): static
     {
         $this->helpText = $text;
         $this->meta['help_text_location'] = $position;
@@ -44,7 +46,7 @@ trait HasHelpText
      *
      * @return string
      */
-    public function getHelpText()
+    public function getHelpText(): ?string
     {
         $helpText = $this->helpText;
 
@@ -79,7 +81,7 @@ trait HasHelpText
      *
      * @return $this
      */
-    public function helpWidth($helpWidth)
+    public function helpWidth($helpWidth): static
     {
         $this->helpWidth = $helpWidth;
 
@@ -91,12 +93,24 @@ trait HasHelpText
      *
      * @return string
      */
-    public function getHelpWidth()
+    public function getHelpWidth(): string
     {
         return $this->helpWidth;
     }
 
-    public function alertWhen(Closure $condition, $color, $text, $attributes = [])
+    public function hideHelpAtPosition($position, $state = true): static
+    {
+        $this->hideHelpAtPositions[$position] = $state;
+
+        return $this;
+    }
+
+    public function getHideHelpAtPosition($key)
+    {
+        return $this->hideHelpAtPositions[$key] ??= false;
+    }
+
+    public function alertWhen(Closure $condition, $color, $text, $attributes = []): static
     {
         $this->helpText = null;
 

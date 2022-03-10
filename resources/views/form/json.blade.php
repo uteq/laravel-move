@@ -3,14 +3,14 @@
     :required="$field->isRequired()"
     :stacked="$field->stacked"
     custom
-    help-text="{{ $field->getHelpText() }}"
+    help-text="{!! $field->getHelpText() !!}"
     label="{{ $field->getName() }}"
     model="{{ $field->store }}"
 >
 
-    @if ($field->stacked && $field->getHelpText())
+    @if ($field->stacked && $field->getHelpText() && ! $field->getHideHelpAtPosition('top'))
     <x-move-alert color="primary" hideIcon>
-        {{ $field->getHelpText() }}
+        {!! $field->getHelpText() !!}
     </x-move-alert>
     @endif
 
@@ -39,13 +39,14 @@
             @endforeach
         </div>
 
-        @if ($field->meta('has_add_button'))
-        @if ($field->formDisplayType === 'form')
+        @if ($field->meta('has_add_button')
+            && $field->formDisplayType === 'form'
+        )
         <button type="button"
                 wire:click="action('{{ $field->store }}', 'addRow', '{{ count($this->store[$field->attribute] ?? []) - 1 }}')"
                 class="text-sm text-gray-800 bg-white -bottom-3 border border-dashed max-w-md border-gray-300 hover:border-primary-300 hover:text-primary-500 hover:underline mx-auto text-center cursor-pointer rounded w-full"
         >
-            {{ $field->addItemText }}
+            {{ $field->addItemText ?? null }}
         </button>
         @else
 
@@ -54,18 +55,18 @@
             <x-slot name="button">
                 <div
                     class="text-sm text-gray-800 bg-white -bottom-3 border border-dashed max-w-md border-gray-300 hover:border-primary-300 hover:text-primary-500 hover:underline mx-auto text-center cursor-pointer rounded">
-                    {{ $field->addItemText }}
+                    {{ $field->addItemText ?? null }}
                 </div>
             </x-slot>
 
             @if ($field->fields)
 
             @foreach ($field->fields as $key => $subField)
-            @php $subField->updateStorePrefix($subField->nextItemStorePrefix()) @endphp
+                @php $subField->updateStorePrefix($subField->nextItemStorePrefix()) @endphp
 
-            <div wire:key="json-{{ $field->attribute }}-field-{{ $subField->storePrefix }}-{{ $key }}">
-                {{ $subField->render('create') }}
-            </div>
+                <div wire:key="json-{{ $field->attribute }}-field-{{ $subField->storePrefix }}-{{ $key }}">
+                    {{ $subField->render('create') }}
+                </div>
             @endforeach
 
             <div wire:click=""></div>
@@ -73,7 +74,6 @@
             @endif
         </x-move-modal>
 
-        @endif
         @endif
     </div>
 

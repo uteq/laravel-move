@@ -1,7 +1,10 @@
 <div class="whitespace-wrap">
     <x-move-dialog-modal
         wire:model="showModal.edit{{ $model['id'] }}"
-        title="{{ __('Form :resource', ['resource' => $this->resourceClass::singularLabel()]) }}"
+        title="{{ __('Edit :resource', [
+            'resource' => $this->resourceClass::singularLabel() . ' ' . \Uteq\Move\Facades\Move::resolveResource($this->resource)->title($model)
+        ]) }}"
+        closeable
     >
         <x-slot name="button">
             <svg class="text-gray-400 hover:text-gray-600 h-6 w-6 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

@@ -1,6 +1,6 @@
 <x-move-row
     name="{{ $panel->name }}"
-    class="px-4"
+    class="px-6"
 >
     <div class="flex flex-col gap-4">
         @foreach ($panel->fields as $key => $field)

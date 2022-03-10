@@ -1,6 +1,7 @@
 <x-move-dialog-modal
     wire:model="showModal.{{ \Str::slug($this->resourceClass) }}"
-    title="{{ __('Form :resource', ['resource' => $this->resourceClass::singularLabel()]) }}"
+    title="{{ __('Add :resource', ['resource' => $this->resourceClass::singularLabel()]) }}"
+    closeable
 >
     <livewire:livewire.resource-form
         wire:key="modal-form-{{ $showModal }}"
