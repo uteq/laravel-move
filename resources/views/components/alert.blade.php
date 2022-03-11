@@ -36,12 +36,14 @@
         'left' => 'border-l-4 rounded-r',
         'right' => 'border-r-4 rounded-l',
         'bottom' => 'border-b-4 rounded-t',
+        'none' => 'border-none',
+        null => 'border-none',
     ][$borderPosition];
 @endphp
 
 <div
     {{ $attributes->class(array_merge($classes, [
-        $borderClass .' px-4 py-3 shadow-md',
+        $borderPosition ? $borderClass .' px-4 py-3' : $class,
     ])) }}
      role="alert"
 >
@@ -51,9 +53,9 @@
         @endif
         <div class="{{ $contentClasses ?? null }}">
             @if ($title)
-                <p class="font-bold">{{ $title }}</p>
+                <p class="font-bold {{ $titleClasses }}">{{ $title }}</p>
             @endif
-            <p class="text-sm">{!! $slot !!}</p>
+            <p class="text-sm {{ $slotClasses }}">{!! $slot !!}</p>
         </div>
     </div>
 </div>

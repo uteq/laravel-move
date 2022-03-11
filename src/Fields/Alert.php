@@ -79,4 +79,18 @@ class Alert extends Panel
 
         return $this;
     }
+
+    public function simple()
+    {
+        $this
+            ->withoutIcon()
+            ->properties([
+                'borderPosition' => null,
+                'class' => 'px-6 py-6 mb-6',
+                'slotClasses' => 'text-md',
+            ])
+            ->class(null);
+
+        return $this;
+    }
 }
