@@ -55,7 +55,7 @@
             @if ($title)
                 <p class="font-bold {{ $titleClasses }}">{{ $title }}</p>
             @endif
-            <p class="text-sm {{ $slotClasses }}">{!! $slot !!}</p>
+            <p class="text-sm {{ $slotClasses ?? null }}">{!! $slot !!}</p>
         </div>
     </div>
 </div>
