@@ -4,9 +4,9 @@
 
         <x-slot name="head">
             <tr>
-                @foreach ($header as $field)
+                @foreach ($header as $headerRow)
                     <x-move-th>
-                        {!! $field->name() !!}
+                        {!! $headerRow->name() !!}
                     </x-move-th>
                 @endforeach
                 <x-move-th></x-move-th>
@@ -88,7 +88,7 @@
 
     @if ($this->meta['with_add_button'])
         <x-move-secondary-button wire:click="$set('showModal', '{{ \Str::slug($this->resourceClass) }}')" class="mt-2">
-            {{ __('Create :resource', ['resource' => $this->resourceClass::singularLabel()]) }}
+            {{ $this->meta('add_button_text', __('Create :resource', ['resource' => $this->resourceClass::singularLabel()])) }}
         </x-move-secondary-button>
     @endif
 

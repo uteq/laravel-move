@@ -56,6 +56,18 @@ class Select extends Field
             'with_add_button' => false,
         ]);
 
+        $noResults = __('No results found');
+
+        $this->settings = array_replace_recursive([
+            'language' => [
+                'noResults' => <<<JS
+                    function() {
+                        return '$noResults';
+                    }
+                    JS
+            ]
+        ], $this->settings);
+
         $this->show(fn ($field) => (string) ($this->getOptions()[$field->value] ?? null));
     }
 

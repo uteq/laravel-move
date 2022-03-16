@@ -275,4 +275,9 @@ class ResourceTable extends TableComponent
             ->when(count($this->hideFields), fn($collection) => $collection->filter(fn($field) => !in_array($field->attribute, $this->hideFields, true)))
             ->toArray();
     }
+
+    public function meta($key, $default = null)
+    {
+        return $this->meta[$key] ?? $default;
+    }
 }

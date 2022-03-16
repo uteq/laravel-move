@@ -287,7 +287,11 @@ abstract class Resource
 
     public function handleUpdate($handler, $model, $fields, $dtoMethod)
     {
-        return $handler($model, $this->toDataTransferObject($fields, $dtoMethod), $this);
+        return $handler(
+            $model,
+            $this->toDataTransferObject($fields, $dtoMethod),
+            $this
+        );
     }
 
     public function handleFieldsBeforeStore(Model $model, array $data, Resource $resource)
@@ -300,6 +304,7 @@ abstract class Resource
 
             $data = $beforeStoreField->handleBeforeStore($value, $beforeStoreField->attribute, $model, $data);
         }
+
 
         return $data;
     }

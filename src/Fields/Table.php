@@ -163,4 +163,11 @@ class Table extends Panel
             'delete' => LivewireCloseModal::asClosure(),
         ]);
     }
+
+    public function addButtonText(string $addButtonText): static
+    {
+        $this->meta['add_button_text'] = $addButtonText;
+
+        return $this;
+    }
 }

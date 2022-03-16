@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            @if ($errors->count())
+            @if ($errors->count() && $this->showErrorMessage === true)
                 <x-move-alert color="red" class="mt-4">
                     Een van de velden is niet goed ingevuld, controleer a.u.b. het formulier op fouten.
                 </x-move-alert>

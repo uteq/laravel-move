@@ -628,8 +628,10 @@ abstract class Field extends FieldElement
             return $data;
         }
 
+        $value ??= Arr::get($data, $field);
+
         foreach ($handlers as $handler) {
-            $data[$field] = $handler($value, $field, $model, $data);
+            Arr::set($data, $field, $handler($value, $field, $model, $data));
         }
 
         return collect($data)
