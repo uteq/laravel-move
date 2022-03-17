@@ -20,7 +20,7 @@ class ResourceFile extends File implements ResourceFileContract
         parent::__construct($this->getPath());
     }
 
-    public function getPath()
+    public function getPath(): string
     {
         if (! in_array($this->media->disk, ['local', 'public'])) {
             $path = str_replace(

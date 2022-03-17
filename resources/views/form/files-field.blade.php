@@ -1,4 +1,4 @@
-<x-move-form.row width="w-full" custom label="{{ $field->getName() }}" model="{{ $field->store }}" :required="$field->isRequired()" help-text="{{ $field->getHelpText() }}"  :meta="$field->meta" :stacked="$field->stacked">
+<x-move-form.row width="w-full" custom label="{{ $field->getName() }}" model="{{ $field->store }}" :required="$field->isRequired()" help-text="{!! $field->gethelptext() !!}"  :meta="$field->meta" :stacked="$field->stacked">
 
     <div
         x-data="{ isUploading: false, progress: 0 }"

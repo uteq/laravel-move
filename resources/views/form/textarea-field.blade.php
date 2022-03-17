@@ -3,7 +3,7 @@
     label="{{ $field->getName() }}"
     model="{{ $field->store }}"
     :required="$field->isRequired()"
-    help-text="{{ $field->getHelpText() }}"
+    help-text="{!! $field->gethelptext() !!}"
     :stacked="$field->stacked"
     :meta="$field->meta"
 >

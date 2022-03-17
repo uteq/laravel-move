@@ -3,7 +3,7 @@
     type="password"
     label="{{ $field->getName() }}"
     :required="$field->isRequired()"
-    help-text="{{ $field->getHelpText() }}"
+    help-text="{!! $field->gethelptext() !!}"
     :meta="$field->meta"
     :stacked="$field->stacked"
 />

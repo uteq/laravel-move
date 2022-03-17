@@ -7,10 +7,16 @@ class Date extends Field
     public string $component = 'date-field';
 
     public array $dateConfig = [
-        "dateFormat" => "d-m-Y",
-        "altFormat" => "d-m-Y",
-        "altInput" => true,
-        "allowInput" => true,
+        'dateFormat' => 'd-m-Y',
+        'altFormat' => 'd-m-Y',
+        'altInput' => true,
+        'allowInput' => true,
+//        'parseDate' => <<<JS
+//            (datestr, format) => {
+//                // alert('hi');
+//                return moment(datestr, format, true).toDate();
+//            }
+//            JS,
     ];
 
     public function init()

@@ -2,7 +2,7 @@
     custom
     model="{{ $field->store }}"
     label="{{ $field->getName() }}"
-    help-text="{{ $field->getHelpText() }}"
+    help-text="{!! $field->gethelptext() !!}"
     :required="$field->isRequired()"
     :meta="$field->meta"
     :stacked="$field->stacked"

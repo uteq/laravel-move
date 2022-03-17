@@ -6,20 +6,21 @@
      wire:ignore
      x-data
      x-ref="input"
-     x-init="window.flatpickr($refs.input, {{ json_encode($config) }})"
+     x-init="window.flatpickr($refs.input, <?php echo str_replace("\"", "'",json_encode($config)); ?>)"
 >
-    <input {{ $disabled ? 'disabled' : '' }}
-           type="text"
-           id="{{ $model }}"
-           wire:model.lazy="{{ $model }}"
-           wire:dirty.class="loading"
-           autocomplete="{{ $model }}"
-           data-input
-           placeholder="{{ $placeholder }}"
-
-        {!! $attributes->merge([
-            'class' => 'flex-1 form-input block w-full min-w-0 transition duration-150 ease-in-out sm:text-sm sm:leading-5 rounded ' . ( $hasError ? 'border-red-500' : 'border-gray-300' ),
-        ]) !!}
+    <input
+        {{ $disabled ? 'disabled' : '' }}
+        type="text"
+        id="{{ $model }}"
+        wire:model.lazy="{{ $model }}"
+        wire:dirty.class="loading"
+        autocomplete="{{ $model }}"
+        data-input
+        placeholder="{{ $placeholder }}"
+        {!! $attributes->class([
+            'flex-1 form-input block w-full min-w-0 transition duration-150 ease-in-out sm:text-sm sm:leading-5 rounded',
+            $hasError ? 'border-red-500' : 'border-gray-300'
+         ]) !!}
     />
 
     <a class="absolute top-0 right-0 px-3 py-2 input-button cursor-pointer" data-toggle>
