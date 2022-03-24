@@ -1,7 +1,7 @@
-@if ($field->clickable)
-    <a href="{{ $field->resourceUrl($this->resource()) }}" class="underline text-primary-500">
-        {{ $field->value }}
-    </a>
+@if ($field->hasExternalLink())
+    @include('move::index.text.with-external-link')
+@elseif ($field->clickable)
+    @include('move::index.text.link')
 @else
-{{ $field->value }}
+    @include('move::index.text.value')
 @endif

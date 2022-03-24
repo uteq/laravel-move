@@ -469,7 +469,7 @@ abstract class Field extends FieldElement
         }
 
         foreach ($handlers as $handler) {
-            $data[$field] = $handler($value, $field, $model, $data);
+            Arr::set($data, $field, $handler($value, $field, $model, $data));
         }
 
         return collect($data)
@@ -691,5 +691,10 @@ abstract class Field extends FieldElement
     public function getSortableCallbacks(): array
     {
         return $this->sortableCallbacks;
+    }
+
+    public function hasExternalLink(): bool
+    {
+        return (bool) ($this->externalLinkCallback ?? false);
     }
 }
