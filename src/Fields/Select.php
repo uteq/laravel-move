@@ -44,6 +44,8 @@ class Select extends Field
 
     public bool $addResourceEnabled = false;
 
+    public bool $shouldMapTags = true;
+
     public string $createResource;
 
     public string $createForm;
@@ -281,11 +283,18 @@ class Select extends Field
     {
         $this->multiple = $multiple;
 
-        if ($this->multiple) {
+        if ($this->multiple && $this->shouldMapTags) {
             $this->mapTags();
         } else {
             unset($this->beforeStore['multiple']);
         }
+
+        return $this;
+    }
+
+    public function shouldMapTags(bool $shouldMapTags = true): static
+    {
+        $this->shouldMapTags = $shouldMapTags;
 
         return $this;
     }
@@ -298,11 +307,9 @@ class Select extends Field
         $this->beforeStore(function ($value, $field, $model) {
             $model = (clone $model)->refresh();
 
-            $value = collect($value)
+            return collect($value)
                 ->map(fn ($value) => $model->{$field}[$value] ?? $value)
                 ->toArray();
-
-            return $value;
         }, 'multiple');
     }
 
@@ -380,5 +387,25 @@ class Select extends Field
         $this->tags = $tags;
 
         return $this;
+    }
+
+    public function optionsBy(string $key, string $value, string $resource = null)
+    {
+        $resource ??= $this->resource::class;
+
+        return $this
+            ->shouldMapTags(false)
+            ->index(fn ($field) => implode(
+                ', ',
+                $resource::query()
+                ->whereIn($key, $field->value)
+                ->pluck($value)
+                ->toArray()
+            ))
+            ->options(
+                $resource::all()
+                    ->mapWithKeys(fn ($item) => [$item->{$key} => $item->{$value}])
+                    ->toArray()
+            );
     }
 }
