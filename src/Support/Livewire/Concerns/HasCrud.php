@@ -4,6 +4,7 @@ namespace Uteq\Move\Support\Livewire\Concerns;
 
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Uteq\Move\Facades\Move;
 use Uteq\Move\Resource;
 
 trait HasCrud
@@ -81,11 +82,8 @@ trait HasCrud
             return null;
         }
 
-        $resource = str_replace('.', '/', $this->resource);
-        $resource = str_replace($this->crudBaseRoute .'/', '', $resource);
-
         return route($this->crudBaseRoute . '.show', [
-            'resource' => $resource,
+            'resource' => $this->getResourcePath(),
             'model' => $model,
         ]);
     }
@@ -104,15 +102,13 @@ trait HasCrud
 
         $model = $this->modelById($id);
 
+
         if (! $model) {
             return null;
         }
 
-        $resource = str_replace('.', '/', $resourceRoute ?: $this->resource);
-        $resource = str_replace($this->crudBaseRoute .'/', '', $resource);
-
         return route($this->crudBaseRoute . '.edit', [
-            'resource' => $resource,
+            'resource' => $this->getResourcePath($resourceRoute),
             'model' => $this->modelById($id),
         ]);
     }
@@ -147,7 +143,7 @@ trait HasCrud
         }
 
         return route($this->crudBaseRoute . '.create', array_replace_recursive([
-            'resource' => str_replace('.', '/', $this->resource),
+            'resource' => $this->getResourcePath(),
         ], $attributes));
     }
 
@@ -168,7 +164,7 @@ trait HasCrud
         return $this->confirmingDestroy = false;
     }
 
-    public function destroy($id)
+    public function destroy($id): ?string
     {
         /** @psalm-suppress TypeDoesNotContainType */
         if (! property_exists($this, 'crudBaseRoute')) {
@@ -191,6 +187,21 @@ trait HasCrud
 
         $this->emit('move::table:updated');
 
-        return $this->redirectRoute(move()::getPrefix() . '.index', ['resource' => str_replace('.', '/', $this->resource)]);
+        $this->redirectRoute(move()::getPrefix() . '.index', [
+            'resource' => $this->getResourcePath(),
+        ]);
+    }
+
+    private function getResourcePath($default = null)
+    {
+        $resource = Move::getByClass($default ?: $this->resource);
+        $resource = str_replace('.', '/', $resource);
+
+        if (! $resource) {
+            $resource = str_replace('.', '/', $default ?: $this->resource);
+            $resource = str_replace($this->crudBaseRoute .'/', '', $resource);
+        }
+
+        return $resource;
     }
 }
