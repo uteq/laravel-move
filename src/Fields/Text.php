@@ -2,15 +2,13 @@
 
 namespace Uteq\Move\Fields;
 
-use Closure;
-
 class Text extends Field
 {
     public string $component = 'text-field';
 
-    protected ?Closure $externalLinkCallback = null;
+    protected ?\Closure $externalLinkCallback = null;
 
-    public function externalLink(Closure $closure): static
+    public function externalLink(\Closure $closure): static
     {
         $this->externalLinkCallback = $closure;
 
