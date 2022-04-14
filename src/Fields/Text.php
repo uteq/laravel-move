@@ -10,6 +10,7 @@ class Text extends Field
 
     protected ?Closure $externalLinkCallback = null;
 
+
     public function externalLink(Closure $closure): static
     {
         $this->externalLinkCallback = $closure;
