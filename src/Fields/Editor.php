@@ -33,6 +33,8 @@ class Editor extends Textarea
 
     public function fixUTF8($string): ?string
     {
+        return $string;
+
         if (empty($string)) {
             return null;
         }
