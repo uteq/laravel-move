@@ -21,7 +21,7 @@
         </div>
 
         <div :class="{'block': open, 'hidden': ! open}"
-             class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right {{ $orientationClass }} hidden"
+             class="absolute z-50 mt-2 w-64 rounded-md shadow-lg origin-top-right {{ $orientationClass }} hidden"
              @click.away="open = false"
         >
             <div class="rounded-md shadow-xs py-1 bg-white">
