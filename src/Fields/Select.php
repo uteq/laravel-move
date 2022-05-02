@@ -28,9 +28,13 @@ class Select extends Field
 
     protected $options;
 
-    public $resourceName = null;
-
     public ?Closure $customIndexName = null;
+
+    protected ?Closure $formatValues = null;
+
+    protected bool $shouldMapTags = true;
+
+    public $resourceName = null;
 
     public array $settings = [];
 
@@ -43,8 +47,6 @@ class Select extends Field
     public ?string $ajaxUrl = null;
 
     public bool $addResourceEnabled = false;
-
-    public bool $shouldMapTags = true;
 
     public string $createResource;
 
@@ -137,20 +139,6 @@ class Select extends Field
         return $resourceName::title($model);
     }
 
-    public function cachedResource($name, $value, $model): ?Model
-    {
-        if ($value instanceof Collection || is_array($value)) {
-            return null;
-        }
-
-        if (! isset(static::$resourceCache[$name][$value]) || empty(static::$resourceCache[$name][$value])) {
-            static::$resourceCache[$name] ??= [];
-            static::$resourceCache[$name][$value] = $name::$model::find($value);
-        }
-
-        return static::$resourceCache[$name][$value];
-    }
-
     public function resource($resource): static
     {
         if (! class_exists($resource)) {
@@ -173,6 +161,20 @@ class Select extends Field
         $this->resourceName = $resource;
 
         return $this;
+    }
+
+    public function cachedResource($name, $value, $model): ?Model
+    {
+        if ($value instanceof Collection || is_array($value)) {
+            return null;
+        }
+
+        if (! isset(static::$resourceCache[$name][$value]) || empty(static::$resourceCache[$name][$value])) {
+            static::$resourceCache[$name] ??= [];
+            static::$resourceCache[$name][$value] = $name::$model::find($value);
+        }
+
+        return static::$resourceCache[$name][$value];
     }
 
     /**
@@ -283,7 +285,7 @@ class Select extends Field
     {
         $this->multiple = $multiple;
 
-        if ($this->multiple && $this->shouldMapTags) {
+        if ($this->multiple) {
             $this->mapTags();
         } else {
             unset($this->beforeStore['multiple']);
@@ -292,9 +294,8 @@ class Select extends Field
         return $this;
     }
 
-    public function shouldMapTags(bool $shouldMapTags = true): static
-    {
-        $this->shouldMapTags = $shouldMapTags;
+    public function shouldMapTags($value = true): static {
+        $this->shouldMapTags = $value;
 
         return $this;
     }
@@ -305,12 +306,25 @@ class Select extends Field
     protected function mapTags(): void
     {
         $this->beforeStore(function ($value, $field, $model) {
-            $model = (clone $model)->refresh();
 
-            return collect($value)
-                ->map(fn ($value) => $model->{$field}[$value] ?? $value)
-                ->toArray();
+            if ($this->shouldMapTags) {
+                $model = (clone $model)->refresh();
+
+                $value = collect($value)
+                    ->map(fn($value) => $model->{$field}[$value] ?? $value)
+                    ->toArray();
+            }
+
+            return $value;
+
         }, 'multiple');
+    }
+
+    public function formatValues(\Closure $closure)
+    {
+        $this->formatValues = $closure;
+
+        return $this;
     }
 
     public function values($form)
@@ -332,8 +346,19 @@ class Select extends Field
             ? ($this->multiple ? $fieldStore : array_keys($fieldStore))
             : $values;
 
+        if($values instanceof Collection) {
+            if ($this->formatValues) {
+                $values = $values
+                    ->mapWithKeys($this->formatValues)
+                    ->filter()
+                    ->toArray();
+            }
+        }
+
         return is_string($values) ? [$values] : $values;
     }
+
+
 
     public function fieldStore()
     {
@@ -387,25 +412,5 @@ class Select extends Field
         $this->tags = $tags;
 
         return $this;
-    }
-
-    public function optionsBy(string $key, string $value, string $resource = null)
-    {
-        $resource ??= $this->resource::class;
-
-        return $this
-            ->shouldMapTags(false)
-            ->index(fn ($field) => implode(
-                ', ',
-                $resource::query()
-                ->whereIn($key, $field->value)
-                ->pluck($value)
-                ->toArray()
-            ))
-            ->options(
-                $resource::all()
-                    ->mapWithKeys(fn ($item) => [$item->{$key} => $item->{$value}])
-                    ->toArray()
-            );
     }
 }
