@@ -24,8 +24,7 @@
                 value="{{ $key }}"
                 @if ($values && is_array($values))
                     @if (isset(array_flip($values)[$label])) selected="selected" @endif
-                    @if (isset(array_flip($values)[$key])) selected="selected" @endif
-                @elseif((string)$key === (string)$values)
+                @elseif($values && (string)$key === (string)$values)
                     selected="selected"
                 @endif
             >{{ $label }}</option>
