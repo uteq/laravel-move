@@ -294,7 +294,8 @@ class Select extends Field
         return $this;
     }
 
-    public function shouldMapTags($value = true): static {
+    public function shouldMapTags($value = true): static
+    {
         $this->shouldMapTags = $value;
 
         return $this;
@@ -306,17 +307,15 @@ class Select extends Field
     protected function mapTags(): void
     {
         $this->beforeStore(function ($value, $field, $model) {
-
             if ($this->shouldMapTags) {
                 $model = (clone $model)->refresh();
 
                 $value = collect($value)
-                    ->map(fn($value) => $model->{$field}[$value] ?? $value)
+                    ->map(fn ($value) => $model->{$field}[$value] ?? $value)
                     ->toArray();
             }
 
             return $value;
-
         }, 'multiple');
     }
 
@@ -346,7 +345,7 @@ class Select extends Field
             ? ($this->multiple ? $fieldStore : array_keys($fieldStore))
             : $values;
 
-        if($values instanceof Collection) {
+        if ($values instanceof Collection) {
             if ($this->formatValues) {
                 $values = $values
                     ->mapWithKeys($this->formatValues)
