@@ -95,8 +95,9 @@
         loadSelect2(element, val, settings, {
             isMultiple: @php echo json_encode($multiple ?? false) @endphp,
         }, function (e) {
+
+            var data = $(this).val();
             let elementName = $(this).attr('id');
-            var data = $(this).select2("val");
 
             @this.set(elementName, data);
         });
