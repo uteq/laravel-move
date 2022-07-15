@@ -89,6 +89,7 @@ switch ($maxWidth ?? '2xl') {
     x-on:close.stop="show = null"
     x-on:keydown.escape.window="show = null"
     <?php endif; ?>
+    {{ $button?->attributes }}
 >
 
     @if ($button)
@@ -120,7 +121,12 @@ switch ($maxWidth ?? '2xl') {
              x-transition:leave-end="opacity-0"
         ><div class="absolute inset-0 bg-gray-500 opacity-75 {{ $closeOnClickAway ? 'cursor-pointer' : null }}"></div></div>
 
-        <div class="bg-white {{ \Uteq\Move\Facades\Move::hasRoundedPanels() ? 'rounded-xl' : null }}  overscroll-contain {{ $scroll ? 'overflow-y-auto' : 'overflow-hidden' }} shadow-xl transform transition-all sm:w-full {{ $maxWidth }}"
+        <div {{ $attributes->whereDoesntStartWith('wire:model')->merge(['class' => Arr::toCssClasses([
+                 'bg-white overscroll-contain shadow-xl transform transition-all sm:w-full ' . $maxWidth,
+                 'rounded-xl' => \Uteq\Move\Facades\Move::hasRoundedPanels(),
+                 'overflow-y-auto' => $scroll,
+                 'overflow-hidden' => ! $scroll,
+             ])]) }}
              x-transition:enter="ease-out duration-300"
              x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
              x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"

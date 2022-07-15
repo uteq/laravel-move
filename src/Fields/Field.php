@@ -828,7 +828,7 @@ abstract class Field extends FieldElement
 
         $prefix = $storeKey ? $storeKey . '.' : '';
 
-        $store = $this->resource->toArray();
+        $store = $this->resource?->toArray();
 
         return Arr::get($store, $prefix . $key);
     }

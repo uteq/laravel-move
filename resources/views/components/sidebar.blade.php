@@ -34,7 +34,7 @@
      x-show="sidebarMenuOpen"
 
 >
-    <div class="flex flex-col w-64">
+    <div class="flex flex-col w-52">
         <!-- Sidebar component, swap this element with another sidebar if you like -->
         <x-move-sidebar-menu
             :custom="$slot ?? null"
