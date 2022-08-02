@@ -190,6 +190,8 @@ trait HasCrud
         $this->redirectRoute(move()::getPrefix() . '.index', [
             'resource' => $this->getResourcePath(),
         ]);
+
+        return null;
     }
 
     private function getResourcePath($default = null)
