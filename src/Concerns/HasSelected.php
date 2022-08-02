@@ -14,14 +14,21 @@ trait HasSelected
         $this->computeHasSelected();
     }
 
+    public function countSelected()
+    {
+        return collect($this->selected)
+            ->filter(fn ($value) => $value !== false)
+            ->count();
+    }
+
     public function hasSelected(): bool
     {
-        return count($this->selected) > 0;
+        return $this->countSelected() > 0;
     }
 
     public function computeHasSelected(): void
     {
-        $this->has_selected = count($this->selected) > 0;
+        $this->has_selected = $this->hasSelected();
     }
 
     public function updatedSelectType($value, $key): void
