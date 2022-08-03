@@ -20,9 +20,10 @@
             {{ $trigger }}
         </div>
 
-        <div :class="{'block': open, 'hidden': ! open}"
-             class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right {{ $orientationClass }} hidden"
+        <div x-show="open"
+             class="absolute z-50 mt-2 w-64 rounded-md shadow-lg origin-top-right {{ $orientationClass }}"
              @click.away="open = false"
+             x-cloak
         >
             <div class="rounded-md shadow-xs py-1 bg-white">
                 {{ $slot }}

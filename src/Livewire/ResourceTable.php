@@ -143,6 +143,8 @@ class ResourceTable extends TableComponent
         $this->has_selected = false;
         $this->resetFilter();
 
+        $this->forgetComputed(['cachedCollection']);
+
         app()->call([$this, 'render']);
     }
 

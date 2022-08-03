@@ -24,6 +24,7 @@
                 value="{{ $key }}"
                 @if ($values && is_array($values))
                     @if (isset(array_flip($values)[$label])) selected="selected" @endif
+                    @if (isset(array_flip($values)[$key])) selected="selected" @endif
                 @elseif((string)$key === (string)$values)
                     selected="selected"
                 @endif
@@ -94,8 +95,9 @@
         loadSelect2(element, val, settings, {
             isMultiple: @php echo json_encode($multiple ?? false) @endphp,
         }, function (e) {
+
+            var data = $(this).val();
             let elementName = $(this).attr('id');
-            var data = $(this).select2("val");
 
             @this.set(elementName, data);
         });

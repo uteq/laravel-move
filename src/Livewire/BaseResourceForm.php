@@ -280,9 +280,9 @@ abstract class BaseResourceForm extends FormComponent
             $this->resolveFieldRules($this->store),
             (
                 // TODO model never exists whenever the rules are loaded
-            (optional($model)->id || $this->modelId)
-                ? $this->resolveFieldUpdateRules($this->store)
-                : $this->resolveFieldCreateRules($this->store)
+                (optional($model)->id || $this->modelId)
+                    ? $this->resolveFieldUpdateRules($this->store)
+                    : $this->resolveFieldCreateRules($this->store)
             )
         );
     }

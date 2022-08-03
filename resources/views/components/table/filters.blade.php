@@ -95,18 +95,18 @@
                 <x-slot name="trigger">
                     <button type="button" class="flex items-center cursor-pointer active:border relative items-center cursor-pointer bg-gray-100 py-1 pr-2 pl-1 rounded-md">
                         <svg class="text-gray-500 h-6 w-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!-- Font Awesome Free 5.15.1 by @fontawesome  - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg>
-                        <div class="ml-2">{{ count($table->selected) }}</div>
+                        <div class="ml-2">{{ $table->countSelected() }}</div>
                     </button>
                 </x-slot>
 
                 <button class="p-2" wire:click="showDelete">
-                    Selectie verwijderen ({{ count($table->selected) }})
+                    Selectie verwijderen ({{ $table->countSelected() }})
                 </button>
             </x-move-dropdown>
 
             <x-move-dialog-modal wire:model="showingDelete">
                 <x-slot name="title">
-                    {{ count($table->selected) }} Item(s) verwijderen
+                    {{ $table->countSelected() }} Item(s) verwijderen
                 </x-slot>
 
                 <x-slot name="content">
