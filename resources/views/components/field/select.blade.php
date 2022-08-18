@@ -1,6 +1,6 @@
 @props(['model', 'version' => 1, 'options' => [], 'placeholder' => null, 'settings' => ['placeholder' => __('Select your option')], 'values', 'multiple' => false])
 
-@php $index = \Str::slug(str_replace('.', '-', $model)); @endphp
+@php $index = uniqid()  . '-' . \Str::slug(str_replace('.', '-', $model)); @endphp
 
 <div class="w-full" wire:ignore>
 

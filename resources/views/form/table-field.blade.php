@@ -70,7 +70,7 @@
                             wire:click="$set('showModal', '{{ \Str::slug($this->resourceClass) }}')"
                             class="underline text-primary-500"
                         >
-                            @lang('Form first :resource', ['resource' => $table->resource()->singularLabel()])
+                            {{ __('Form first :resource', ['resource' => $table->resource()->singularLabel()]) }}
                         </button>
                         @endif
                     </div>

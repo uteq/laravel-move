@@ -110,6 +110,10 @@ class Panel implements PanelInterface, ElementInterface
             $this->stackFields();
         }
 
+        if (method_exists($this, 'init')) {
+            $this->init();
+        }
+
         return $this;
     }
 

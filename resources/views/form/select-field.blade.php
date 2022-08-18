@@ -1,4 +1,4 @@
-@php $index = Str::slug(str_replace('.', '-', 'model.'. $field->attribute)) @endphp
+@php $index = uniqid()  . '.' . Str::slug(str_replace('.', '-', 'model.'. $field->attribute)) @endphp
 
 <x-move-form.row
     custom

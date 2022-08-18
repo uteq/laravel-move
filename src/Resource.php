@@ -75,7 +75,7 @@ abstract class Resource
 
     protected static $flatFields;
     protected static $allFields;
-    private static $parent = null;
+    protected static $parent = null;
 
     public function __construct(Model $resource)
     {
