@@ -2,12 +2,10 @@
 
 namespace Uteq\Move\Fields;
 
-use App\Admin\Move\Fields\Paragraph;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\View\View;
@@ -18,7 +16,6 @@ use Uteq\Move\Concerns\HasRequired;
 use Uteq\Move\Concerns\HasRules;
 use Uteq\Move\Concerns\IsStacked;
 use Uteq\Move\Concerns\Sortable;
-use Uteq\Move\Concerns\WithClosures;
 use Uteq\Move\Concerns\WithModal;
 use Uteq\Move\Concerns\WithRedirects;
 use Uteq\Move\Facades\Move;
@@ -867,5 +864,10 @@ abstract class Field extends FieldElement
         }
 
         return false;
+    }
+
+    public function dd()
+    {
+        dd($this);
     }
 }

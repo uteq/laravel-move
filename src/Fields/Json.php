@@ -190,4 +190,9 @@ class Json extends Field
 
         return $this;
     }
+
+    public function values($store)
+    {
+        return Arr::get($store, $this->attribute, []) ?: [];
+    }
 }
