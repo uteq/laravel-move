@@ -364,7 +364,7 @@ abstract class Field extends FieldElement
         return strtolower(Str::afterLast(static::class, '\\'));
     }
 
-    public function view(string $displayTypeKey, array $data = [])
+    public function view($displayTypeKey, $data = [], $mergeData = [])
     {
         $this->type = $displayTypeKey;
 
