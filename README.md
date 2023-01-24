@@ -1,3 +1,5 @@
+# Please use Filament over this package. This will package will be archived soon.
+
 # Laravel Move | An admin panel powered by Livewire and Jetstream
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/uteq/laravel-move.svg?style=flat-square)](https://packagist.org/packages/uteq/laravel-move)
