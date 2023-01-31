@@ -163,6 +163,13 @@ abstract class Field extends FieldElement
         }
     }
 
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
     public function valueCallback(callable $valueCallback = null)
     {
         $this->valueCallback = $valueCallback;
@@ -313,10 +320,6 @@ abstract class Field extends FieldElement
         $this->resource = $resource;
 
         $value = $this->getResourceAttributeValue($resource, $this->attribute) ?: $defaultValue;
-
-        if ($this->attribute === 'description') {
-            dd($value);
-        }
 
         $this->value = $this->valueCallback
             ? tap($value, fn ($value) => call_user_func(

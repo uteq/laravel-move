@@ -11,6 +11,11 @@ class MediaCollection extends DataTransferObjectCollection implements MediaColle
         return parent::current();
     }
 
+    public static function createSingle($data)
+    {
+        return static::create([$data]);
+    }
+
     public static function create($data)
     {
         if ($data instanceof MediaCollection) {
