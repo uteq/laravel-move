@@ -32,13 +32,21 @@ class Json extends Field
         return $this;
     }
 
-    public function fields(array $fields, array $meta = [], array $options = [])
+    public function schema(array $fields, array $meta = [], array $options = [])
     {
         $this->fields = $fields;
         $this->fieldMeta = $meta ?: $this->fieldMeta;
         $this->fieldOptions = $options ?: $this->fieldOptions;
 
         return $this;
+    }
+
+    /**
+     * @deprecated
+     */
+    public function fields(array $fields, array $meta = [], array $options = [])
+    {
+        return $this->schema($fields, $meta, $options);
     }
 
     public function fieldMeta(array $meta = [])

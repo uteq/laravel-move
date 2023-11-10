@@ -1,10 +1,10 @@
-<div class="
-        px-4 pt-4 pb-2 last:pb-4 sm:p-6 bg-white w-full border-b last:border-b-0 border-gray-100
-        {{ ($meta['with_grid'] ?? true) ? 'grid grid-cols-6 gap-6' : null }}
-    "
+<div @class([
+        'bg-white w-full border-b last:border-b-0 border-gray-100',
+        'px-4 pt-4 pb-2 last:pb-4 sm:p-6' => ($meta['without_padding'] ?? false) === false,
+        'grid grid-cols-6 gap-6' => $meta['with_grid'] ?? true,
+    ])
      wire:key="move-form-row-{{ $model }}"
 >
-
     @if ($meta['full_colspan'] ?? false === true)
 
         <div class="{{ ($labelValue ? 'sm:grid sm:grid-cols-9 sm:gap-4 sm:items-start' : null) }}">

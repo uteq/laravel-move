@@ -15,7 +15,7 @@ trait HasHelpText
      *
      * @var string
      */
-    public $helpText;
+    protected $helpText;
 
     public $helpTextAttributes = [];
 
@@ -57,6 +57,7 @@ trait HasHelpText
 
         $data = array_replace_recursive($this->helpTextAttributes, [
             'store' => $undotedStore,
+            'get' => fn ($key) => Arr::get($undotedStore, $key),
             'field' => $this
         ]);
 
@@ -64,11 +65,11 @@ trait HasHelpText
             ? app()->call($helpText, $data)
             : $helpText;
 
-        if (is_string($view)) {
-            $view = app('view')->make(CreateBladeView::fromString($view));
-        } else {
+        if (! is_string($view)) {
             return null;
         }
+
+        $view = app('view')->make(CreateBladeView::fromString($view));
 
         throw_unless($view instanceof View,
             new \Exception('"view" method on ['.get_class($this).'] must return instance of ['.View::class.']'));

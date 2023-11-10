@@ -5,6 +5,7 @@
     'name' => optional($attributes->wire('model'))->value(),
     'value' => null,
     'disableTab' => false,
+    'placeholder' => '',
     'toolbar' => [
         [[ 'header' => [1, 2, 3, 4, 5, 6, false] ]],
         ['bold', 'italic', 'underline', 'strike'],
@@ -13,7 +14,8 @@
         [[ 'align' => [] ]],
         ['clean']
     ],
-    'rows' => 5
+    'rows' => 5,
+    'class' => 'w-full border rounded-b',
 ])
 
 @php
@@ -34,7 +36,8 @@
                     bounds: document.body,
                     modules: {
                         toolbar: {{ json_encode($toolbar) }}
-                    }
+                    },
+                    placeholder: '{{ $placeholder }}',
                 });
 
                 quill{{ $id }}.on('text-change', (delta, oldDelta, source) => {
@@ -47,11 +50,9 @@
                 @endif
                 "
             style="min-height: {{ $rows * 3 }}em; min-width: 100%;"
-            class="w-full border rounded-b"
+            class="{{ $class }}"
         >
-            <div class="ql-editor-{{ $id }}"
-                 tabindex="1"
-            >{!! $value !!}</div>
+            <div class="ql-editor-{{ $id }}" tabindex="1">{!! $value !!}</div>
         </div>
     </div>
     <style>

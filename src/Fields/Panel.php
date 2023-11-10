@@ -102,7 +102,7 @@ class Panel implements PanelInterface, ElementInterface
         return $this->id ?? $this->unique;
     }
 
-    public function setFields(array $fields)
+    public function schema(array $fields): static
     {
         $this->fields = $fields;
 
@@ -115,6 +115,14 @@ class Panel implements PanelInterface, ElementInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @deprecated
+     */
+    public function setFields(array $fields): static
+    {
+        return $this->schema($fields);
     }
 
     public function nameOnCreate(string $nameOnCreate): static
@@ -352,6 +360,11 @@ class Panel implements PanelInterface, ElementInterface
                 'full_colspan' => true,
                 'with_grid' => false
             ]);
+    }
+
+    public function withoutPadding()
+    {
+        return $this->withMeta(['without_padding' => true]);
     }
 
     public function getParentModel()
